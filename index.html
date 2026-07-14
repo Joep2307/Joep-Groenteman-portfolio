@@ -836,6 +836,80 @@
             color: var(--accent);
         }
 
+        /* ---------- cv panel entries ---------- */
+        .cv-item {
+            margin-bottom: 1.6rem;
+        }
+
+        .cv-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .cv-item-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: .4rem;
+        }
+
+        .cv-role {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text);
+        }
+
+        .cv-role span {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .cv-date {
+            font-family: var(--mono);
+            font-size: .7rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+        }
+
+        .cv-grade {
+            font-family: var(--mono);
+            font-size: .72rem;
+            color: var(--text-dim);
+            margin-bottom: .5rem;
+            display: block;
+        }
+
+        .cv-sub {
+            margin-top: 1rem;
+            padding-left: 1.2rem;
+            border-left: 1px solid var(--border);
+        }
+
+        .cv-sub .cv-item {
+            margin-bottom: 1.2rem;
+        }
+
+        .cv-langs {
+            list-style: none;
+            display: flex;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .cv-langs li {
+            font-family: var(--mono);
+            font-size: .8rem;
+        }
+
+        .cv-langs li span {
+            display: block;
+            color: var(--text-dim);
+            font-size: .7rem;
+            margin-top: .3rem;
+        }
+
         @media (prefers-reduced-motion: reduce) {
             * {
                 animation: none !important;
@@ -1004,7 +1078,10 @@
                         new skills. I see new project challenges as an opportunity to try something new rather than
                         an obstacle — the best way for me to keep evolving is to stay curious, engage with feedback,
                         and learn from the real world around me.</p>
-                    <a href="Joep_Groenteman_CV.pdf" class="cv-btn" download>Download CV (PDF) ↓</a>
+                    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:center;">
+                        <a href="Joep_Groenteman_CV.pdf" class="cv-btn" download>Download CV (PDF) ↓</a>
+                        <a href="#" class="case-link" data-open="panel-05">View CV →</a>
+                    </div>
                 </div>
                 <ul class="skills-list">
                     <li class="skills-heading"><span>Hard skills</span><span></span></li>
@@ -1167,6 +1244,141 @@
                     usage guidelines, researching new components, and supporting the team in applying the system
                     across the website.</p>
             </div>
+            <div class="panel-nav">
+                <button data-nav="prev">← Previous</button>
+                <button data-nav="next">Next →</button>
+            </div>
+        </div>
+
+        <div class="case-panel" id="panel-05" role="dialog" aria-modal="true" aria-labelledby="panel-05-title"
+            tabindex="-1">
+            <span class="panel-index">RESUME</span>
+            <h3 class="panel-title" id="panel-05-title">Curriculum Vitae</h3>
+            <div class="panel-tags"><span>Figma</span><span>Canva</span><span>Accessibility/EAA</span></div>
+
+            <div class="panel-block">
+                <h4>Profile</h4>
+                <p>Fourth year Communication &amp; Multimedia Design student with a strong interest in UX design,
+                    accessibility, and digital products. I enjoy solving complex problems through research,
+                    prototyping, and user centered design.</p>
+                <p>I am curious, proactive, and enjoy working with multidisciplinary teams to create experiences
+                    that are both functional and inclusive. I am looking for opportunities where I can continue to
+                    grow as a UX designer while creating meaningful products for real users.</p>
+            </div>
+
+            <div class="panel-block">
+                <h4>Languages</h4>
+                <ul class="cv-langs">
+                    <li>Dutch<span>Native</span></li>
+                    <li>English<span>Fluent</span></li>
+                </ul>
+            </div>
+
+            <div class="panel-block">
+                <h4>Experience</h4>
+
+                <div class="cv-item">
+                    <div class="cv-item-head">
+                        <span class="cv-role">Hospitality &amp; Events Staff — <span>@droog</span></span>
+                        <span class="cv-date">Oct 2025 – Present</span>
+                    </div>
+                    <p>Serving guests as a server and barista, providing technical, light and sound support during
+                        events, and assisting with hosting and coordinating a wide range of events.</p>
+                </div>
+
+                <div class="cv-item">
+                    <div class="cv-item-head">
+                        <span class="cv-role">Intern UX Design &amp; Accessibility — <span>Athora Netherlands</span></span>
+                        <span class="cv-date">Feb 2025 – Jul 2025</span>
+                    </div>
+                    <span class="cv-grade">Grade: 9.5</span>
+                    <p>Designed user interfaces in Figma, contributed to design systems, and conducted accessibility
+                        audits using WCAG guidelines. Collaborated within multidisciplinary teams to improve digital
+                        products and contributed to the implementation of the European Accessibility Act (EAA).</p>
+                </div>
+
+                <div class="cv-item">
+                    <div class="cv-item-head">
+                        <span class="cv-role">Operations — <span>Albert Heijn</span></span>
+                        <span class="cv-date">Feb 2020 – Feb 2026</span>
+                    </div>
+                    <p>Managed daily store operations, coordinated the team, and ensured efficient service and
+                        customer satisfaction.</p>
+                    <div class="cv-sub">
+                        <div class="cv-item">
+                            <div class="cv-item-head">
+                                <span class="cv-role">Shiftleader Operations</span>
+                                <span class="cv-date">May 2023 – Feb 2026</span>
+                            </div>
+                        </div>
+                        <div class="cv-item">
+                            <div class="cv-item-head">
+                                <span class="cv-role">Employee Operations</span>
+                                <span class="cv-date">Feb 2020 – May 2023</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-block">
+                <h4>Education</h4>
+
+                <div class="cv-item">
+                    <div class="cv-item-head">
+                        <span class="cv-role">Bachelor Communication &amp; Multimedia Design — <span>HvA</span></span>
+                        <span class="cv-date">2023 – Present</span>
+                    </div>
+                    <p>Developing skills in UX and UI design, user research, prototyping, branding, and frontend
+                        development. Working on digital products with a strong focus on accessible and
+                        user-centered design.</p>
+                    <div class="cv-sub">
+                        <div class="cv-item">
+                            <div class="cv-item-head">
+                                <span class="cv-role">Minor in User Experience Design</span>
+                                <span class="cv-date">Sep 2025 – Feb 2026</span>
+                            </div>
+                            <span class="cv-grade">Grade: 7</span>
+                            <p>Specialized in user-centered design through research, usability testing, interaction
+                                design, prototyping and accessibility. Collaborated with industry partners to design
+                                and validate digital solutions for real users.</p>
+                        </div>
+                        <div class="cv-item">
+                            <div class="cv-item-head">
+                                <span class="cv-role">Minor in Urban Interaction Design</span>
+                                <span class="cv-date">Feb 2026 – Jun 2026</span>
+                            </div>
+                            <span class="cv-grade">Grade: 8.5</span>
+                            <p>Designed interactive experiences for public spaces by combining urban design,
+                                psychology, and product design. Focused on research, prototyping, and testing
+                                interventions that encourage social exploration and interaction.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cv-item">
+                    <div class="cv-item-head">
+                        <span class="cv-role">Havo — <span>Amstelveen college</span></span>
+                        <span class="cv-date">2016 – 2021</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-block">
+                <h4>Volunteering</h4>
+                <div class="cv-item">
+                    <div class="cv-item-head">
+                        <span class="cv-role">Kennel Assistant — <span>KNGF</span></span>
+                        <span class="cv-date">Apr 2023 – Sep 2023</span>
+                    </div>
+                    <p>Supported the daily care of dogs and helped maintain the kennel.</p>
+                </div>
+            </div>
+
+            <div class="panel-block">
+                <a href="Joep_Groenteman_CV.pdf" class="cv-btn" download>Download CV (PDF) ↓</a>
+            </div>
+
             <div class="panel-nav">
                 <button data-nav="prev">← Previous</button>
                 <button data-nav="next">Next →</button>
