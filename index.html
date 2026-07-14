@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Roboto:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <style>
         :root {
@@ -23,7 +23,7 @@
             --accent-dim: rgba(61, 90, 255, 0.55);
             --border: #202023;
             --display: 'Space Grotesk', sans-serif;
-            --body: 'Inter', sans-serif;
+            --body: 'Roboto', sans-serif;
             --mono: 'JetBrains Mono', monospace;
         }
 
@@ -482,6 +482,23 @@
             gap: 4rem;
         }
 
+        .about-photo {
+            width: 168px;
+            aspect-ratio: 4/5;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            float: left;
+            margin: 0 1.6rem 1rem 0;
+            filter: grayscale(15%);
+        }
+
+        @media (max-width: 640px) {
+            .about-photo {
+                width: 120px;
+            }
+        }
+
         .about-bio p {
             color: var(--text-muted);
             max-width: 56ch;
@@ -532,6 +549,23 @@
 
         .skills-list li span:last-child {
             color: var(--text-dim);
+            text-align: right;
+        }
+
+        .skills-list li.skills-heading {
+            border-bottom: none;
+            padding: 1.4rem 0 .5rem;
+        }
+
+        .skills-list li.skills-heading:first-child {
+            padding-top: 0;
+        }
+
+        .skills-list li.skills-heading span:first-child {
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-size: .7rem;
         }
 
         /* ---------- contact ---------- */
@@ -875,7 +909,8 @@
             </div>
             <div class="case" id="case-02">
                 <div class="case-media">
-                    <div class="glow"></div><img src="//img/Marathon savings image.png" alt="Audit report fornt page">
+                    <div class="glow"></div><img src="img/marathon-savings.jpg"
+                        alt="Marathon Savings app screens showing onboarding and savings dashboard">
                 </div>
                 <div>
                     <span class="case-index">CASE 02 — NATIONALE NEDERLANDEN - MINOR USER EXPERIENCE DESIGN</span>
@@ -895,7 +930,8 @@
 
             <div class="case" id="case-03">
                 <div class="case-media">
-                    <div class="glow"></div><span class="ph-label">[ project image placeholder ]</span>
+                    <div class="glow"></div><img src="img/eaa-laptop.png"
+                        alt="WCAG 2.2 audit report shown on a laptop screen">
                 </div>
                 <div>
                     <span class="case-index">CASE 03 — ATHORA</span>
@@ -916,7 +952,8 @@
 
             <div class="case" id="case-04">
                 <div class="case-media">
-                    <div class="glow"></div><span class="ph-label">[ project image placeholder ]</span>
+                    <div class="glow"></div><img src="img/zwitserleven-laptop.png"
+                        alt="Redesigned Zwitserleven pension dashboard shown on a laptop screen">
                 </div>
                 <div>
                     <span class="case-index">CASE 04 — ZWISTERLEVEN</span>
@@ -943,10 +980,12 @@
             </div>
             <div class="about-grid">
                 <div class="about-bio">
+                    <img src="img/about-photo.jpg" alt="Portrait of Joep Groenteman" class="about-photo">
                     <p>I’m Joep Groenteman (He/Him),
                         a fourth year Communication and Multimedia Design student at the HvA. I completed a minor in
                         User Experience
-                        Design. I am specifically interested in how people interact with both digital and physical
+                        Design, and am currently working towards a minor in Urban Interaction Design. I am specifically
+                        interested in how people interact with both digital and physical
                         environments.</p>
                     <p>During my studies, I developed a strong interest and commitment to accessibility and inclusivity,
                         grounded
@@ -961,12 +1000,21 @@
                         normal boundaries of how things work. For me, it is important to always ask why something exists
                         the way it
                         does, and for whom does it benefit.</p>
-                    <a href="#" class="cv-btn">Download CV (PDF) ↓</a>
+                    <p>I'm always open to diving into new things, especially when it comes to learning and acquiring
+                        new skills. I see new project challenges as an opportunity to try something new rather than
+                        an obstacle — the best way for me to keep evolving is to stay curious, engage with feedback,
+                        and learn from the real world around me.</p>
+                    <a href="cv/Joep_Groenteman_CV.pdf" class="cv-btn" download>Download CV (PDF) ↓</a>
                 </div>
                 <ul class="skills-list">
-                    <li><span>Design</span><span>Figma, Canva, Design systems</span></li>
-                    <li><span>Front-end</span><span>HTML, CSS, Claude</span></li>
-                    <li><span>Other</span><span>Accessibility EAA</span></li>
+                    <li class="skills-heading"><span>Hard skills</span><span></span></li>
+                    <li><span>Figma</span><span>Auto layout, design & prototyping</span></li>
+                    <li><span>Accessibility</span><span>EAA, screen readers & testing</span></li>
+                    <li><span>Other tools</span><span>Canva</span></li>
+                    <li class="skills-heading"><span>Soft skills</span><span></span></li>
+                    <li><span>Ideation</span><span>Creative ideation & project development</span></li>
+                    <li><span>Collaboration</span><span>Cross-team, multiple stakeholders</span></li>
+                    <li><span>Critical thinking</span><span>Challenging assumptions & bias</span></li>
                 </ul>
             </div>
         </section>
@@ -1019,29 +1067,36 @@
             <span class="panel-index">CASE 02 — NATIONALE NEDERLANDEN · MINOR USER EXPERIENCE DESIGN</span>
             <h3 class="panel-title" id="panel-02-title">Marathon Savings</h3>
             <div class="panel-tags"><span>Figma</span><span>Concepting</span><span>Redesign</span></div>
-            <div class="panel-media"><img src="//img/Marathon savings image.png"
-                    alt="Marathon Savings audit report front page"></div>
+            <div class="panel-media"><img src="img/marathon-savings.jpg"
+                    alt="Marathon Savings app screens showing onboarding and savings dashboard"></div>
             <div class="panel-block">
                 <h4>Overview</h4>
-                <p>During the User Experience Design minor at HvA, I designed Marathon Savings, a gamified saving
-                    feature for
-                    the Nationale Nederlanden app inspired by the Rotterdam Marathon.</p>
+                <p>During the User Experience Design minor at HvA, I was tasked with creating a new feature concept
+                    for the Nationale Nederlanden app using up to three UX trends: accessibility and inclusivity,
+                    gamification, or thoughtful AI. I chose to use gamification to make saving money more accessible
+                    for people using the app.</p>
+                <p>Nationale Nederlanden is well known for sponsoring the Rotterdam Marathon, so I wanted to make use
+                    of this while working on the project.</p>
             </div>
             <div class="panel-block">
                 <h4>Concept</h4>
-                <p>The concept encourages users to save at their own pace through four saver types, each based on a
-                    target
-                    amount and target date, turning a routine savings goal into something closer to training for a race.
-                </p>
+                <p>"Marathon Savings" turns saving into a race-like experience. Everyone runs a marathon at a
+                    different pace and has personal goals unique to them — this same idea applies to saving. Some
+                    people want to race towards the finish line, others take a more gradual approach to a single
+                    goal, while others simply want to see how far they can go.</p>
             </div>
             <div class="panel-block">
                 <h4>Process</h4>
-                <p>Add detail here on research, user testing, and how the four saver types were defined and validated in
-                    Figma.</p>
+                <p>To make the concept work for different types of savers, I created a variation of the Bartle player
+                    types, based on saving goals: target amount and target date.</p>
+                <p>Marathon Runner: target date and target amount. Sprinter: target amount, no target date. Endurance
+                    Runner: target date, no target amount. Interval Runner: no target date or target amount.</p>
             </div>
             <div class="panel-block">
                 <h4>Outcome</h4>
-                <p>Add detail here on how the concept was received and what it delivered for the NN app.</p>
+                <p>The result is a savings feature concept that adapts to how each person actually saves, rather than
+                    forcing everyone through the same goal-setting flow — while tying naturally into Nationale
+                    Nederlanden's Rotterdam Marathon sponsorship.</p>
             </div>
             <div class="panel-nav">
                 <button data-nav="prev">← Previous</button>
@@ -1054,23 +1109,31 @@
             <span class="panel-index">CASE 03 — ATHORA</span>
             <h3 class="panel-title" id="panel-03-title">European Accessibility Act (EAA)</h3>
             <div class="panel-tags"><span>HTML/CSS</span><span>Accessibility</span><span>Testing</span></div>
-            <div class="panel-media"><span class="ph-label">[ project image placeholder ]</span></div>
+            <div class="panel-media"><img src="img/eaa-laptop.png"
+                    alt="WCAG 2.2 audit report shown on a laptop screen"></div>
             <div class="panel-block">
                 <h4>Overview</h4>
-                <p>During my internship at Athora, I conducted accessibility audits for websites, mobile apps, and PDFs
-                    in
-                    preparation for the European Accessibility Act (EAA).</p>
+                <p>During my internship at Athora, the parent company of Zwitserleven and Reaal, I conducted an
+                    accessibility audit to assess whether the websites were compliant with the upcoming European
+                    Accessibility Act '25 (EAA).</p>
             </div>
             <div class="panel-block">
                 <h4>Process</h4>
-                <p>I created reports, helped organize accessibility workshops, and collaborated with the UX team to
-                    implement accessible solutions. Add specifics on the audit method, tools used, and how findings were
-                    prioritized.</p>
+                <p>I tested the website, mobile app, and PDF documents using screen readers and disability simulation
+                    tools, and performed technical checks in the code to identify accessibility issues.</p>
+                <p>Besides the testing, I created detailed reports and assisted in organizing internal bootcamps for
+                    multiple departments to help colleagues understand what accessibility is, why it matters, and
+                    what their role is in delivering accessible products.</p>
             </div>
             <div class="panel-block">
                 <h4>Outcome</h4>
-                <p>Add detail here on the impact of the audits and workshops on the wider organization's EAA readiness.
-                </p>
+                <p>I supported the UX team and copywriters in developing and implementing solutions for the issues I
+                    identified, making sure the improvements were actually accessible and could be implemented on the
+                    website.</p>
+                <img src="img/eaa-bootcamp.jpg" alt="EAA bootcamp for developer teams, June 2025"
+                    style="width:100%;border-radius:6px;border:1px solid var(--border);margin-top:.5rem;">
+                <p style="font-size:.75rem;color:var(--text-dim);margin-top:.6rem;margin-bottom:0;">EAA bootcamp for
+                    developer teams (04.06.2025)</p>
             </div>
             <div class="panel-nav">
                 <button data-nav="prev">← Previous</button>
@@ -1083,23 +1146,26 @@
             <span class="panel-index">CASE 04 — ZWITSERLEVEN</span>
             <h3 class="panel-title" id="panel-04-title">Zwitserleven Redesign</h3>
             <div class="panel-tags"><span>Vue</span><span>D3.js</span><span>Design ops</span></div>
-            <div class="panel-media"><span class="ph-label">[ project image placeholder ]</span></div>
+            <div class="panel-media"><img src="img/zwitserleven-laptop.png"
+                    alt="Redesigned Zwitserleven pension dashboard shown on a laptop screen"></div>
             <div class="panel-block">
                 <h4>Overview</h4>
-                <p>During my internship at Athora, I helped redesign the Zwitserleven website using a new design system.
-                </p>
+                <p>While at Athora, I supported the redesign of the Zwitserleven website using their new design
+                    system, and was able to contribute to further development of the design system itself. I worked
+                    on redesigning existing pages and creating new pages for new products.</p>
             </div>
             <div class="panel-block">
                 <h4>Process</h4>
-                <p>I designed pages, contributed to the design system in Figma, and collaborated with UX designers,
-                    developers, copywriters, and legal stakeholders. Add specifics on which pages you owned and how the
-                    design
-                    system evolved.</p>
+                <p>Our goal was to find the right balance between applying the new design while keeping the
+                    experience familiar, so customers could still easily find their way around. I was part of a
+                    multidisciplinary team with a variety of different roles, including copywriters, developers, and
+                    legal stakeholders.</p>
             </div>
             <div class="panel-block">
                 <h4>Outcome</h4>
-                <p>Add detail here on the result of the redesign — what changed for users, and any measurable impact.
-                </p>
+                <p>I contributed to improving the design system in Figma by helping define components, documenting
+                    usage guidelines, researching new components, and supporting the team in applying the system
+                    across the website.</p>
             </div>
             <div class="panel-nav">
                 <button data-nav="prev">← Previous</button>
