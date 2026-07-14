@@ -124,20 +124,21 @@
             transition: color .3s ease;
         }
 
-        .rail-item .dash {
+        .rail-item::before {
+            content: '';
             width: 14px;
             height: 1px;
-            background: var(--text-dim);
-            transition: all .3s ease;
+            flex: 0 0 auto;
+            background: currentColor;
+            transition: width .3s ease;
         }
 
         .rail-item.active {
             color: var(--accent);
         }
 
-        .rail-item.active .dash {
+        .rail-item.active::before {
             width: 26px;
-            background: var(--accent);
         }
 
         .rail-item .label {
@@ -967,10 +968,10 @@
     </nav>
 
     <nav class="rail" id="rail" aria-label="Section navigation">
-        <a class="rail-item" href="#intro" data-target="intro"><span class="dash" aria-hidden="true"></span><span class="label">Intro</span></a>
-        <a class="rail-item" href="#work" data-target="work"><span class="dash" aria-hidden="true"></span><span class="label">Work</span></a>
-        <a class="rail-item" href="#about" data-target="about"><span class="dash" aria-hidden="true"></span><span class="label">About</span></a>
-        <a class="rail-item" href="#contact" data-target="contact"><span class="dash" aria-hidden="true"></span><span class="label">Contact</span></a>
+        <a class="rail-item" href="#intro" data-target="intro"><span class="label">Intro</span></a>
+        <a class="rail-item" href="#work" data-target="work"><span class="label">Work</span></a>
+        <a class="rail-item" href="#about" data-target="about"><span class="label">About</span></a>
+        <a class="rail-item" href="#contact" data-target="contact"><span class="label">Contact</span></a>
     </nav>
 
     <main id="main-content" tabindex="-1">
@@ -1112,7 +1113,7 @@
                         an obstacle — the best way for me to keep evolving is to stay curious, engage with feedback,
                         and learn from the real world around me.</p>
                     <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:center;">
-                        <a href="Joep_Groenteman_CV.pdf" class="cv-btn" download aria-label="Download Joep Groenteman’s CV as a PDF">Download CV (PDF) ↓</a>
+                        <a href="Joep_Groenteman_CV.pdf" class="cv-btn" download>Download CV (PDF) ↓</a>
                         <a href="#panel-05" class="case-link" data-open="panel-05">View CV →</a>
                     </div>
                 </div>
@@ -1409,7 +1410,7 @@
             </div>
 
             <div class="panel-block">
-                <a href="Joep_Groenteman_CV.pdf" class="cv-btn" download aria-label="Download Joep Groenteman’s CV as a PDF">Download CV (PDF) ↓</a>
+                <a href="Joep_Groenteman_CV.pdf" class="cv-btn" download>Download CV (PDF) ↓</a>
             </div>
 
             <div class="panel-nav">
