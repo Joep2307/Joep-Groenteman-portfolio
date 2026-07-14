@@ -1073,7 +1073,27 @@
                 scroll-behavior: auto;
             }
         }
-    </style>
+    
+        .hero-gradient {
+            position:absolute;
+            top:-45%;
+            right:-35%;
+            width:1300px;
+            height:1300px;
+            pointer-events:none;
+            border-radius:50%;
+            z-index:0;
+            background:
+                radial-gradient(circle at 45% 45%, rgba(90,170,255,.55), transparent 35%),
+                radial-gradient(circle at 70% 35%, rgba(120,120,255,.35), transparent 40%),
+                radial-gradient(circle at 30% 70%, rgba(30,120,255,.28), transparent 45%);
+            filter:blur(140px);
+            opacity:.95;
+            will-change:transform;
+        }
+        #intro > *:not(.hero-gradient){position:relative;z-index:1;}
+
+</style>
 </head>
 
 <body>
@@ -1098,6 +1118,7 @@
     <main id="main-content" tabindex="-1">
 
         <section id="intro">
+            <div class="hero-gradient"></div>
             <div class="hero-graphic" aria-hidden="true" id="heroGraphic">
                 <svg viewBox="0 0 220 130" id="scribbleSvg">
                     <path class="hg-line" id="scribblePath" d="" />
@@ -1803,7 +1824,25 @@
                 }
             }
         });
-    </script>
+    
+// gradient follow
+const glow=document.querySelector('.hero-gradient');
+if(glow){
+let currentX=0,currentY=0,targetX=0,targetY=0;
+window.addEventListener('pointermove',e=>{
+ targetX=(e.clientX/window.innerWidth-0.5)*420;
+ targetY=(e.clientY/window.innerHeight-0.5)*320;
+});
+window.addEventListener('pointerleave',()=>{targetX=0;targetY=0;});
+(function anim(){
+ currentX+=(targetX-currentX)*0.12;
+ currentY+=(targetY-currentY)*0.12;
+ glow.style.transform=`translate(${currentX}px,${currentY}px) scale(1.18)`;
+ requestAnimationFrame(anim);
+})();
+}
+
+</script>
 
 </body>
 
