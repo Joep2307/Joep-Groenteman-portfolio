@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio — Web Design</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --bg-alt: #131316;
+            --bg-card: #101012;
+            --text: #f2f1ec;
+            --text-muted: #8a8a8a;
+            --text-dim: #4a4a4a;
+            --accent: #3d5aff;
+            --accent-soft: rgba(61, 90, 255, 0.14);
+            --accent-dim: rgba(61, 90, 255, 0.55);
+            --border: #202023;
+            --display: 'Space Grotesk', sans-serif;
+            --body: 'Inter', sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--body);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+
+        /* ---------- scroll progress ---------- */
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            width: 0%;
+            background: var(--accent);
+            z-index: 200;
+            transition: width .08s linear;
+        }
+
+        /* ---------- index rail ---------- */
+        .rail {
+            position: fixed;
+            left: 3rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 1.6rem;
+            z-index: 100;
+        }
+
+        .rail-item {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            font-family: var(--mono);
+            font-size: .7rem;
+            color: var(--text-dim);
+            cursor: pointer;
+            letter-spacing: .04em;
+            transition: color .3s ease;
+        }
+
+        .rail-item .dash {
+            width: 14px;
+            height: 1px;
+            background: var(--text-dim);
+            transition: all .3s ease;
+        }
+
+        .rail-item.active {
+            color: var(--accent);
+        }
+
+        .rail-item.active .dash {
+            width: 26px;
+            background: var(--accent);
+        }
+
+        .rail-item .label {
+            opacity: 0;
+            transform: translateX(-4px);
+            transition: all .3s ease;
+            white-space: nowrap;
+        }
+
+        .rail-item:hover .label,
+        .rail-item.active .label {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        @media (max-width: 900px) {
+            .rail {
+                display: none;
+            }
+        }
+
+        /* ---------- nav ---------- */
+        .topnav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.6rem 3rem;
+            z-index: 150;
+            mix-blend-mode: difference;
+        }
+
+        .topnav .mark {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: .01em;
+        }
+
+        .topnav .contact-link {
+            font-family: var(--mono);
+            font-size: .75rem;
+            color: var(--text);
+            border-bottom: 1px solid transparent;
+            padding-bottom: 2px;
+            transition: border-color .3s ease;
+        }
+
+        .topnav .contact-link:hover {
+            border-color: var(--text);
+        }
+
+        @media (max-width: 640px) {
+            .topnav {
+                padding: 1.2rem 1.5rem;
+            }
+        }
+
+        section {
+            position: relative;
+            padding: 0 3rem;
+        }
+
+        @media (max-width: 640px) {
+            section {
+                padding: 0 1.5rem;
+            }
+        }
+
+        @media (min-width: 901px) {
+            section {
+                padding-left: 9rem;
+            }
+        }
+
+        /* ---------- hero ---------- */
+        #intro {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-top: 6rem;
+        }
+
+        .eyebrow {
+            font-family: var(--mono);
+            font-size: .8rem;
+            color: var(--accent);
+            letter-spacing: .08em;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+        }
+
+        .eyebrow::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: inline-block;
+            box-shadow: 0 0 0 4px var(--accent-soft);
+        }
+
+        h1.hero-title {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: clamp(2.4rem, 7vw, 6rem);
+            line-height: 1.02;
+            letter-spacing: -.02em;
+            max-width: 16ch;
+        }
+
+        h1.hero-title em {
+            font-style: normal;
+            color: var(--accent);
+        }
+
+        .hero-sub {
+            margin-top: 2rem;
+            max-width: 46ch;
+            font-size: 1.05rem;
+            color: var(--text-muted);
+        }
+
+        .hero-meta {
+            margin-top: 3.5rem;
+            display: flex;
+            gap: 3rem;
+            flex-wrap: wrap;
+            font-family: var(--mono);
+            font-size: .75rem;
+            color: var(--text-dim);
+        }
+
+        .hero-meta div span {
+            display: block;
+            color: var(--text-muted);
+            margin-bottom: .35rem;
+        }
+
+        .scroll-cue {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 3rem;
+            font-family: var(--mono);
+            font-size: .7rem;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .scroll-cue .line {
+            width: 1px;
+            height: 28px;
+            background: linear-gradient(var(--text-dim), transparent);
+            animation: pulse-line 1.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse-line {
+
+            0%,
+            100% {
+                opacity: .3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .scroll-cue {
+                left: 1.5rem;
+            }
+        }
+
+        @media (min-width: 901px) {
+            .scroll-cue {
+                left: 9rem;
+            }
+        }
+
+        /* ---------- section heads ---------- */
+        .section-head {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            margin-bottom: 3.5rem;
+            padding-top: 7rem;
+        }
+
+        .section-num {
+            font-family: var(--mono);
+            font-size: .8rem;
+            color: var(--accent);
+        }
+
+        .section-title {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+        }
+
+        .section-rule {
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ---------- work / case studies ---------- */
+        #work {
+            padding-bottom: 2rem;
+        }
+
+        .case {
+            min-height: 92vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--border);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity .8s ease, transform .8s ease;
+        }
+
+        .case.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .case:last-child {
+            border-bottom: none;
+        }
+
+        .case:nth-child(even) {
+            direction: rtl;
+        }
+
+        .case:nth-child(even)>* {
+            direction: ltr;
+        }
+
+        .case-media {
+            aspect-ratio: 4/3;
+            border-radius: 6px;
+            background:
+                linear-gradient(135deg, var(--bg-alt), var(--bg-card));
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .case-media::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                repeating-linear-gradient(45deg, transparent, transparent 11px, rgba(255, 255, 255, 0.02) 11px, rgba(255, 255, 255, 0.02) 12px);
+        }
+
+        .case-media .ph-label {
+            font-family: var(--mono);
+            font-size: .7rem;
+            color: var(--text-dim);
+            z-index: 1;
+            letter-spacing: .05em;
+        }
+
+        .case-media .glow {
+            position: absolute;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, var(--accent-soft), transparent 70%);
+            filter: blur(10px);
+            transition: transform .6s ease;
+        }
+
+        .case:hover .case-media .glow {
+            transform: scale(1.3);
+        }
+
+        .case:hover .case-media {
+            border-color: var(--accent-dim);
+        }
+
+        .case-index {
+            font-family: var(--mono);
+            font-size: .75rem;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .case-title {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            margin-bottom: 1rem;
+        }
+
+        .case-desc {
+            color: var(--text-muted);
+            max-width: 42ch;
+            margin-bottom: 1.5rem;
+        }
+
+        .case-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .6rem;
+            margin-bottom: 2rem;
+        }
+
+        .case-tags span {
+            font-family: var(--mono);
+            font-size: .68rem;
+            color: var(--accent);
+            background: var(--accent-soft);
+            padding: .3rem .6rem;
+            border-radius: 3px;
+        }
+
+        .case-link {
+            font-family: var(--mono);
+            font-size: .8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 4px;
+            transition: all .3s ease;
+            width: fit-content;
+        }
+
+        .case-link:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+            gap: .8rem;
+        }
+
+        @media (max-width: 800px) {
+
+            .case,
+            .case:nth-child(even) {
+                grid-template-columns: 1fr;
+                direction: ltr;
+            }
+        }
+
+        /* ---------- about ---------- */
+        #about {
+            padding-bottom: 2rem;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 4rem;
+        }
+
+        .about-bio p {
+            color: var(--text-muted);
+            max-width: 56ch;
+            margin-bottom: 1.2rem;
+            font-size: 1.02rem;
+        }
+
+        .about-bio p:first-child {
+            color: var(--text);
+            font-size: 1.15rem;
+        }
+
+        .cv-btn {
+            margin-top: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: .6rem;
+            font-family: var(--mono);
+            font-size: .8rem;
+            color: var(--bg);
+            background: var(--accent);
+            padding: .85rem 1.4rem;
+            border-radius: 3px;
+            transition: transform .25s ease, box-shadow .25s ease;
+        }
+
+        .cv-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--accent-soft);
+        }
+
+        .skills-list {
+            list-style: none;
+        }
+
+        .skills-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: .9rem 0;
+            border-bottom: 1px solid var(--border);
+            font-family: var(--mono);
+            font-size: .82rem;
+        }
+
+        .skills-list li span:first-child {
+            color: var(--text);
+        }
+
+        .skills-list li span:last-child {
+            color: var(--text-dim);
+        }
+
+        /* ---------- contact ---------- */
+        #contact {
+            padding-top: 7rem;
+            padding-bottom: 8rem;
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .contact-eyebrow {
+            font-family: var(--mono);
+            font-size: .8rem;
+            color: var(--accent);
+            margin-bottom: 1.2rem;
+        }
+
+        .contact-title {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: clamp(2rem, 6vw, 4.2rem);
+            max-width: 14ch;
+            margin-bottom: 2.5rem;
+            line-height: 1.05;
+        }
+
+        .contact-email {
+            font-family: var(--display);
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            color: var(--accent);
+            display: inline-block;
+            border-bottom: 1px solid var(--accent-dim);
+            padding-bottom: 6px;
+            width: fit-content;
+            transition: opacity .3s ease;
+        }
+
+        .contact-email:hover {
+            opacity: .7;
+        }
+
+        .socials {
+            margin-top: 3rem;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .socials a {
+            font-family: var(--mono);
+            font-size: .78rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid transparent;
+            padding-bottom: 3px;
+            transition: all .3s ease;
+        }
+
+        .socials a:hover {
+            color: var(--text);
+            border-color: var(--text);
+        }
+
+        footer {
+            padding: 2rem 3rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--mono);
+            font-size: .68rem;
+            color: var(--text-dim);
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            footer {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        /* ---------- case study overlay ---------- */
+        body.panel-open {
+            overflow: hidden;
+        }
+
+        .case-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 300;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .case-overlay.active {
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .case-overlay-bg {
+            position: absolute;
+            inset: 0;
+            background: rgba(6, 6, 7, 0.7);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            transition: opacity .4s ease;
+        }
+
+        .case-overlay.active .case-overlay-bg {
+            opacity: 1;
+        }
+
+        .case-panel {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: min(880px, 92vw);
+            background: var(--bg);
+            border-left: 1px solid var(--border);
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform .5s cubic-bezier(.2, .8, .2, 1);
+            padding: 5rem 3.5rem 6rem;
+        }
+
+        .case-overlay.active .case-panel {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 640px) {
+            .case-panel {
+                width: 100vw;
+                padding: 5rem 1.5rem 4rem;
+            }
+        }
+
+        .panel-close {
+            position: fixed;
+            top: 1.8rem;
+            right: min(880px, 92vw);
+            margin-right: 1.6rem;
+            font-family: var(--mono);
+            font-size: .75rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            cursor: pointer;
+            padding: .5rem .3rem;
+            transition: color .3s ease;
+            background: none;
+            border: none;
+        }
+
+        .panel-close:hover {
+            color: var(--text);
+        }
+
+        @media (max-width: 640px) {
+            .panel-close {
+                right: 0;
+                margin-right: 1rem;
+            }
+        }
+
+        .panel-index {
+            font-family: var(--mono);
+            font-size: .75rem;
+            color: var(--accent);
+            letter-spacing: .04em;
+            margin-bottom: 1.2rem;
+            display: block;
+        }
+
+        .panel-title {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            line-height: 1.05;
+            margin-bottom: 1.5rem;
+            max-width: 20ch;
+        }
+
+        .panel-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .6rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .panel-tags span {
+            font-family: var(--mono);
+            font-size: .68rem;
+            color: var(--accent);
+            background: var(--accent-soft);
+            padding: .3rem .6rem;
+            border-radius: 3px;
+        }
+
+        .panel-media {
+            aspect-ratio: 16/9;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--bg-alt), var(--bg-card));
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 3rem;
+            overflow: hidden;
+        }
+
+        .panel-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .panel-media .ph-label {
+            font-family: var(--mono);
+            font-size: .7rem;
+            color: var(--text-dim);
+            letter-spacing: .05em;
+        }
+
+        .panel-block {
+            margin-bottom: 2.6rem;
+        }
+
+        .panel-block h4 {
+            font-family: var(--mono);
+            font-size: .72rem;
+            color: var(--text-dim);
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            margin-bottom: .9rem;
+        }
+
+        .panel-block p {
+            color: var(--text-muted);
+            max-width: 62ch;
+            margin-bottom: 1rem;
+            font-size: .98rem;
+        }
+
+        .panel-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3.5rem;
+            padding-top: 1.8rem;
+            border-top: 1px solid var(--border);
+            font-family: var(--mono);
+            font-size: .78rem;
+        }
+
+        .panel-nav button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            transition: color .3s ease;
+        }
+
+        .panel-nav button:hover {
+            color: var(--accent);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+
+            html {
+                scroll-behavior: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="progress" id="progress"></div>
+
+    <nav class="topnav">
+        <div class="mark">Joep <br> Groenteman</div>
+
+        <a href="#contact" class="contact-link">GET IN TOUCH</a>
+    </nav>
+
+    <div class="rail" id="rail">
+        <div class="rail-item" data-target="intro"><span class="dash"></span><span class="label">Intro</span></div>
+        <div class="rail-item" data-target="work"><span class="dash"></span><span class="label">Work</span></div>
+        <div class="rail-item" data-target="about"><span class="dash"></span><span class="label">About</span></div>
+        <div class="rail-item" data-target="contact"><span class="dash"></span><span class="label">Contact</span></div>
+    </div>
+
+    <main>
+
+        <section id="intro">
+            <div class="eyebrow">2026</div>
+            <h1 class="hero-title">Web design that gets out of <em>the way</em>.</h1>
+            <p class="hero-sub">I'm a web designer and front-end developer building clean, fast, considered interfaces
+                for
+                startups and studios. Four case studies below, from first sketch to shipped product.</p>
+            <div class="hero-meta">
+                <div><span>Based in</span>Amsterdam, NL</div>
+                <div><span>Study</span>4th year multimedia design</div>
+                <div><span>Focus</span>Web design · Accessibility· Design systems</div>
+            </div>
+            <div class="scroll-cue"><span class="line"></span>SCROLL</div>
+        </section>
+
+        <section id="work">
+            <div class="section-head">
+                <span class="section-num">01</span>
+                <h2 class="section-title">Selected work</h2>
+                <div class="section-rule"></div>
+            </div>
+
+            <div class="case" id="case-01">
+                <div class="case-media">
+                    <div class="glow"></div><span class="ph-label">[ project image placeholder ]</span>
+
+                </div>
+                <div>
+                    <span class="case-index">CASE 01 — MINOR URBAN INTERECTION DESIGN </span>
+                    <h3 class="case-title"> The Line</h3>
+                    <p class="case-desc">The Line is an urban interaction project that encourages people to step outside
+                        their daily routines and explore their city. Through playful interventions and a community
+                        driven platform, the project inspires people to discover new routes and experience familiar
+                        places from a different perspective.</p>
+                    <div class="case-tags"><span>Concepting</span><span>Design system</span><span>Vibe coding</span>
+                    </div>
+
+                    <a href="#" class="case-link" data-open="panel-01">View case study →</a>
+                </div>
+            </div>
+            <div class="case" id="case-02">
+                <div class="case-media">
+                    <div class="glow"></div><img src="//img/Marathon savings image.png" alt="Audit report fornt page">
+                </div>
+                <div>
+                    <span class="case-index">CASE 02 — NATIONALE NEDERLANDEN - MINOR USER EXPERIENCE DESIGN</span>
+                    <h3 class="case-title">Marathon Savings</h3>
+                    <p class="case-desc">**Marathon Savings**
+
+                        During the User Experience Design minor at HvA, I designed **Marathon Savings**, a gamified
+                        saving feature
+                        for the Nationale Nederlanden app inspired by the Rotterdam Marathon. The concept encourages
+                        users to save
+                        at their own pace through four saver types based on a target amount and target date.
+                    </p>
+                    <div class="case-tags"><span>Figma</span><span>Concepting</span><span>Redesign</span></div>
+                    <a href="#" class="case-link" data-open="panel-02">View case study →</a>
+                </div>
+            </div>
+
+            <div class="case" id="case-03">
+                <div class="case-media">
+                    <div class="glow"></div><span class="ph-label">[ project image placeholder ]</span>
+                </div>
+                <div>
+                    <span class="case-index">CASE 03 — ATHORA</span>
+                    <h3 class="case-title">European Accessibility Act (EAA)</h3>
+                    <p class="case-desc">**Accessibility Audits**
+
+                        During my internship at Athora, I conducted accessibility audits for websites, mobile apps, and
+                        PDFs in
+                        preparation for the European Accessibility Act (EAA). I created reports, helped organize
+                        accessibility
+                        workshops, and collaborated with the UX team to implement accessible solutions.
+
+                    </p>
+                    <div class="case-tags"><span>HTML/CSS</span><span>Accessibility</span><span>Testing</span></div>
+                    <a href="#" class="case-link" data-open="panel-03">View case study →</a>
+                </div>
+            </div>
+
+            <div class="case" id="case-04">
+                <div class="case-media">
+                    <div class="glow"></div><span class="ph-label">[ project image placeholder ]</span>
+                </div>
+                <div>
+                    <span class="case-index">CASE 04 — ZWISTERLEVEN</span>
+                    <h3 class="case-title">Zwitserleven Redesign</h3>
+                    <p class="case-desc">**Zwitserleven Redesign**
+
+                        During my internship at Athora, I helped redesign the Zwitserleven website using a new design
+                        system. I
+                        designed pages, contributed to the design system in Figma, and collaborated with UX designers,
+                        developers,
+                        copywriters, and legal stakeholders.
+                    </p>
+                    <div class="case-tags"><span>Vue</span><span>D3.js</span><span>Design ops</span></div>
+                    <a href="#" class="case-link" data-open="panel-04">View case study →</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="about">
+            <div class="section-head">
+                <span class="section-num">02</span>
+                <h2 class="section-title">About</h2>
+                <div class="section-rule"></div>
+            </div>
+            <div class="about-grid">
+                <div class="about-bio">
+                    <p>I’m Joep Groenteman (He/Him),
+                        a fourth year Communication and Multimedia Design student at the HvA. I completed a minor in
+                        User Experience
+                        Design. I am specifically interested in how people interact with both digital and physical
+                        environments.</p>
+                    <p>During my studies, I developed a strong interest and commitment to accessibility and inclusivity,
+                        grounded
+                        in the belief that digital products should be accessible to everyone.</p>
+                    <p>I am passionate about making sure websites, apps, and public interfaces work well for people with
+                        different
+                        abilities and needs, and I enjoy finding ways to improve digital experiences so they are
+                        accessible for all
+                        users.</p>
+                    <p>My studies have instilled a creative, problem-solving way of thinking that pushes me to go beyond
+                        the
+                        normal boundaries of how things work. For me, it is important to always ask why something exists
+                        the way it
+                        does, and for whom does it benefit.</p>
+                    <a href="#" class="cv-btn">Download CV (PDF) ↓</a>
+                </div>
+                <ul class="skills-list">
+                    <li><span>Design</span><span>Figma, Canva, Design systems</span></li>
+                    <li><span>Front-end</span><span>HTML, CSS, Claude</span></li>
+                    <li><span>Other</span><span>Accessibility EAA</span></li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="contact">
+            <div class="contact-eyebrow">03 — CONTACT</div>
+            <h2 class="contact-title">Design for everyone.
+            </h2>
+            <a href="mailto:joep.groenteman@gmail.com" class="contact-email">joep.groenteman@gmail.com</a>
+            <div class="socials">
+                <a href="www.linkedin.com/in/joep-groenteman-6831a8275">LinkedIn</a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ---------- case study overlays ---------- -->
+    <div class="case-overlay" id="overlay">
+        <div class="case-overlay-bg" data-close></div>
+
+        <div class="case-panel" id="panel-01" role="dialog" aria-modal="true" aria-labelledby="panel-01-title"
+            tabindex="-1">
+            <span class="panel-index">CASE 01 — MINOR URBAN INTERSECTION DESIGN</span>
+            <h3 class="panel-title" id="panel-01-title">The Line</h3>
+            <div class="panel-tags"><span>Concepting</span><span>Design system</span><span>Vibe coding</span></div>
+            <div class="panel-media"><span class="ph-label">[ project image placeholder ]</span></div>
+            <div class="panel-block">
+                <h4>Overview</h4>
+                <p>A short brief on the brief itself — what the assignment asked for, who it was for, and the
+                    constraints
+                    you were designing within.</p>
+            </div>
+            <div class="panel-block">
+                <h4>Process</h4>
+                <p>Walk through how the concept came together: research, sketching, iterations, and any decisions that
+                    shaped the final direction.</p>
+            </div>
+            <div class="panel-block">
+                <h4>Outcome</h4>
+                <p>What shipped, what you learned, and what you'd do differently next time.</p>
+            </div>
+            <div class="panel-nav">
+                <button data-nav="prev">← Previous</button>
+                <button data-nav="next">Next →</button>
+            </div>
+        </div>
+
+        <div class="case-panel" id="panel-02" role="dialog" aria-modal="true" aria-labelledby="panel-02-title"
+            tabindex="-1">
+            <span class="panel-index">CASE 02 — NATIONALE NEDERLANDEN · MINOR USER EXPERIENCE DESIGN</span>
+            <h3 class="panel-title" id="panel-02-title">Marathon Savings</h3>
+            <div class="panel-tags"><span>Figma</span><span>Concepting</span><span>Redesign</span></div>
+            <div class="panel-media"><img src="//img/Marathon savings image.png"
+                    alt="Marathon Savings audit report front page"></div>
+            <div class="panel-block">
+                <h4>Overview</h4>
+                <p>During the User Experience Design minor at HvA, I designed Marathon Savings, a gamified saving
+                    feature for
+                    the Nationale Nederlanden app inspired by the Rotterdam Marathon.</p>
+            </div>
+            <div class="panel-block">
+                <h4>Concept</h4>
+                <p>The concept encourages users to save at their own pace through four saver types, each based on a
+                    target
+                    amount and target date, turning a routine savings goal into something closer to training for a race.
+                </p>
+            </div>
+            <div class="panel-block">
+                <h4>Process</h4>
+                <p>Add detail here on research, user testing, and how the four saver types were defined and validated in
+                    Figma.</p>
+            </div>
+            <div class="panel-block">
+                <h4>Outcome</h4>
+                <p>Add detail here on how the concept was received and what it delivered for the NN app.</p>
+            </div>
+            <div class="panel-nav">
+                <button data-nav="prev">← Previous</button>
+                <button data-nav="next">Next →</button>
+            </div>
+        </div>
+
+        <div class="case-panel" id="panel-03" role="dialog" aria-modal="true" aria-labelledby="panel-03-title"
+            tabindex="-1">
+            <span class="panel-index">CASE 03 — ATHORA</span>
+            <h3 class="panel-title" id="panel-03-title">European Accessibility Act (EAA)</h3>
+            <div class="panel-tags"><span>HTML/CSS</span><span>Accessibility</span><span>Testing</span></div>
+            <div class="panel-media"><span class="ph-label">[ project image placeholder ]</span></div>
+            <div class="panel-block">
+                <h4>Overview</h4>
+                <p>During my internship at Athora, I conducted accessibility audits for websites, mobile apps, and PDFs
+                    in
+                    preparation for the European Accessibility Act (EAA).</p>
+            </div>
+            <div class="panel-block">
+                <h4>Process</h4>
+                <p>I created reports, helped organize accessibility workshops, and collaborated with the UX team to
+                    implement accessible solutions. Add specifics on the audit method, tools used, and how findings were
+                    prioritized.</p>
+            </div>
+            <div class="panel-block">
+                <h4>Outcome</h4>
+                <p>Add detail here on the impact of the audits and workshops on the wider organization's EAA readiness.
+                </p>
+            </div>
+            <div class="panel-nav">
+                <button data-nav="prev">← Previous</button>
+                <button data-nav="next">Next →</button>
+            </div>
+        </div>
+
+        <div class="case-panel" id="panel-04" role="dialog" aria-modal="true" aria-labelledby="panel-04-title"
+            tabindex="-1">
+            <span class="panel-index">CASE 04 — ZWITSERLEVEN</span>
+            <h3 class="panel-title" id="panel-04-title">Zwitserleven Redesign</h3>
+            <div class="panel-tags"><span>Vue</span><span>D3.js</span><span>Design ops</span></div>
+            <div class="panel-media"><span class="ph-label">[ project image placeholder ]</span></div>
+            <div class="panel-block">
+                <h4>Overview</h4>
+                <p>During my internship at Athora, I helped redesign the Zwitserleven website using a new design system.
+                </p>
+            </div>
+            <div class="panel-block">
+                <h4>Process</h4>
+                <p>I designed pages, contributed to the design system in Figma, and collaborated with UX designers,
+                    developers, copywriters, and legal stakeholders. Add specifics on which pages you owned and how the
+                    design
+                    system evolved.</p>
+            </div>
+            <div class="panel-block">
+                <h4>Outcome</h4>
+                <p>Add detail here on the result of the redesign — what changed for users, and any measurable impact.
+                </p>
+            </div>
+            <div class="panel-nav">
+                <button data-nav="prev">← Previous</button>
+                <button data-nav="next">Next →</button>
+            </div>
+        </div>
+
+        <button class="panel-close" data-close>close ✕</button>
+    </div>
+
+    <footer>
+        <span>© 2026 Joep Groenteman. All rights reserved.</span>
+    </footer>
+
+    <script>
+        // scroll progress bar
+        const progress = document.getElementById('progress');
+        function updateProgress() {
+            const h = document.documentElement;
+            const scrolled = h.scrollTop;
+            const height = h.scrollHeight - h.clientHeight;
+            progress.style.width = (height > 0 ? (scrolled / height) * 100 : 0) + '%';
+        }
+        document.addEventListener('scroll', updateProgress, { passive: true });
+        updateProgress();
+
+        // rail active state + click to scroll
+        const railItems = document.querySelectorAll('.rail-item');
+        const sections = document.querySelectorAll('main section');
+
+        railItems.forEach(item => {
+            item.addEventListener('click', () => {
+                document.getElementById(item.dataset.target).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        const railObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const rail = document.querySelector(`.rail-item[data-target="${entry.target.id}"]`);
+                if (!rail) return;
+                if (entry.isIntersecting) {
+                    railItems.forEach(r => r.classList.remove('active'));
+                    rail.classList.add('active');
+                }
+            });
+        }, { threshold: 0.4 });
+        sections.forEach(s => railObserver.observe(s));
+
+        // case study reveal on scroll
+        const caseObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                    caseObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.case').forEach(c => caseObserver.observe(c));
+
+        // ---------- case study overlay ----------
+        const overlay = document.getElementById('overlay');
+        const panels = Array.from(document.querySelectorAll('.case-panel'));
+        const panelIds = panels.map(p => p.id);
+        let lastFocused = null;
+
+        function openPanel(id) {
+            const panel = document.getElementById(id);
+            if (!panel) return;
+            panels.forEach(p => p.style.display = (p.id === id ? '' : 'none'));
+            lastFocused = document.activeElement;
+            overlay.classList.add('active');
+            document.body.classList.add('panel-open');
+            panel.focus();
+        }
+
+        function closePanel() {
+            overlay.classList.remove('active');
+            document.body.classList.remove('panel-open');
+            if (lastFocused) lastFocused.focus();
+        }
+
+        document.querySelectorAll('[data-open]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                openPanel(link.dataset.open);
+            });
+        });
+
+        overlay.querySelectorAll('[data-close]').forEach(el => {
+            el.addEventListener('click', closePanel);
+        });
+
+        overlay.querySelectorAll('[data-nav]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const current = panels.find(p => p.style.display !== 'none');
+                const idx = panelIds.indexOf(current.id);
+                const dir = btn.dataset.nav === 'next' ? 1 : -1;
+                const nextIdx = (idx + dir + panelIds.length) % panelIds.length;
+                openPanel(panelIds[nextIdx]);
+            });
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && overlay.classList.contains('active')) {
+                closePanel();
+            }
+        });
+    </script>
+
+</body>
+
+</html>
