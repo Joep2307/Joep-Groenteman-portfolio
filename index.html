@@ -18,9 +18,9 @@
             --text: #f2f1ec;
             --text-muted: #8a8a8a;
             --text-dim: #9a9a9a;
-            --accent: #3d5aff;
-            --accent-soft: rgba(61, 90, 255, 0.14);
-            --accent-dim: rgba(61, 90, 255, 0.55);
+            --accent: #8094ff;
+            --accent-soft: rgba(128, 148, 255, 0.16);
+            --accent-dim: rgba(128, 148, 255, 0.72);
             --border: #202023;
             --display: 'Space Grotesk', sans-serif;
             --body: 'Roboto', sans-serif;
@@ -47,7 +47,7 @@
 
         ::selection {
             background: var(--accent);
-            color: #fff;
+            color: var(--bg);
         }
 
         a {
@@ -78,8 +78,8 @@
             left: 1rem;
             z-index: 1000;
             background: var(--accent);
-            color: #fff;
-            padding: .75rem 1rem;
+            color: var(--bg);
+            padding: .8125rem 1rem;
             border-radius: 3px;
             transform: translateY(-200%);
             transition: transform .2s ease;
@@ -116,9 +116,9 @@
         .rail-item {
             display: flex;
             align-items: center;
-            gap: .7rem;
+            gap: .8125rem;
             font-family: var(--mono);
-            font-size: .7rem;
+            font-size: .8125rem;
             color: var(--text-dim);
             letter-spacing: .04em;
             transition: color .3s ease;
@@ -183,7 +183,7 @@
 
         .topnav .contact-link {
             font-family: var(--mono);
-            font-size: .75rem;
+            font-size: .8125rem;
             color: var(--text);
             border-bottom: 1px solid transparent;
             padding-bottom: 2px;
@@ -274,7 +274,7 @@
             gap: 3rem;
             flex-wrap: wrap;
             font-family: var(--mono);
-            font-size: .75rem;
+            font-size: .8125rem;
             color: var(--text-dim);
         }
 
@@ -289,7 +289,7 @@
             bottom: 2.5rem;
             left: 3rem;
             font-family: var(--mono);
-            font-size: .7rem;
+            font-size: .8125rem;
             color: var(--text-dim);
             display: flex;
             align-items: center;
@@ -412,7 +412,7 @@
 
         .case-media .ph-label {
             font-family: var(--mono);
-            font-size: .7rem;
+            font-size: .8125rem;
             color: var(--text-dim);
             z-index: 1;
             letter-spacing: .05em;
@@ -437,7 +437,7 @@
 
         .case-index {
             font-family: var(--mono);
-            font-size: .75rem;
+            font-size: .8125rem;
             color: var(--text-dim);
             margin-bottom: 1rem;
             display: block;
@@ -465,7 +465,7 @@
 
         .case-tags span {
             font-family: var(--mono);
-            font-size: .68rem;
+            font-size: .8125rem;
             color: var(--accent);
             background: var(--accent-soft);
             padding: .3rem .6rem;
@@ -594,7 +594,7 @@
             color: var(--accent);
             text-transform: uppercase;
             letter-spacing: .08em;
-            font-size: .7rem;
+            font-size: .8125rem;
         }
 
         /* ---------- contact ---------- */
@@ -646,7 +646,7 @@
 
         .socials a {
             font-family: var(--mono);
-            font-size: .78rem;
+            font-size: .8125rem;
             color: var(--text-muted);
             border-bottom: 1px solid transparent;
             padding-bottom: 3px;
@@ -663,7 +663,7 @@
             display: flex;
             justify-content: space-between;
             font-family: var(--mono);
-            font-size: .68rem;
+            font-size: .8125rem;
             color: var(--text-dim);
             border-top: 1px solid var(--border);
             flex-wrap: wrap;
@@ -742,7 +742,7 @@
             right: min(880px, 92vw);
             margin-right: 1.6rem;
             font-family: var(--mono);
-            font-size: .75rem;
+            font-size: .8125rem;
             color: var(--text-muted);
             display: flex;
             align-items: center;
@@ -766,7 +766,7 @@
 
         .panel-index {
             font-family: var(--mono);
-            font-size: .75rem;
+            font-size: .8125rem;
             color: var(--accent);
             letter-spacing: .04em;
             margin-bottom: 1.2rem;
@@ -791,7 +791,7 @@
 
         .panel-tags span {
             font-family: var(--mono);
-            font-size: .68rem;
+            font-size: .8125rem;
             color: var(--accent);
             background: var(--accent-soft);
             padding: .3rem .6rem;
@@ -818,7 +818,7 @@
 
         .panel-media .ph-label {
             font-family: var(--mono);
-            font-size: .7rem;
+            font-size: .8125rem;
             color: var(--text-dim);
             letter-spacing: .05em;
         }
@@ -829,7 +829,7 @@
 
         .panel-block h4 {
             font-family: var(--mono);
-            font-size: .72rem;
+            font-size: .8125rem;
             color: var(--text-dim);
             letter-spacing: .08em;
             text-transform: uppercase;
@@ -850,7 +850,7 @@
             padding-top: 1.8rem;
             border-top: 1px solid var(--border);
             font-family: var(--mono);
-            font-size: .78rem;
+            font-size: .8125rem;
         }
 
         .panel-nav button {
@@ -899,14 +899,14 @@
 
         .cv-date {
             font-family: var(--mono);
-            font-size: .7rem;
+            font-size: .8125rem;
             color: var(--text-dim);
             white-space: nowrap;
         }
 
         .cv-grade {
             font-family: var(--mono);
-            font-size: .72rem;
+            font-size: .8125rem;
             color: var(--text-dim);
             margin-bottom: .5rem;
             display: block;
@@ -937,7 +937,7 @@
         .cv-langs li span {
             display: block;
             color: var(--text-dim);
-            font-size: .7rem;
+            font-size: .8125rem;
             margin-top: .3rem;
         }
 
@@ -1112,7 +1112,7 @@
                         an obstacle — the best way for me to keep evolving is to stay curious, engage with feedback,
                         and learn from the real world around me.</p>
                     <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:center;">
-                        <a href="Joep_Groenteman_CV.pdf" class="cv-btn" download>Download CV (PDF) ↓</a>
+                        <a href="Joep_Groenteman_CV.pdf" class="cv-btn" download aria-label="Download Joep Groenteman’s CV as a PDF">Download CV (PDF) ↓</a>
                         <a href="#panel-05" class="case-link" data-open="panel-05">View CV →</a>
                     </div>
                 </div>
@@ -1242,7 +1242,7 @@
                     website.</p>
                 <img src="img/eaa-bootcamp.jpg" alt="EAA bootcamp for developer teams, June 2025"
                     style="width:100%;border-radius:6px;border:1px solid var(--border);margin-top:.5rem;">
-                <p style="font-size:.75rem;color:var(--text-dim);margin-top:.6rem;margin-bottom:0;">EAA bootcamp for
+                <p style="font-size:.8125rem;color:var(--text-dim);margin-top:.6rem;margin-bottom:0;">EAA bootcamp for
                     developer teams (04.06.2025)</p>
             </div>
             <div class="panel-nav">
@@ -1409,7 +1409,7 @@
             </div>
 
             <div class="panel-block">
-                <a href="Joep_Groenteman_CV.pdf" class="cv-btn" download>Download CV (PDF) ↓</a>
+                <a href="Joep_Groenteman_CV.pdf" class="cv-btn" download aria-label="Download Joep Groenteman’s CV as a PDF">Download CV (PDF) ↓</a>
             </div>
 
             <div class="panel-nav">
