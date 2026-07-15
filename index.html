@@ -1196,7 +1196,7 @@
                         developers,
                         copywriters, and legal stakeholders.
                     </p>
-                    <div class="case-tags"><span>Figma</span><span>Design system</span><span>Redesign</span></div>
+                    <div class="case-tags"><span>Vue</span><span>D3.js</span><span>Design ops</span></div>
                     <a href="#panel-04" class="case-link" data-open="panel-04">View case study →</a>
                 </div>
             </div>
@@ -1368,7 +1368,7 @@
             tabindex="-1">
             <span class="panel-index">CASE 04 — ZWITSERLEVEN</span>
             <h3 class="panel-title" id="panel-04-title">Zwitserleven Redesign</h3>
-            <div class="panel-tags"><span>Figma</span><span>Design system</span><span>Redesign</span></div>
+            <div class="panel-tags"><span>Figma</span><span>Design system</span></div>
 
             <div class="panel-block">
                 <h4>Overview</h4>
@@ -1634,7 +1634,7 @@
         function getFocusable(container) {
             return Array.from(container.querySelectorAll(
                 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-            )).filter(el => !el.hasAttribute('hidden') && el.offsetParent !== null);
+            )).filter(el => !el.hasAttribute('hidden') && el.getClientRects().length > 0);
         }
 
         function openPanel(id, preserveTrigger = false) {
