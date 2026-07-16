@@ -4,7 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio — Web Design</title>
+    <title>Joep Groenteman — UX Design &amp; Accessibility</title>
+    <meta name="description"
+        content="Portfolio of Joep Groenteman, UX designer focused on accessible, user-centered digital experiences. Selected work, about, and contact.">
+    <meta property="og:title" content="Joep Groenteman — UX Design &amp; Accessibility">
+    <meta property="og:description"
+        content="UX designer focused on accessible, user-centered digital experiences.">
+    <meta property="og:type" content="website">
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0a0a'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-size='14' font-weight='600' fill='%238094ff' text-anchor='middle'%3EJG%3C/text%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -286,8 +294,10 @@
         }
 
         .scroll-cue {
-            bottom: -4rem;
-            right: 5rem;
+            position: absolute;
+            bottom: 3rem;
+            left: 3rem;
+            z-index: 1;
             font-family: var(--mono);
             font-size: .8125rem;
             color: var(--text-dim);
@@ -323,7 +333,7 @@
 
         @media (min-width: 901px) {
             .scroll-cue {
-                left: 0rem;
+                left: 9rem;
             }
         }
 
@@ -942,6 +952,20 @@
             font-size: .98rem;
         }
 
+        .panel-block>img {
+            width: 100%;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            margin-top: .5rem;
+        }
+
+        .panel-block .panel-caption {
+            font-size: .8125rem;
+            color: var(--text-dim);
+            margin-top: .6rem;
+            margin-bottom: 0;
+        }
+
         .panel-nav {
             display: flex;
             justify-content: space-between;
@@ -1069,7 +1093,7 @@
             will-change: transform;
         }
 
-        #intro>*:not(.hero-gradient) {
+        #intro>*:not(.hero-gradient):not(.scroll-cue) {
             position: relative;
             z-index: 1;
         }
@@ -1083,7 +1107,7 @@
     <div class="progress" id="progress"></div>
 
     <nav class="topnav" aria-label="Primary">
-        <div class="mark"><a href="#">Joep <br> Groenteman</div></a>
+        <div class="mark"><a href="#intro">Joep <br> Groenteman</a></div>
 
         <a href="#contact" class="contact-link">GET IN TOUCH</a>
     </nav>
@@ -1119,14 +1143,16 @@
                 <div class="section-rule"></div>
             </div>
 
+            <div class="cases">
+
             <div class="case" id="case-01">
                 <div class="case-media">
-                    <div class="glow"></div><img src="img/the-line-hero.jpg"
-                        alt="Urban Trails landing page reading 'Take the other road' with a curved multi-coloured route line">
+                    <div class="glow"></div><img src="img/the-line-hero.jpg" loading="lazy"
+                        alt="The Line landing page reading 'Take the other road' with a curved multi-coloured route line">
                 </div>
                 <div>
-                    <span class="case-index">CASE 01 — MINOR URBAN INTERECTION DESIGN </span>
-                    <h3 class="case-title"> The Line</h3>
+                    <span class="case-index">CASE 01 — MINOR URBAN INTERACTION DESIGN</span>
+                    <h3 class="case-title">The Line</h3>
                     <p class="case-desc">The Line is an urban interaction project that encourages people to step outside
                         their daily routines and explore their city. Through playful interventions and a community
                         driven platform, the project inspires people to discover new routes and experience familiar
@@ -1139,20 +1165,16 @@
             </div>
             <div class="case" id="case-02">
                 <div class="case-media">
-                    <div class="glow"></div><img src="img/marathon-savings.jpg"
+                    <div class="glow"></div><img src="img/marathon-savings.jpg" loading="lazy"
                         alt="Marathon Savings app screens showing onboarding and savings dashboard">
                 </div>
                 <div>
                     <span class="case-index">CASE 02 — NATIONALE NEDERLANDEN - MINOR USER EXPERIENCE DESIGN</span>
                     <h3 class="case-title">Marathon Savings</h3>
-                    <p class="case-desc">**Marathon Savings**
-
-                        During the User Experience Design minor at HvA, I designed **Marathon Savings**, a gamified
-                        saving feature
-                        for the Nationale Nederlanden app inspired by the Rotterdam Marathon. The concept encourages
-                        users to save
-                        at their own pace through four saver types based on a target amount and target date.
-                    </p>
+                    <p class="case-desc">During the User Experience Design minor at HvA, I designed Marathon Savings,
+                        a gamified saving feature for the Nationale Nederlanden app inspired by the Rotterdam Marathon.
+                        The concept encourages users to save at their own pace through four saver types based on a
+                        target amount and target date.</p>
                     <div class="case-tags"><span>Figma</span><span>Concepting</span><span>Redesign</span></div>
                     <a href="#panel-02" class="case-link" data-open="panel-02">View case study →</a>
                 </div>
@@ -1160,21 +1182,16 @@
 
             <div class="case" id="case-03">
                 <div class="case-media">
-                    <div class="glow"></div><img src="/img/eaa-audit-report-cover.jpg"
+                    <div class="glow"></div><img src="img/eaa-audit-report-cover.jpg" loading="lazy"
                         alt="WCAG 2.2 audit report shown on a laptop screen">
                 </div>
                 <div>
                     <span class="case-index">CASE 03 — ATHORA</span>
                     <h3 class="case-title">European Accessibility Act (EAA)</h3>
-                    <p class="case-desc">**Accessibility Audits**
-
-                        During my internship at Athora, I conducted accessibility audits for websites, mobile apps, and
-                        PDFs in
-                        preparation for the European Accessibility Act (EAA). I created reports, helped organize
-                        accessibility
-                        workshops, and collaborated with the UX team to implement accessible solutions.
-
-                    </p>
+                    <p class="case-desc">During my internship at Athora, I conducted accessibility audits for
+                        websites, mobile apps, and PDFs in preparation for the European Accessibility Act (EAA). I
+                        created reports, helped organize accessibility workshops, and collaborated with the UX team to
+                        implement accessible solutions.</p>
                     <div class="case-tags"><span>HTML/CSS</span><span>Accessibility</span><span>Testing</span></div>
                     <a href="#panel-03" class="case-link" data-open="panel-03">View case study →</a>
                 </div>
@@ -1182,23 +1199,20 @@
 
             <div class="case" id="case-04">
                 <div class="case-media">
-                    <div class="glow"></div><img src="/img/zwitserleven-dashboard.jpg"
+                    <div class="glow"></div><img src="img/zwitserleven-dashboard.jpg" loading="lazy"
                         alt="Redesigned Zwitserleven pension dashboard">
                 </div>
                 <div>
-                    <span class="case-index">CASE 04 — ZWISTERLEVEN</span>
+                    <span class="case-index">CASE 04 — ZWITSERLEVEN</span>
                     <h3 class="case-title">Zwitserleven Redesign</h3>
-                    <p class="case-desc">**Zwitserleven Redesign**
-
-                        During my internship at Athora, I helped redesign the Zwitserleven website using a new design
-                        system. I
-                        designed pages, contributed to the design system in Figma, and collaborated with UX designers,
-                        developers,
-                        copywriters, and legal stakeholders.
-                    </p>
-                    <div class="case-tags"><span>Vue</span><span>D3.js</span><span>Design ops</span></div>
+                    <p class="case-desc">During my internship at Athora, I helped redesign the Zwitserleven website
+                        using a new design system. I designed pages, contributed to the design system in Figma, and
+                        collaborated with UX designers, developers, copywriters, and legal stakeholders.</p>
+                    <div class="case-tags"><span>Figma</span><span>Design system</span><span>Collaboration</span></div>
                     <a href="#panel-04" class="case-link" data-open="panel-04">View case study →</a>
                 </div>
+            </div>
+
             </div>
         </section>
 
@@ -1265,7 +1279,7 @@
     <div class="panel-tags"><span>Research</span><span>Urban Design</span><span>Prototype</span></div>
 
     <div class="panel-media">
-        <img src="img/the-line-hero.jpg"
+        <img src="img/the-line-hero.jpg" loading="lazy"
             alt="The Line website showing alternative routes through Amsterdam">
     </div>
 
@@ -1277,9 +1291,9 @@
 
         <img src="img/the-line-routes-map.jpg"
             alt="Map showing alternative routes through Amsterdam"
-            style="width:100%;border-radius:6px;border:1px solid var(--border);margin-top:.5rem;">
+            loading="lazy">
 
-        <p style="font-size:.8125rem;color:var(--text-dim);margin-top:.6rem;margin-bottom:0;">
+        <p class="panel-caption">
             Alternative routes that encourage people to explore beyond their usual path.
         </p>
     </div>
@@ -1299,11 +1313,6 @@
     <div class="panel-block">
         <h4>Outcome</h4>
         <p>The final concept combines urban design with digital interaction to encourage exploration and social connection. Rather than simply helping people reach a destination, The Line transforms the journey itself into the experience.</p>
-
-        
-        <p style="font-size:.8125rem;color:var(--text-dim);margin-top:.6rem;margin-bottom:0;">
-            The Line website allows users to discover, create, and share their own routes.
-        </p>
     </div>
 
     <div class="panel-nav">
@@ -1312,23 +1321,60 @@
     </div>
 </div>
 
+        <!-- TODO: replace stub copy below with the full Marathon Savings case study -->
+        <div class="case-panel" id="panel-02" role="dialog" aria-modal="true" aria-labelledby="panel-02-title"
+            tabindex="-1">
+            <span class="panel-index">CASE 02 — NATIONALE NEDERLANDEN — MINOR USER EXPERIENCE DESIGN</span>
+            <h3 class="panel-title" id="panel-02-title">Marathon Savings</h3>
+            <div class="panel-tags"><span>Figma</span><span>Concepting</span><span>Redesign</span></div>
+            <div class="panel-media"><img src="img/marathon-savings.jpg" loading="lazy"
+                    alt="Marathon Savings app screens showing onboarding and savings dashboard"></div>
+            <div class="panel-block">
+                <h4>Overview</h4>
+                <p>During the User Experience Design minor at the HvA, I designed Marathon Savings, a gamified saving
+                    feature for the Nationale Nederlanden app inspired by the Rotterdam Marathon. The concept
+                    encourages users to save at their own pace.</p>
+            </div>
+            <div class="panel-block">
+                <h4>Concept</h4>
+                <p>Users choose one of four saver types based on a target amount and target date, turning saving into
+                    a personal marathon: everyone runs the same distance, but at their own pace.</p>
+                <img src="img/marathon-savings-intro.jpg" loading="lazy"
+                    alt="Marathon Savings introduction screens explaining the four saver types">
+                <p class="panel-caption">Onboarding flow introducing the four saver types</p>
+            </div>
+            <div class="panel-block">
+                <h4>Process</h4>
+                <p>Starting from user research and interviews, I iterated on concepts through sketches, wireframes,
+                    and interactive Figma prototypes, validating each round with usability tests.</p>
+            </div>
+            <div class="panel-block">
+                <h4>Outcome</h4>
+                <p>The final prototype was validated with real users and presented to Nationale Nederlanden as a
+                    concept for encouraging long-term saving behaviour.</p>
+                <img src="img/marathon-savings-dashboard.jpg" loading="lazy"
+                    alt="Marathon Savings dashboard showing saving progress towards the target">
+                <p class="panel-caption">The savings dashboard tracking progress towards the target</p>
+            </div>
+            <div class="panel-nav">
+                <button data-nav="prev">← Previous</button>
+                <button data-nav="next">Next →</button>
+            </div>
+        </div>
+
         <div class="case-panel" id="panel-03" role="dialog" aria-modal="true" aria-labelledby="panel-03-title"
             tabindex="-1">
             <span class="panel-index">CASE 03 — ATHORA</span>
             <h3 class="panel-title" id="panel-03-title">European Accessibility Act (EAA)</h3>
             <div class="panel-tags"><span>HTML/CSS</span><span>Accessibility</span><span>Testing</span></div>
-            <div class="panel-media"><img src="img/eaa-laptop.png" alt="WCAG 2.2 audit report shown on a laptop screen">
+            <div class="panel-media"><img src="img/eaa-audit-report-cover.jpg" loading="lazy"
+                    alt="Cover page of the WCAG 2.2 Audit Verslag report prepared for Reaal, dated 15 May 2025">
             </div>
             <div class="panel-block">
                 <h4>Overview</h4>
                 <p>During my internship at Athora, the parent company of Zwitserleven and Reaal, I conducted an
                     accessibility audit to assess whether the websites were compliant with the upcoming European
                     Accessibility Act '25 (EAA).</p>
-                <img src="img/eaa-audit-report-cover.jpg"
-                    alt="Cover page of the WCAG 2.2 Audit Verslag report prepared for Reaal, dated 15 May 2025"
-                    style="width:100%;border-radius:6px;border:1px solid var(--border);margin-top:.5rem;">
-                <p style="font-size:.8125rem;color:var(--text-dim);margin-top:.6rem;margin-bottom:0;">Cover page of
-                    one of the WCAG 2.2 audit reports delivered to stakeholders</p>
             </div>
             <div class="panel-block">
                 <h4>Process</h4>
@@ -1336,13 +1382,13 @@
                     tools, and performed technical checks in the code to identify accessibility issues.</p>
                 <img src="img/eaa-wave-test.jpg"
                     alt="WAVE web accessibility evaluation tool showing 1 error, 9 contrast errors, and 12 alerts on the Zwitserleven homepage"
-                    style="width:100%;border-radius:6px;border:1px solid var(--border);margin-top:.5rem;">
-                <p style="font-size:.8125rem;color:var(--text-dim);margin-top:.6rem;margin-bottom:0;">Running the
+                    loading="lazy">
+                <p class="panel-caption">Running the
                     Zwitserleven homepage through the WAVE evaluation tool</p>
                 <img src="img/eaa-code-review.jpg"
                     alt="Browser developer tools open on the Zwitserleven homepage, inspecting ARIA attributes and the underlying HTML"
-                    style="width:100%;border-radius:6px;border:1px solid var(--border);margin-top:1rem;">
-                <p style="font-size:.8125rem;color:var(--text-dim);margin-top:.6rem;margin-bottom:0;">Checking ARIA
+                    loading="lazy">
+                <p class="panel-caption">Checking ARIA
                     attributes and markup directly in the code</p>
                 <p style="margin-top:.6rem;">Besides the testing, I created detailed reports and assisted in organizing
                     internal bootcamps for multiple departments to help colleagues understand what accessibility is,
@@ -1353,10 +1399,6 @@
                 <p>I supported the UX team and copywriters in developing and implementing solutions for the issues I
                     identified, making sure the improvements were actually accessible and could be implemented on the
                     website.</p>
-                <img src="img/eaa-bootcamp.jpg" alt="EAA bootcamp for developer teams, June 2025"
-                    style="width:100%;border-radius:6px;border:1px solid var(--border);margin-top:.5rem;">
-                <p style="font-size:.8125rem;color:var(--text-dim);margin-top:.6rem;margin-bottom:0;">EAA bootcamp for
-                    developer teams (04.06.2025)</p>
             </div>
             <div class="panel-nav">
                 <button data-nav="prev">← Previous</button>
@@ -1369,7 +1411,9 @@
             <span class="panel-index">CASE 04 — ZWITSERLEVEN</span>
             <h3 class="panel-title" id="panel-04-title">Zwitserleven Redesign</h3>
             <div class="panel-tags"><span>Figma</span><span>Design system</span></div>
-
+            <div class="panel-media"><img src="img/zwitserleven-dashboard.jpg" loading="lazy"
+                    alt="Redesigned MijnZwitserleven dashboard showing a pension breakdown chart and a personal to-do list">
+            </div>
             <div class="panel-block">
                 <h4>Overview</h4>
                 <p>While at Athora, I supported the redesign of the Zwitserleven website using their new design
@@ -1382,11 +1426,6 @@
                     experience familiar, so customers could still easily find their way around. I was part of a
                     multidisciplinary team with a variety of different roles, including copywriters, developers, and
                     legal stakeholders.</p>
-                <img src="img/zwitserleven-dashboard.jpg"
-                    alt="Redesigned MijnZwitserleven dashboard showing a pension breakdown chart and a personal to-do list"
-                    style="width:100%;border-radius:6px;border:1px solid var(--border);margin-top:.5rem;">
-                <p style="font-size:.8125rem;color:var(--text-dim);margin-top:.6rem;margin-bottom:0;">The redesigned
-                    MijnZwitserleven pension overview page</p>
             </div>
             <div class="panel-block">
                 <h4>Outcome</h4>
@@ -1395,8 +1434,8 @@
                     across the website.</p>
                 <img src="img/zwitserleven-berichten.jpg"
                     alt="Redesigned Berichten (Messages) inbox page listing received and archived messages with due dates"
-                    style="width:100%;border-radius:6px;border:1px solid var(--border);margin-top:.5rem;">
-                <p style="font-size:.8125rem;color:var(--text-dim);margin-top:.6rem;margin-bottom:0;">The redesigned
+                    loading="lazy">
+                <p class="panel-caption">The redesigned
                     Berichten (messages) inbox, built with the new design system</p>
             </div>
             <div class="panel-nav">
@@ -1717,21 +1756,31 @@
             }
         });
 
-        // gradient follow
+        // gradient follow (skipped for reduced motion, paused while hero is off-screen)
         const glow = document.querySelector('.hero-gradient');
-        if (glow) {
+        if (glow && !prefersReducedMotion) {
             let currentX = 0, currentY = 0, targetX = 0, targetY = 0;
+            let rafId = null;
             window.addEventListener('pointermove', e => {
                 targetX = (e.clientX / window.innerWidth - 0.5) * 420;
                 targetY = (e.clientY / window.innerHeight - 0.5) * 320;
             });
             window.addEventListener('pointerleave', () => { targetX = 0; targetY = 0; });
-            (function anim() {
+            function anim() {
                 currentX += (targetX - currentX) * 0.12;
                 currentY += (targetY - currentY) * 0.12;
                 glow.style.transform = `translate(${currentX}px,${currentY}px) scale(1.18)`;
-                requestAnimationFrame(anim);
-            })();
+                rafId = requestAnimationFrame(anim);
+            }
+            const heroObserver = new IntersectionObserver(([entry]) => {
+                if (entry.isIntersecting && rafId === null) {
+                    rafId = requestAnimationFrame(anim);
+                } else if (!entry.isIntersecting && rafId !== null) {
+                    cancelAnimationFrame(rafId);
+                    rafId = null;
+                }
+            });
+            heroObserver.observe(document.getElementById('intro'));
         }
 
     </script>
