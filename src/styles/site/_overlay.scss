@@ -1,0 +1,60 @@
+@use '../abstracts/breakpoints';
+
+body.panel-open {
+    overflow: hidden;
+}
+
+.case-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.case-overlay.active {
+    visibility: visible;
+    pointer-events: auto;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+.case-overlay-bg {
+    position: absolute;
+    inset: 0;
+    background: rgb(6 6 7 / 70%);
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.case-overlay.active .case-overlay-bg {
+    opacity: 1;
+}
+
+.case-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: min(880px, 92vw);
+    background: var(--bg);
+    border-left: 1px solid var(--border);
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    padding: 5rem 3.5rem 6rem;
+}
+
+.case-overlay.active .case-panel {
+    transform: translateX(0);
+}
+
+@include breakpoints.down(breakpoints.$sm) {
+    .case-panel {
+        width: 100vw;
+        padding: 5rem 1.5rem 4rem;
+    }
+}

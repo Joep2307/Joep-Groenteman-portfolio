@@ -1,0 +1,19 @@
+// Added to the site inside the editor preview, so it shows its settled
+// state right away each time it redraws.
+*,
+*::before {
+    animation: none !important;
+    transition: none !important;
+}
+
+html {
+    scroll-behavior: auto !important;
+}
+
+#intro .eyebrow,
+#intro .hero-title,
+#intro .hero-sub,
+#intro .hero-meta,
+#intro .scroll-cue {
+    opacity: 1 !important;
+}

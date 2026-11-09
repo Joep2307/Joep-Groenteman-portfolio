@@ -1,0 +1,8 @@
+node_modules/
+dist/
+coverage/
+target/
+src/geometry/pkg/
+test-results/
+playwright-report/
+.DS_Store

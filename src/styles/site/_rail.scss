@@ -1,0 +1,60 @@
+@use '../abstracts/breakpoints';
+
+.rail {
+    position: fixed;
+    left: 3rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 2.6rem;
+    z-index: 100;
+}
+
+.rail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8125rem;
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+    transition: color 0.3s ease;
+}
+
+.rail-item::before {
+    content: '';
+    width: 18px;
+    height: 1px;
+    flex: 0 0 auto;
+    background: currentcolor;
+    transition: width 0.3s ease;
+}
+
+.rail-item.active {
+    color: var(--accent);
+}
+
+.rail-item.active::before {
+    width: 26px;
+}
+
+.rail-item .label {
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.rail-item:hover .label,
+.rail-item:focus-visible .label,
+.rail-item.active .label {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+@include breakpoints.down(breakpoints.$lg) {
+    .rail {
+        display: none;
+    }
+}

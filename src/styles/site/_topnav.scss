@@ -1,0 +1,79 @@
+@use '../abstracts/breakpoints';
+
+.topnav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.6rem 3rem;
+    z-index: 150;
+    mix-blend-mode: difference;
+}
+
+.topnav .mark {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+}
+
+.topnav .mark a {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    transition: color 0.3s ease;
+}
+
+.topnav .mark img {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+}
+
+.topnav.scrolled .mark a {
+    color: transparent;
+    pointer-events: none;
+}
+
+.topnav.scrolled .mark img {
+    pointer-events: auto;
+}
+
+.topnav .contact-link {
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    color: var(--text);
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: border-color 0.3s ease;
+}
+
+.topnav .contact-link:hover {
+    border-color: var(--text);
+}
+
+@include breakpoints.down(breakpoints.$sm) {
+    .topnav {
+        padding: 1.2rem 1.5rem;
+    }
+}
+
+section {
+    position: relative;
+    padding: 0 3rem;
+}
+
+@include breakpoints.down(breakpoints.$sm) {
+    section {
+        padding: 0 1.5rem;
+    }
+}
+
+@include breakpoints.up(breakpoints.$lg) {
+    section {
+        padding-left: 12rem;
+    }
+}

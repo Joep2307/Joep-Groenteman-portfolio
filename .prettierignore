@@ -1,0 +1,15 @@
+pnpm-lock.yaml
+dist/
+coverage/
+src/geometry/pkg/
+src/geometry/target/
+src/smoke/baseline/
+
+# The editor publishes this file with its own whitespace.
+exe/index.html
+
+# Old site, deleted at cutover in Phase 8.
+/index.html
+/dev/
+
+TODO.md

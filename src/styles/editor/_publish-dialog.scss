@@ -1,0 +1,58 @@
+dialog {
+    margin: auto;
+    width: min(32rem, calc(100% - 2rem));
+    background: var(--bg-alt);
+    color: var(--text);
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    padding: 1.5rem;
+}
+
+dialog::backdrop {
+    background: rgb(6 6 7 / 70%);
+}
+
+dialog h2 {
+    font-family: var(--display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+dialog p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+dialog ul {
+    list-style: none;
+    margin-bottom: 1rem;
+}
+
+dialog li {
+    margin-bottom: 0.4rem;
+}
+
+dialog li button {
+    width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+    font-family: var(--body);
+    font-size: 0.875rem;
+    border-color: var(--danger);
+}
+
+dialog .files {
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    overflow-wrap: anywhere;
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
