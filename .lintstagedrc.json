@@ -1,0 +1,6 @@
+{
+    "*.{ts,scss,json,md,yml,html}": "prettier --write",
+    "*.ts": "eslint --fix --no-warn-ignored",
+    "*.scss": "stylelint --fix --allow-empty-input",
+    "*.rs": "rustfmt --edition 2024 --config-path rustfmt.toml"
+}

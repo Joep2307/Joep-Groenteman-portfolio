@@ -1,0 +1,4 @@
+# ESLint and tsc read the types wasm-pack generates; a fresh clone has none.
+[ -d src/geometry/pkg ] || pnpm wasm
+pnpm lint-staged
+pnpm typecheck

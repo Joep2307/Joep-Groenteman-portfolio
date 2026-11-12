@@ -193,12 +193,22 @@
             display: flex;
             align-items: center;
             gap: .7rem;
+            transition: color .3s ease;
         }
 
         .topnav .mark img {
             width: 36px;
             height: 36px;
             border-radius: 9px;
+        }
+
+        .topnav.scrolled .mark a {
+            color: transparent;
+            pointer-events: none;
+        }
+
+        .topnav.scrolled .mark img {
+            pointer-events: auto;
         }
 
         .topnav .contact-link {
@@ -1635,6 +1645,14 @@
         }
         document.addEventListener('scroll', updateProgress, { passive: true });
         updateProgress();
+
+        // hide the name next to the logo once the page has scrolled
+        const topnav = document.querySelector('.topnav');
+        function updateTopnav() {
+            topnav.classList.toggle('scrolled', document.documentElement.scrollTop > 0);
+        }
+        document.addEventListener('scroll', updateTopnav, { passive: true });
+        updateTopnav();
 
         // rail active state + click to scroll
         const railItems = document.querySelectorAll('.rail-item');

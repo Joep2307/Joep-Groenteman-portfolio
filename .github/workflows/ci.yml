@@ -1,0 +1,81 @@
+name: CI
+
+on:
+    push:
+    pull_request:
+
+concurrency:
+    group: ci-${{ github.ref }}
+    cancel-in-progress: true
+
+permissions:
+    contents: read
+
+jobs:
+    check:
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        steps:
+            - uses: actions/checkout@v7
+
+            - uses: pnpm/action-setup@v6
+
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 24
+                  cache: pnpm
+
+            - uses: dtolnay/rust-toolchain@stable
+              with:
+                  components: rustfmt, clippy
+                  targets: wasm32-unknown-unknown
+
+            - uses: Swatinem/rust-cache@v2
+              with:
+                  workspaces: src/geometry
+
+            - uses: taiki-e/install-action@v2
+              with:
+                  tool: wasm-pack
+
+            - run: pnpm install --frozen-lockfile
+
+            - name: Build wasm
+              run: pnpm wasm
+
+            - name: Format
+              run: pnpm format:check
+
+            - name: ESLint
+              run: pnpm lint:ts
+
+            - name: Stylelint
+              run: pnpm lint:scss
+
+            - name: Clippy
+              run: pnpm lint:rust
+
+            - name: Typecheck
+              run: pnpm typecheck
+
+            - name: Vitest
+              run: pnpm test
+
+            - name: Cargo test
+              run: pnpm test:rust
+
+            - name: Build
+              run: pnpm build
+
+            - name: Install Playwright browser
+              run: pnpm exec playwright install --with-deps chromium
+
+            - name: Smoke
+              run: pnpm smoke
+
+            - uses: actions/upload-artifact@v7
+              if: failure()
+              with:
+                  name: playwright-results
+                  path: test-results/
+                  retention-days: 7

@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Portfolio editor</title>
+    <link rel="icon" type="image/svg+xml" href="/img/logo.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Roboto:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --bg-alt: #131316;
+            --bg-card: #101012;
+            --text: #f2f1ec;
+            --text-muted: #a8a8a8;
+            --accent: #8094ff;
+            --accent-soft: rgba(128, 148, 255, 0.16);
+            --danger: #ff8f8f;
+            --warn: #ffcf70;
+            --border: #2c2c30;
+            --border-strong: #5a5a60;
+            --display: 'Space Grotesk', sans-serif;
+            --body: 'Roboto', sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+            --topbar: 3.75rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body,
+        #app {
+            height: 100%;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--body);
+            line-height: 1.5;
+        }
+
+        a {
+            color: var(--accent);
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+        }
+
+        /* ---------- buttons ---------- */
+        button,
+        .btn {
+            font-family: var(--mono);
+            font-size: .8125rem;
+            color: var(--text);
+            background: none;
+            border: 1px solid var(--border-strong);
+            border-radius: 3px;
+            padding: .5rem .8rem;
+            min-height: 2.25rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            text-decoration: none;
+        }
+
+        button:hover:not(:disabled),
+        .btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        button:disabled {
+            opacity: .35;
+            cursor: not-allowed;
+        }
+
+        button.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--bg);
+            font-weight: 500;
+        }
+
+        button.primary:hover:not(:disabled) {
+            color: var(--bg);
+            opacity: .85;
+        }
+
+        button.danger:hover:not(:disabled) {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        button.icon {
+            width: 2.25rem;
+            padding: 0;
+            justify-content: center;
+        }
+
+        /* ---------- layout ---------- */
+        .topbar {
+            height: var(--topbar);
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            padding: 0 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .topbar img {
+            width: 28px;
+            height: 28px;
+            border-radius: 7px;
+        }
+
+        .topbar strong {
+            font-family: var(--display);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status {
+            font-family: var(--mono);
+            font-size: .8125rem;
+            color: var(--text-muted);
+            margin-right: auto;
+            margin-left: .75rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .status.dirty {
+            color: var(--warn);
+        }
+
+        .layout {
+            height: calc(100% - var(--topbar));
+            display: grid;
+            grid-template-columns: 13.5rem minmax(0, 1fr);
+        }
+
+        .layout.preview-on {
+            grid-template-columns: 13.5rem minmax(26rem, 1fr) minmax(0, 1.1fr);
+        }
+
+        .sidebar {
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 1rem .75rem;
+            display: flex;
+            flex-direction: column;
+            gap: .15rem;
+        }
+
+        .sidebar button {
+            width: 100%;
+            border: none;
+            min-height: 2.25rem;
+            text-align: left;
+            font-family: var(--body);
+            font-size: .9rem;
+            color: var(--text-muted);
+            justify-content: flex-start;
+        }
+
+        .sidebar button.sub {
+            padding-left: 1.5rem;
+            font-size: .85rem;
+        }
+
+        .sidebar button span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .sidebar button[aria-current="page"] {
+            background: var(--accent-soft);
+            color: var(--text);
+        }
+
+        .sidebar button.add {
+            color: var(--accent);
+            font-family: var(--mono);
+            font-size: .8125rem;
+        }
+
+        .sidebar .spacer {
+            flex: 1;
+            min-height: 1.5rem;
+        }
+
+        .sidebar .disconnect {
+            color: var(--text-muted);
+            font-family: var(--mono);
+            font-size: .8125rem;
+        }
+
+        .editor {
+            overflow-y: auto;
+            padding: 2rem 2.25rem 6rem;
+        }
+
+        .editor>* {
+            max-width: 46rem;
+        }
+
+        .preview {
+            display: none;
+            border-left: 1px solid var(--border);
+            background: var(--bg);
+        }
+
+        .preview-on .preview {
+            display: block;
+        }
+
+        .preview iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+            background: var(--bg);
+        }
+
+        @media (max-width: 1100px) {
+
+            .layout,
+            .layout.preview-on {
+                grid-template-columns: minmax(0, 1fr);
+                grid-template-rows: auto minmax(0, 1fr);
+            }
+
+            .sidebar {
+                flex-direction: row;
+                overflow-x: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding: .5rem;
+            }
+
+            .sidebar button,
+            .sidebar button.sub {
+                width: auto;
+                white-space: nowrap;
+                padding-left: .8rem;
+                flex: 0 0 auto;
+            }
+
+            .sidebar button span {
+                overflow: visible;
+            }
+
+            .sidebar .spacer {
+                display: none;
+            }
+
+            .editor {
+                padding: 1.5rem 1rem 5rem;
+            }
+
+            .preview-on .editor {
+                display: none;
+            }
+
+            .preview-on .preview {
+                border-left: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .topbar {
+                padding: 0 .75rem;
+                gap: .4rem;
+            }
+
+            .topbar strong,
+            .topbar img,
+            .status {
+                display: none;
+            }
+
+            .topbar .discard {
+                margin-right: auto;
+            }
+        }
+
+        /* ---------- forms ---------- */
+        h1 {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: 1.75rem;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            overflow-wrap: anywhere;
+        }
+
+        h1:focus {
+            outline: none;
+        }
+
+        .group {
+            border-top: 1px solid var(--border);
+            padding: 1.5rem 0 1rem;
+        }
+
+        .group>h2 {
+            font-family: var(--mono);
+            font-size: .8125rem;
+            font-weight: 400;
+            color: var(--accent);
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .sub-heading {
+            font-family: var(--mono);
+            font-size: .8125rem;
+            font-weight: 400;
+            color: var(--text-muted);
+            margin: 1.25rem 0 .6rem;
+        }
+
+        .field {
+            margin-bottom: 1rem;
+        }
+
+        .field label,
+        .field-label {
+            display: block;
+            font-size: .85rem;
+            font-weight: 500;
+            margin-bottom: .3rem;
+        }
+
+        input:not([type="file"]),
+        textarea {
+            width: 100%;
+            font-family: var(--body);
+            font-size: .95rem;
+            line-height: 1.5;
+            color: var(--text);
+            background: var(--bg-alt);
+            border: 1px solid var(--border-strong);
+            border-radius: 3px;
+            padding: .5rem .65rem;
+        }
+
+        textarea {
+            resize: vertical;
+            overflow: hidden;
+            display: block;
+        }
+
+        input:disabled,
+        textarea:disabled {
+            opacity: .6;
+        }
+
+        ::placeholder {
+            color: #8a8a8a;
+        }
+
+        .hint {
+            font-size: .8125rem;
+            color: var(--text-muted);
+            margin-top: .3rem;
+        }
+
+        .two-up {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 .75rem;
+        }
+
+        @media (max-width: 640px) {
+            .two-up {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        /* ---------- repeating rows ---------- */
+        .row {
+            position: relative;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg-card);
+            padding: .85rem;
+            margin-bottom: .6rem;
+        }
+
+        .row .row {
+            background: var(--bg-alt);
+        }
+
+        .row-body>*:last-child,
+        .row-body>.two-up:last-child>.field {
+            margin-bottom: 0;
+        }
+
+        /* sits on the first label's line, so short rows stay short */
+        .row-actions {
+            position: absolute;
+            top: .4rem;
+            right: .85rem;
+            display: flex;
+            gap: .25rem;
+        }
+
+        .row-actions button.icon {
+            width: 1.75rem;
+            min-height: 1.75rem;
+        }
+
+        .adds {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            margin: .75rem 0 1rem;
+        }
+
+        .project-open {
+            width: 100%;
+            justify-content: flex-start;
+            text-align: left;
+            font-family: var(--display);
+            font-size: 1rem;
+            font-weight: 500;
+            min-height: 2.75rem;
+        }
+
+        .project-row {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .project-row .row-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .project-row .row-actions {
+            position: static;
+        }
+
+        /* ---------- image field ---------- */
+        .image-field {
+            display: grid;
+            grid-template-columns: 7rem minmax(0, 1fr);
+            gap: .85rem;
+            margin-bottom: 1rem;
+        }
+
+        .thumb {
+            width: 7rem;
+            aspect-ratio: 4/3;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            background: var(--bg-alt);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--mono);
+            font-size: .75rem;
+            color: var(--text-muted);
+        }
+
+        .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .upload {
+            margin-bottom: .75rem;
+        }
+
+        .upload input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+        }
+
+        .upload input:focus-visible+.btn {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* ---------- messages ---------- */
+        .banner {
+            border: 1px solid var(--warn);
+            border-radius: 6px;
+            padding: .85rem 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .banner p {
+            margin-bottom: .6rem;
+            font-size: .9rem;
+        }
+
+        .banner .adds {
+            margin-bottom: 0;
+        }
+
+        .notice {
+            position: fixed;
+            left: 50%;
+            bottom: 1.25rem;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: calc(100% - 2rem);
+            background: var(--text);
+            color: var(--bg);
+            font-size: .9rem;
+            padding: .6rem 1rem;
+            border-radius: 3px;
+            z-index: 10;
+        }
+
+        .notice a {
+            color: inherit;
+        }
+
+        .error-text {
+            color: var(--danger);
+            font-size: .9rem;
+            margin-top: .6rem;
+        }
+
+        /* ---------- login + full-page states ---------- */
+        .center-page {
+            max-width: 34rem;
+            margin: 0 auto;
+            padding: 4rem 1rem;
+        }
+
+        .center-page ol,
+        .center-page ul {
+            margin: 0 0 1.5rem 1.25rem;
+            color: var(--text-muted);
+            font-size: .95rem;
+        }
+
+        .center-page li {
+            margin-bottom: .4rem;
+        }
+
+        .center-page li strong {
+            color: var(--text);
+        }
+
+        .center-page p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        /* ---------- publish dialog ---------- */
+        dialog {
+            margin: auto;
+            width: min(32rem, calc(100% - 2rem));
+            background: var(--bg-alt);
+            color: var(--text);
+            border: 1px solid var(--border-strong);
+            border-radius: 6px;
+            padding: 1.5rem;
+        }
+
+        dialog::backdrop {
+            background: rgba(6, 6, 7, 0.7);
+        }
+
+        dialog h2 {
+            font-family: var(--display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        dialog p {
+            font-size: .9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        dialog ul {
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+
+        dialog li {
+            margin-bottom: .4rem;
+        }
+
+        dialog li button {
+            width: 100%;
+            justify-content: flex-start;
+            text-align: left;
+            font-family: var(--body);
+            font-size: .875rem;
+            border-color: var(--danger);
+        }
+
+        dialog .files {
+            font-family: var(--mono);
+            font-size: .8125rem;
+            color: var(--text-muted);
+            overflow-wrap: anywhere;
+        }
+
+        .dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: .5rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app"></div>
+    <div class="notice" id="notice" role="status" hidden></div>
+    <datalist id="known-images"></datalist>
+
+    <dialog id="publish-dialog" aria-labelledby="publish-title">
+        <h2 id="publish-title">Publish to your live site</h2>
+        <div id="publish-body"></div>
+    </dialog>
+
+    <script>
+        // ---------- config ----------
+        const REPO = 'Joep2307/Joep-Groenteman-portfolio';
+        const BRANCH = 'main';
+        const API = `https://api.github.com/repos/${REPO}`;
+        const LIVE_URL = 'https://joep-groenteman-portfolio-qwc2.vercel.app';
+        const TOKEN_KEY = 'portfolio-editor-token';
+        const TOKEN_URL = 'https://github.com/settings/personal-access-tokens/new?name=Portfolio+editor&description=Publishes+portfolio+edits+from+the+%2Fdev+page&expires_in=365&contents=write';
+        const MAX_UPLOAD_NOTE = 2 * 1024 * 1024;
+
+        // every selector the editor relies on, so a hand edit that removes one gives a clear message
+        const REQUIRED = ['title', 'meta[name="description"]', 'meta[property="og:title"]', 'meta[property="og:description"]',
+            '.topnav .mark a', '.contact-link', '.rail', '#intro .eyebrow', '.hero-title', '.hero-sub', '.hero-meta', '.scroll-cue',
+            '#work .section-title', '.cases', '#about .section-title', '.about-bio', '.about-bio [data-open]', '.skills-list',
+            '#contact .section-title', '.contact-title', '.contact-email', '.socials', '#overlay', '.panel-close', 'footer span'];
+
+        // ---------- state ----------
+        // `doc` is the parsed index.html and the only copy of the content: forms edit its nodes directly,
+        // and publishing serializes it again, so CSS, scripts and hand edits are never touched.
+        let doc = null;
+        let cleanHtml = '';
+        let baseBlobSha = null;
+        let conflict = null;
+        let pending = {};
+        let previewImages = {};
+        let knownImages = [];
+        let currentView = 'intro';
+        let previewOn = window.innerWidth > 1100;
+        let previewTarget = { scroll: '#intro' };
+        let previewScroll = null;
+        let flushTimer = null;
+        let noticeTimer = null;
+        let fieldSeq = 0;
+
+        const $ = selector => document.querySelector(selector);
+        const pad = n => String(n).padStart(2, '0');
+        const clean = s => s.replace(/\s+/g, ' ').trim();
+        const escapeHtml = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        const serialize = () => '<!DOCTYPE html>\n' + doc.documentElement.outerHTML + '\n';
+        const token = () => localStorage.getItem(TOKEN_KEY);
+
+        function h(tag, props = {}, ...kids) {
+            const el = document.createElement(tag);
+            for (const [key, value] of Object.entries(props)) {
+                if (key.startsWith('on')) el.addEventListener(key.slice(2), value);
+                else if (key === 'class') el.className = value;
+                else if (value === true) el.setAttribute(key, '');
+                else if (value !== false && value != null) el.setAttribute(key, value);
+            }
+            el.append(...kids.flat().filter(kid => kid != null && kid !== false));
+            return el;
+        }
+
+        function notify(message, link) {
+            const notice = $('#notice');
+            notice.replaceChildren(message);
+            if (link) notice.append(' ', h('a', { href: link.href, target: '_blank', rel: 'noopener noreferrer' }, link.label));
+            notice.hidden = false;
+            clearTimeout(noticeTimer);
+            noticeTimer = setTimeout(() => { notice.hidden = true; }, 7000);
+        }
+
+        // ---------- github ----------
+        async function gh(path, options = {}) {
+            const res = await fetch(API + path, {
+                ...options,
+                cache: 'no-store',
+                headers: { Authorization: `Bearer ${token()}`, Accept: 'application/vnd.github+json' },
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw Object.assign(new Error(data.message || `GitHub error ${res.status}`), { status: res.status });
+            return data;
+        }
+
+        const post = (path, body) => gh(path, { method: 'POST', body: JSON.stringify(body) });
+
+        function decodeBase64(b64) {
+            const bytes = Uint8Array.from(atob(b64.replace(/\n/g, '')), c => c.charCodeAt(0));
+            return new TextDecoder().decode(bytes);
+        }
+
+        async function fetchLatest() {
+            const ref = await gh(`/git/ref/heads/${BRANCH}`);
+            const head = ref.object.sha;
+            const file = await gh(`/contents/index.html?ref=${head}`);
+            return { head, blobSha: file.sha, html: decodeBase64(file.content) };
+        }
+
+        async function publish(message) {
+            const latest = await fetchLatest();
+            if (latest.blobSha !== baseBlobSha) {
+                conflict = latest;
+                throw new Error('index.html changed on GitHub since you started editing. Nothing was published.');
+            }
+            const html = serialize();
+            const uploads = Object.entries(pending);
+            const htmlBlob = await post('/git/blobs', { content: html, encoding: 'utf-8' });
+            const files = await Promise.all(uploads.map(async ([path, file]) => {
+                const blob = await post('/git/blobs', { content: file.base64, encoding: 'base64' });
+                return { path, mode: '100644', type: 'blob', sha: blob.sha };
+            }));
+            const parent = await gh(`/git/commits/${latest.head}`);
+            const tree = await post('/git/trees', {
+                base_tree: parent.tree.sha,
+                tree: [{ path: 'index.html', mode: '100644', type: 'blob', sha: htmlBlob.sha }, ...files],
+            });
+            const commit = await post('/git/commits', { message, tree: tree.sha, parents: [latest.head] });
+            await gh(`/git/refs/heads/${BRANCH}`, { method: 'PATCH', body: JSON.stringify({ sha: commit.sha }) });
+
+            baseBlobSha = htmlBlob.sha;
+            cleanHtml = html;
+            pending = {};
+            await clearDraft();
+        }
+
+        // ---------- draft (kept on this device until published) ----------
+        function store(mode, run) {
+            return new Promise((resolve, reject) => {
+                const open = indexedDB.open('portfolio-editor', 1);
+                open.onupgradeneeded = () => open.result.createObjectStore('kv');
+                open.onerror = () => reject(open.error);
+                open.onsuccess = () => {
+                    const tx = open.result.transaction('kv', mode);
+                    const req = run(tx.objectStore('kv'));
+                    tx.oncomplete = () => { open.result.close(); resolve(req.result); };
+                    tx.onerror = () => { open.result.close(); reject(tx.error); };
+                };
+            });
+        }
+
+        const loadDraft = () => store('readonly', kv => kv.get('draft'));
+        const clearDraft = () => store('readwrite', kv => kv.delete('draft'));
+        const saveDraft = () => store('readwrite', kv => kv.put({ html: serialize(), baseBlobSha, pending }, 'draft'));
+
+        function isDirty() {
+            return serialize() !== cleanHtml || Object.keys(pending).length > 0;
+        }
+
+        // ---------- inline text: **bold**, *accent*, enter for a line break ----------
+        function toMarkup(node, skip) {
+            let out = '';
+            for (const child of node.childNodes) {
+                if (child.nodeType === 3) out += child.textContent.replace(/\s+/g, ' ');
+                if (child.nodeType !== 1 || (skip && child.matches(skip))) continue;
+                if (child.tagName === 'BR') out += '\n';
+                else if (/^(STRONG|B)$/.test(child.tagName)) out += `**${toMarkup(child).trim()}**`;
+                else if (/^(EM|I)$/.test(child.tagName)) out += `*${toMarkup(child).trim()}*`;
+                else out += toMarkup(child);
+            }
+            return out.split('\n').map(line => line.trim()).join('\n').trim();
+        }
+
+        function fromMarkup(text) {
+            return escapeHtml(text.trim())
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function setMarkup(node, value, skip) {
+            [...node.childNodes].forEach(child => {
+                if (!(skip && child.nodeType === 1 && child.matches(skip))) child.remove();
+            });
+            node.insertAdjacentHTML('beforeend', fromMarkup(value));
+        }
+
+        // anything other than bold, italic and line breaks can't round-trip through a plain field
+        const hasCustomHtml = (node, skip) => [...node.querySelectorAll('*')]
+            .some(el => !/^(STRONG|B|EM|I|BR)$/.test(el.tagName) && !(skip && el.matches(skip)));
+
+        // ---------- site document helpers ----------
+        const leadingWs = el => {
+            const prev = el.previousSibling;
+            return prev && prev.nodeType === 3 && !prev.textContent.trim() ? prev : null;
+        };
+
+        function addNode(parent, html, before = null) {
+            const holder = doc.createElement('div');
+            holder.innerHTML = html.trim();
+            const el = holder.firstElementChild;
+            const sample = [...parent.children].map(leadingWs).find(Boolean);
+            const last = parent.lastChild;
+            const ref = before ? (leadingWs(before) || before)
+                : (last && last.nodeType === 3 && !last.textContent.trim() ? last : null);
+            parent.insertBefore(doc.createTextNode(sample ? sample.textContent.replace(/\n+/, '\n') : '\n'), ref);
+            parent.insertBefore(el, ref);
+            return el;
+        }
+
+        function moveBefore(group, target) {
+            const anchor = leadingWs(target) || target;
+            for (const el of group) {
+                const ws = leadingWs(el);
+                if (ws) anchor.parentNode.insertBefore(ws, anchor);
+                anchor.parentNode.insertBefore(el, anchor);
+            }
+        }
+
+        function removeGroup(item) {
+            for (const el of item.nodes) {
+                const ws = leadingWs(el);
+                if (ws) ws.remove();
+                el.remove();
+            }
+        }
+
+        function swapGroups(items, a, b) {
+            const [first, second] = a < b ? [a, b] : [b, a];
+            moveBefore(items[second].nodes, items[first].nodes[0]);
+        }
+
+        function leadText(el) {
+            let node = [...el.childNodes].find(child => child.nodeType === 3 && child.textContent.trim());
+            if (!node) {
+                node = doc.createTextNode('');
+                el.prepend(node);
+            }
+            return node;
+        }
+
+        function nextNumber(prefix) {
+            const used = [...doc.querySelectorAll(`[id^="${prefix}"]`)]
+                .map(el => parseInt(el.id.slice(prefix.length), 10)).filter(Number.isFinite);
+            return pad(Math.max(0, ...used) + 1);
+        }
+
+        const assetUrl = path => !path ? '' : previewImages[path] || new URL(path, location.origin + '/').href;
+
+        function projects() {
+            return [...doc.querySelectorAll('.cases > .case')].map(card => {
+                const link = card.querySelector('[data-open]');
+                const panel = link && doc.getElementById(link.dataset.open);
+                return panel && { card, panel, id: panel.id, title: clean(card.querySelector('.case-title').textContent), nodes: [card] };
+            }).filter(Boolean);
+        }
+
+        const cvPanel = () => doc.getElementById(doc.querySelector('.about-bio [data-open]').dataset.open);
+
+        const customSections = () => [...doc.querySelectorAll('main > section')]
+            .filter(section => !['intro', 'work', 'about', 'contact'].includes(section.id));
+
+        function renumberCases() {
+            projects().forEach((project, i) => {
+                for (const el of [project.card.querySelector('.case-index'), project.panel.querySelector('.panel-index')]) {
+                    el.textContent = clean(el.textContent).replace(/^CASE \d+/, `CASE ${pad(i + 1)}`);
+                }
+            });
+        }
+
+        function renumberSections() {
+            [...doc.querySelectorAll('main > section .section-num')].forEach((num, i) => { num.textContent = pad(i + 1); });
+        }
+
+        // ---------- form fields ----------
+        function field(label, value, onChange, { multiline = false, hint, placeholder, list, disabled, type = 'text' } = {}) {
+            const id = `field-${++fieldSeq}`;
+            const input = h(multiline ? 'textarea' : 'input', {
+                id, placeholder, list, disabled, rows: multiline ? 2 : null, type: multiline ? null : type,
+                'aria-describedby': hint ? `${id}-hint` : null,
+            });
+            input.value = value;
+            input.addEventListener('input', () => {
+                onChange(input.value);
+                if (multiline) autosize(input);
+                changed();
+            });
+            return h('div', { class: 'field' },
+                h('label', { for: id }, label),
+                input,
+                hint && h('p', { class: 'hint', id: `${id}-hint` }, hint));
+        }
+
+        function autosize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = `${textarea.scrollHeight + 2}px`;
+        }
+
+        const textField = (label, node, options) =>
+            field(label, clean(node.textContent), value => { node.textContent = value; }, options);
+
+        const attrField = (label, node, name, options) =>
+            field(label, node.getAttribute(name) || '', value => node.setAttribute(name, value), options);
+
+        function richField(label, node, { skip, multiline = true, hint } = {}) {
+            const custom = hasCustomHtml(node, skip);
+            return field(label, toMarkup(node, skip), value => setMarkup(node, value, skip), {
+                multiline,
+                disabled: custom,
+                hint: custom ? 'Contains custom HTML, so edit this one in index.html.' : hint,
+            });
+        }
+
+        function optionalField(label, parent, selector, html, before, options) {
+            const find = () => parent.querySelector(selector);
+            return field(label, find() ? toMarkup(find()) : '', value => {
+                if (value.trim()) setMarkup(find() || addNode(parent, html, before()), value);
+                else if (find()) removeGroup({ nodes: [find()] });
+            }, options);
+        }
+
+        function tagsField(label, container) {
+            const tags = [...container.children].map(tag => clean(tag.textContent)).join(', ');
+            return field(label, tags, value => {
+                container.replaceChildren(...value.split(',').map(clean).filter(Boolean).map(tag => {
+                    const span = doc.createElement('span');
+                    span.textContent = tag;
+                    return span;
+                }));
+            }, { hint: 'Separate tags with commas.' });
+        }
+
+        // the "CASE 01" prefix follows the project's position, so only the rest is editable
+        function caseLabelField(label, node) {
+            const text = clean(node.textContent);
+            const prefix = text.match(/^CASE \d+/);
+            if (!prefix) return textField(label, node);
+            return field(label, text.slice(prefix[0].length).replace(/^\s*[—-]\s*/, ''), value => {
+                const current = clean(node.textContent).match(/^CASE \d+/)[0];
+                node.textContent = value.trim() ? `${current} — ${value.trim()}` : current;
+            }, { hint: `Shown after “${prefix[0]} —”. The number follows the project's position.` });
+        }
+
+        async function stageFile(file, path) {
+            const dataUrl = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(reader.error);
+                reader.readAsDataURL(file);
+            });
+            pending[path] = { base64: dataUrl.split(',')[1], dataUrl };
+            previewImages[path] = dataUrl;
+        }
+
+        function uniqueImagePath(fileName) {
+            const dot = fileName.lastIndexOf('.');
+            const ext = dot > 0 ? fileName.slice(dot + 1).toLowerCase() : 'jpg';
+            const slug = (dot > 0 ? fileName.slice(0, dot) : fileName).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'image';
+            let path = `img/${slug}.${ext}`;
+            for (let n = 2; knownImages.includes(path); n++) path = `img/${slug}-${n}.${ext}`;
+            return path;
+        }
+
+        function refreshKnownImages() {
+            $('#known-images').replaceChildren(...knownImages.map(path => h('option', { value: path })));
+        }
+
+        function imageField(label, img) {
+            const thumbImg = h('img', { alt: '' });
+            const thumbEmpty = h('span', {}, 'No image');
+            const showThumb = () => {
+                const src = img.getAttribute('src');
+                thumbImg.hidden = !src;
+                thumbEmpty.hidden = !!src;
+                if (src) thumbImg.src = assetUrl(src);
+            };
+            showThumb();
+
+            const pathField = attrField('Image path', img, 'src', { list: 'known-images', placeholder: 'img/my-image.jpg' });
+            const pathInput = pathField.querySelector('input');
+            pathInput.addEventListener('input', showThumb);
+
+            const fileId = `field-${++fieldSeq}`;
+            const fileInput = h('input', {
+                type: 'file', id: fileId, accept: 'image/*',
+                onchange: async () => {
+                    const file = fileInput.files[0];
+                    if (!file) return;
+                    const path = uniqueImagePath(file.name);
+                    await stageFile(file, path);
+                    knownImages.push(path);
+                    refreshKnownImages();
+                    img.setAttribute('src', path);
+                    pathInput.value = path;
+                    showThumb();
+                    changed();
+                    notify(file.size > MAX_UPLOAD_NOTE
+                        ? `${path} added, but it is ${(file.size / 1048576).toFixed(1)} MB. Under 1 MB keeps your site fast.`
+                        : `${path} added. It uploads when you publish.`);
+                },
+            });
+
+            return h('div', {},
+                h('p', { class: 'field-label' }, label),
+                h('div', { class: 'image-field' },
+                    h('div', { class: 'thumb' }, thumbImg, thumbEmpty),
+                    h('div', {},
+                        h('div', { class: 'upload' }, fileInput, h('label', { for: fileId, class: 'btn' }, 'Upload image')),
+                        pathField,
+                        attrField('Alt text', img, 'alt', { multiline: true, hint: 'Describe the image for people using a screen reader.' }))));
+        }
+
+        function group(title, kids, target) {
+            return h('section', { class: 'group', 'data-preview': target ? JSON.stringify(target) : null },
+                h('h2', {}, title), kids);
+        }
+
+        // ---------- repeating lists ----------
+        function act(run, focusTargets = []) {
+            run();
+            changed();
+            renderView();
+            const target = focusTargets.map(selector => $(selector)).find(Boolean) || $('#editor h1');
+            target.focus();
+        }
+
+        function listEditor({ key, name, items, render, adds = [], swap = swapGroups, remove = removeGroup, confirmRemove, rowClass = '' }) {
+            const moveFocus = (i, dir) => [`[data-fk="${key}:${i}:${dir}"]:not(:disabled)`, `[data-fk="${key}:${i}:${dir === 'up' ? 'down' : 'up'}"]:not(:disabled)`];
+            const addFocus = [`[data-add="${key}"]`];
+            const firstInput = i => [`[data-row="${key}:${i}"] input:not([type="file"]), [data-row="${key}:${i}"] textarea`];
+            return h('div', {},
+                items.map((item, i) => h('div', { class: `row ${rowClass}`, 'data-row': `${key}:${i}` },
+                    h('div', { class: 'row-body' }, render(item, i)),
+                    h('div', { class: 'row-actions' },
+                        h('button', {
+                            type: 'button', class: 'icon', 'aria-label': `Move ${name} ${i + 1} up`, title: 'Move up',
+                            'data-fk': `${key}:${i}:up`, disabled: i === 0,
+                            onclick: () => act(() => swap(items, i, i - 1), moveFocus(i - 1, 'up')),
+                        }, '↑'),
+                        h('button', {
+                            type: 'button', class: 'icon', 'aria-label': `Move ${name} ${i + 1} down`, title: 'Move down',
+                            'data-fk': `${key}:${i}:down`, disabled: i === items.length - 1,
+                            onclick: () => act(() => swap(items, i, i + 1), moveFocus(i + 1, 'down')),
+                        }, '↓'),
+                        item.fixed ? null : h('button', {
+                            type: 'button', class: 'icon danger', 'aria-label': `Remove ${name} ${i + 1}`, title: 'Remove',
+                            onclick: () => {
+                                if (confirmRemove && !confirm(confirmRemove(item))) return;
+                                act(() => remove(item), addFocus);
+                            },
+                        }, '✕')))),
+                adds.length > 0 && h('div', { class: 'adds' }, adds.map((add, i) => h('button', {
+                    type: 'button', 'data-add': i === 0 ? key : null,
+                    onclick: () => act(add.run, firstInput(items.length)),
+                }, `+ ${add.label}`))));
+        }
+
+        function paragraphList(key, parent, before, intro) {
+            const items = [...parent.children].filter(el => el.tagName === 'P').map(el => ({ nodes: [el] }));
+            return h('div', {},
+                h('p', { class: 'field-label' }, 'Paragraphs'),
+                intro && h('p', { class: 'hint', style: 'margin-bottom:.6rem' }, intro),
+                listEditor({
+                    key, name: 'paragraph', items,
+                    render: (item, i) => richField(`Paragraph ${i + 1}`, item.nodes[0]),
+                    adds: [{ label: 'Add paragraph', run: () => addNode(parent, '<p></p>', before) }],
+                }));
+        }
+
+        function sectionFields(id) {
+            const section = doc.getElementById(id);
+            const rail = doc.querySelector(`.rail [data-target="${id}"] .label`);
+            return [
+                textField('Section heading', section.querySelector('.section-title')),
+                rail && textField('Label in the side navigation', rail),
+            ];
+        }
+
+        // ---------- views ----------
+        function viewIntro() {
+            const meta = doc.querySelector('.hero-meta');
+            const metaItems = [...meta.children].map(el => ({ nodes: [el] }));
+            return ['Intro',
+                group('Hero', [
+                    textField('Small line above the title', doc.querySelector('#intro .eyebrow')),
+                    richField('Title', doc.querySelector('.hero-title'), { hint: 'Enter starts a new line. Wrap a word in *asterisks* for the accent colour.' }),
+                    richField('Introduction', doc.querySelector('.hero-sub')),
+                    richField('Scroll hint', doc.querySelector('.scroll-cue'), { skip: '.line', multiline: false }),
+                    textField('Label in the side navigation', doc.querySelector('.rail [data-target="intro"] .label')),
+                ]),
+                group('Facts under the introduction', listEditor({
+                    key: 'meta', name: 'fact', items: metaItems,
+                    render: item => h('div', { class: 'two-up' },
+                        textField('Label', item.nodes[0].querySelector('span')),
+                        richField('Value', item.nodes[0], { skip: 'span', multiline: false })),
+                    adds: [{ label: 'Add fact', run: () => addNode(meta, '<div><span></span></div>') }],
+                })),
+            ];
+        }
+
+        function viewWork() {
+            const list = projects();
+            return ['Projects',
+                group('Section', sectionFields('work')),
+                group('Your projects', listEditor({
+                    key: 'projects', name: 'project', items: list, rowClass: 'project-row',
+                    swap: swapProjects,
+                    remove: removeProject,
+                    confirmRemove: project => `Remove “${project.title}” and its case study? It only disappears from the live site once you publish.`,
+                    render: project => h('button', { type: 'button', class: 'project-open', onclick: () => go(`project:${project.id}`) }, project.title || 'Untitled project'),
+                })),
+                h('div', { class: 'adds' }, h('button', { type: 'button', onclick: addProject }, '+ Add project')),
+            ];
+        }
+
+        function swapProjects(items, a, b) {
+            const [first, second] = a < b ? [a, b] : [b, a];
+            moveBefore([items[second].card], items[first].card);
+            moveBefore([items[second].panel], items[first].panel);
+            renumberCases();
+        }
+
+        function removeProject(project) {
+            removeGroup({ nodes: [project.card, project.panel] });
+            renumberCases();
+        }
+
+        function addProject() {
+            const n = nextNumber('panel-');
+            const prev = clean(doc.querySelector('.panel-nav [data-nav="prev"]')?.textContent || '← Previous');
+            const next = clean(doc.querySelector('.panel-nav [data-nav="next"]')?.textContent || 'Next →');
+            const caseNum = `CASE ${pad(projects().length + 1)}`;
+            addNode(doc.querySelector('.cases'), `
+            <div class="case" id="case-${n}">
+                <div class="case-media">
+                    <div class="glow"></div><img src="" loading="lazy" alt="">
+                </div>
+                <div>
+                    <span class="case-index">${caseNum}</span>
+                    <h3 class="case-title">New project</h3>
+                    <p class="case-desc"></p>
+                    <div class="case-tags"></div>
+                    <a href="#panel-${n}" class="case-link" data-open="panel-${n}">View case study →</a>
+                </div>
+            </div>`);
+            addNode(doc.getElementById('overlay'), `
+        <div class="case-panel" id="panel-${n}" role="dialog" aria-modal="true" aria-labelledby="panel-${n}-title" tabindex="-1">
+            <span class="panel-index">${caseNum}</span>
+            <h3 class="panel-title" id="panel-${n}-title">New project</h3>
+            <div class="panel-tags"></div>
+            <div class="panel-media"><img src="" loading="lazy" alt=""></div>
+            <div class="panel-block">
+                <h4>Overview</h4>
+                <p></p>
+            </div>
+            <div class="panel-block">
+                <h4>Process</h4>
+                <p></p>
+            </div>
+            <div class="panel-block">
+                <h4>Outcome</h4>
+                <p></p>
+            </div>
+            <div class="panel-nav">
+                <button data-nav="prev">${escapeHtml(prev)}</button>
+                <button data-nav="next">${escapeHtml(next)}</button>
+            </div>
+        </div>`, cvPanel());
+            changed();
+            go(`project:panel-${n}`);
+            $('#editor input').select();
+        }
+
+        function blockItems(block) {
+            const items = [];
+            for (const el of block.children) {
+                if (el.tagName === 'H4') continue;
+                const previous = items[items.length - 1];
+                if (el.classList.contains('panel-caption') && previous?.type === 'image') previous.nodes.push(el);
+                else if (el.tagName === 'IMG') items.push({ type: 'image', nodes: [el] });
+                else if (el.tagName === 'P') items.push({ type: 'text', nodes: [el] });
+                else if (el.classList.contains('cv-item')) items.push({ type: 'entry', nodes: [el] });
+                else if (el.classList.contains('cv-langs')) items.push({ type: 'languages', nodes: [el], fixed: true });
+                else items.push({ type: 'other', nodes: [el], fixed: true });
+            }
+            return items;
+        }
+
+        function captionField(item) {
+            const block = item.nodes[0].parentNode;
+            return field('Caption', item.nodes[1] ? clean(item.nodes[1].textContent) : '', value => {
+                if (!value.trim()) {
+                    if (item.nodes[1]) removeGroup({ nodes: item.nodes.splice(1) });
+                    return;
+                }
+                if (!item.nodes[1]) item.nodes[1] = addNode(block, '<p class="panel-caption"></p>', item.nodes[0].nextElementSibling);
+                item.nodes[1].textContent = value;
+            }, { multiline: true });
+        }
+
+        function renderBlockItem(item, i, key) {
+            if (item.type === 'text') return richField(`Paragraph`, item.nodes[0]);
+            if (item.type === 'image') return h('div', {}, imageField('Image', item.nodes[0]), captionField(item));
+            if (item.type === 'entry') return cvEntry(item.nodes[0], `${key}:${i}`, true);
+            if (item.type === 'languages') return languages(item.nodes[0], `${key}:${i}`);
+            return h('p', { class: 'hint' }, 'Custom HTML. Edit this part in index.html.');
+        }
+
+        function blocksEditor(key, panel, before, adds) {
+            const blocks = [...panel.querySelectorAll(':scope > .panel-block')].filter(block => block.querySelector(':scope > h4'));
+            return listEditor({
+                key, name: 'section', items: blocks.map(block => ({ nodes: [block] })),
+                confirmRemove: item => `Remove the “${clean(item.nodes[0].querySelector('h4').textContent)}” section?`,
+                render: (item, i) => {
+                    const block = item.nodes[0];
+                    const itemsKey = `${key}:${i}:items`;
+                    return h('div', {},
+                        textField('Section heading', block.querySelector(':scope > h4')),
+                        listEditor({
+                            key: itemsKey, name: 'item', items: blockItems(block),
+                            render: (blockItem, j) => renderBlockItem(blockItem, j, itemsKey),
+                            adds: adds(block),
+                        }));
+                },
+                adds: [{
+                    label: 'Add section',
+                    run: () => addNode(panel, '<div class="panel-block">\n<h4></h4>\n<p></p>\n</div>', before),
+                }],
+            });
+        }
+
+        function viewProject(id) {
+            const project = projects().find(p => p.id === id);
+            if (!project) return viewWork();
+            const { card, panel } = project;
+            const titleField = field('Project title', project.title, value => {
+                card.querySelector('.case-title').textContent = value;
+                panel.querySelector('.panel-title').textContent = value;
+            });
+            const nav = panel.querySelector('.panel-nav');
+            return [project.title || 'Untitled project',
+                h('div', { class: 'adds' }, h('button', { type: 'button', onclick: () => go('work') }, '← All projects')),
+                group('Project', titleField),
+                group('Homepage card', [
+                    caseLabelField('Label', card.querySelector('.case-index')),
+                    richField('Short description', card.querySelector('.case-desc')),
+                    tagsField('Tags', card.querySelector('.case-tags')),
+                    imageField('Card image', card.querySelector('.case-media img')),
+                    textField('Link text', card.querySelector('.case-link')),
+                ], { scroll: `#${card.id}` }),
+                group('Case study', [
+                    caseLabelField('Label', panel.querySelector('.panel-index')),
+                    tagsField('Tags', panel.querySelector('.panel-tags')),
+                    imageField('Main image', panel.querySelector('.panel-media img')),
+                    h('p', { class: 'hint', style: 'margin-bottom:1rem' }, 'In paragraphs, **double asterisks** make text bold.'),
+                    blocksEditor(`${id}:blocks`, panel, nav, block => [
+                        { label: 'Add paragraph', run: () => addNode(block, '<p></p>') },
+                        { label: 'Add image', run: () => addNode(block, '<img src="" alt="" loading="lazy">') },
+                    ]),
+                ], { open: id }),
+            ];
+        }
+
+        function viewAbout() {
+            const bio = doc.querySelector('.about-bio');
+            const actions = bio.querySelector('[data-open]').parentNode;
+            const skills = doc.querySelector('.skills-list');
+            const cvLink = bio.querySelector('.cv-btn');
+            const cvButtons = doc.querySelectorAll('.cv-btn');
+            const cvPath = cvLink.getAttribute('href');
+            const fileId = `field-${++fieldSeq}`;
+            return ['About',
+                group('Section', sectionFields('about')),
+                group('Bio', [
+                    paragraphList('bio', bio, actions, 'Double asterisks make text **bold**. The first paragraph shows larger on the site.'),
+                ]),
+                group('CV buttons', [
+                    h('div', { class: 'two-up' },
+                        textField('Download button text', cvLink),
+                        textField('View button text', bio.querySelector('[data-open]'))),
+                    h('p', { class: 'field-label' }, 'CV file'),
+                    h('p', { class: 'hint', style: 'margin-bottom:.5rem' }, `Replaces ${cvPath}, used by ${cvButtons.length} download buttons.`),
+                    h('div', { class: 'upload' },
+                        h('input', {
+                            type: 'file', id: fileId, accept: 'application/pdf',
+                            onchange: async event => {
+                                const file = event.target.files[0];
+                                if (!file) return;
+                                await stageFile(file, cvPath);
+                                changed();
+                                notify(`New CV ready. It replaces ${cvPath} when you publish.`);
+                            },
+                        }),
+                        h('label', { for: fileId, class: 'btn' }, 'Upload new CV (PDF)')),
+                ]),
+                group('Skills', listEditor({
+                    key: 'skills', name: 'skills row', items: [...skills.children].map(el => ({ nodes: [el] })),
+                    render: item => {
+                        const [name, detail] = item.nodes[0].children;
+                        return item.nodes[0].classList.contains('skills-heading')
+                            ? textField('Group heading', name)
+                            : h('div', { class: 'two-up' }, textField('Skill', name), textField('Details', detail));
+                    },
+                    adds: [
+                        { label: 'Add skill', run: () => addNode(skills, '<li><span></span><span></span></li>') },
+                        { label: 'Add group heading', run: () => addNode(skills, '<li class="skills-heading"><span></span><span></span></li>') },
+                    ],
+                })),
+            ];
+        }
+
+        function cvEntry(entry, key, withSubs) {
+            const role = entry.querySelector(':scope > .cv-item-head .cv-role');
+            const roleText = () => {
+                const org = role.querySelector('span');
+                const copy = role.cloneNode(true);
+                copy.querySelector('span')?.remove();
+                return { name: clean(copy.textContent).replace(/\s*—$/, ''), org: org ? clean(org.textContent) : '' };
+            };
+            const writeRole = ({ name, org }) => {
+                role.textContent = org.trim() ? `${name} — ` : name;
+                if (org.trim()) {
+                    const span = doc.createElement('span');
+                    span.textContent = org;
+                    role.append(span);
+                }
+            };
+            const head = entry.querySelector(':scope > .cv-item-head');
+            const sub = () => entry.querySelector(':scope > .cv-sub');
+            const subs = sub() ? [...sub().querySelectorAll(':scope > .cv-item')].map(el => ({ nodes: [el] })) : [];
+            return h('div', {},
+                h('div', { class: 'two-up' },
+                    field('Role or title', roleText().name, value => writeRole({ ...roleText(), name: value })),
+                    field('Organisation', roleText().org, value => writeRole({ ...roleText(), org: value }))),
+                h('div', { class: 'two-up' },
+                    textField('Dates', head.querySelector('.cv-date')),
+                    optionalField('Grade', entry, ':scope > .cv-grade', '<span class="cv-grade"></span>', () => head.nextElementSibling, { placeholder: 'Grade: 8.5' })),
+                optionalField('Description', entry, ':scope > p', '<p></p>', () => sub(), { multiline: true }),
+                withSubs && h('div', {},
+                    h('p', { class: 'sub-heading' }, 'Sub-roles'),
+                    listEditor({
+                        key: `${key}:subs`, name: 'sub-role', items: subs,
+                        remove: item => {
+                            const wrapper = item.nodes[0].parentNode;
+                            removeGroup(item);
+                            if (!wrapper.children.length) removeGroup({ nodes: [wrapper] });
+                        },
+                        render: (item, i) => cvEntry(item.nodes[0], `${key}:subs:${i}`, false),
+                        adds: [{
+                            label: 'Add sub-role',
+                            run: () => addNode(sub() || addNode(entry, '<div class="cv-sub"></div>'), CV_ENTRY_HTML),
+                        }],
+                    })));
+        }
+
+        const CV_ENTRY_HTML = `
+                <div class="cv-item">
+                    <div class="cv-item-head">
+                        <span class="cv-role"></span>
+                        <span class="cv-date"></span>
+                    </div>
+                </div>`;
+
+        function languages(list, key) {
+            return h('div', {},
+                h('p', { class: 'field-label' }, 'Languages'),
+                listEditor({
+                    key: `${key}:langs`, name: 'language', items: [...list.children].map(el => ({ nodes: [el] })),
+                    render: item => {
+                        const [li] = item.nodes;
+                        return h('div', { class: 'two-up' },
+                            field('Language', clean(leadText(li).textContent), value => { leadText(li).textContent = value; }),
+                            textField('Level', li.querySelector('span')));
+                    },
+                    adds: [{ label: 'Add language', run: () => addNode(list, '<li><span></span></li>') }],
+                }));
+        }
+
+        function viewCv() {
+            const panel = cvPanel();
+            const download = panel.querySelector('.cv-btn');
+            const downloadBlock = download.closest('.panel-block');
+            return ['CV',
+                group('Header', [
+                    textField('Small label', panel.querySelector('.panel-index')),
+                    textField('Title', panel.querySelector('.panel-title')),
+                    tagsField('Tags', panel.querySelector('.panel-tags')),
+                    textField('Download button text', download),
+                ], { open: panel.id }),
+                group('Sections', blocksEditor('cv', panel, downloadBlock, block => [
+                    { label: 'Add entry', run: () => addNode(block, CV_ENTRY_HTML) },
+                    { label: 'Add paragraph', run: () => addNode(block, '<p></p>') },
+                ]), { open: panel.id }),
+            ];
+        }
+
+        function viewContact() {
+            const email = doc.querySelector('.contact-email');
+            const socials = doc.querySelector('.socials');
+            return ['Contact',
+                group('Section', sectionFields('contact')),
+                group('Details', [
+                    textField('Big line', doc.querySelector('.contact-title')),
+                    field('Email address', clean(email.textContent), value => {
+                        email.textContent = value;
+                        email.setAttribute('href', `mailto:${value.trim()}`);
+                    }, { type: 'email' }),
+                ]),
+                group('Links', listEditor({
+                    key: 'socials', name: 'link', items: [...socials.children].map(el => ({ nodes: [el] })),
+                    render: item => {
+                        const [link] = item.nodes;
+                        return h('div', { class: 'two-up' },
+                            field('Name', clean(leadText(link).textContent), value => { leadText(link).textContent = value; }),
+                            attrField('URL', link, 'href', { type: 'url', placeholder: 'https://' }));
+                    },
+                    adds: [{
+                        label: 'Add link',
+                        run: () => addNode(socials, '<a href="" target="_blank" rel="noopener noreferrer"><span class="sr-only"> (opens in a new tab)</span></a>'),
+                    }],
+                })),
+            ];
+        }
+
+        function addSection() {
+            const n = nextNumber('section-');
+            const id = `section-${n}`;
+            const contact = doc.getElementById('contact');
+            addNode(doc.querySelector('main'), `
+        <section id="${id}">
+            <div class="section-head">
+                <span class="section-num"></span>
+                <h2 class="section-title">New section</h2>
+                <div class="section-rule"></div>
+            </div>
+            <div class="about-bio">
+                <p></p>
+            </div>
+        </section>`, contact);
+            addNode(doc.querySelector('.rail'), `<a class="rail-item" href="#${id}" data-target="${id}"><span class="label">New section</span></a>`,
+                doc.querySelector('.rail [data-target="contact"]'));
+            renumberSections();
+            changed();
+            go(`section:${id}`);
+            $('#editor input').select();
+        }
+
+        function viewSection(id) {
+            const section = doc.getElementById(id);
+            if (!section) return viewIntro();
+            return [clean(section.querySelector('.section-title').textContent) || 'Untitled section',
+                group('Section', [
+                    ...sectionFields(id),
+                    paragraphList(`${id}:paragraphs`, section.querySelector('.about-bio'), null, 'Double asterisks make text **bold**. The first paragraph shows larger on the site.'),
+                ], { scroll: `#${id}` }),
+                h('div', { class: 'adds' }, h('button', {
+                    type: 'button', class: 'danger',
+                    onclick: () => {
+                        if (!confirm('Remove this section? It only disappears from the live site once you publish.')) return;
+                        removeGroup({ nodes: [section, doc.querySelector(`.rail [data-target="${id}"]`)] });
+                        renumberSections();
+                        changed();
+                        go('intro');
+                    },
+                }, 'Remove this section')),
+            ];
+        }
+
+        function viewSettings() {
+            const setAll = selector => value => doc.querySelectorAll(selector).forEach(el => { el.textContent = value; });
+            const firstText = selector => clean(doc.querySelector(selector)?.textContent || '');
+            return ['Site settings',
+                group('Search and sharing', [
+                    textField('Page title', doc.querySelector('title')),
+                    attrField('Description', doc.querySelector('meta[name="description"]'), 'content', { multiline: true }),
+                    attrField('Sharing title', doc.querySelector('meta[property="og:title"]'), 'content'),
+                    attrField('Sharing description', doc.querySelector('meta[property="og:description"]'), 'content', { multiline: true }),
+                ]),
+                group('Navigation', [
+                    richField('Your name, top left', doc.querySelector('.topnav .mark a'), { skip: 'img', hint: 'Enter starts a new line.' }),
+                    textField('Contact link, top right', doc.querySelector('.contact-link')),
+                    textField('Skip link', doc.querySelector('.skip-link')),
+                ]),
+                group('Case study buttons', [
+                    field('Previous', firstText('[data-nav="prev"]'), setAll('[data-nav="prev"]')),
+                    field('Next', firstText('[data-nav="next"]'), setAll('[data-nav="next"]')),
+                    textField('Close', doc.querySelector('.panel-close')),
+                ]),
+                group('Footer', [textField('Footer text', doc.querySelector('footer span'))]),
+            ];
+        }
+
+        const VIEWS = {
+            intro: { render: viewIntro, target: { scroll: '#intro' } },
+            work: { render: viewWork, target: { scroll: '#work' } },
+            about: { render: viewAbout, target: { scroll: '#about' } },
+            contact: { render: viewContact, target: { scroll: '#contact' } },
+            settings: { render: viewSettings, target: { scroll: '#intro' } },
+        };
+
+        function resolveView(view) {
+            const [kind, id] = view.split(':');
+            if (kind === 'project' && doc.getElementById(id)) return { render: () => viewProject(id), target: { scroll: `#${projects().find(p => p.id === id)?.card.id}` } };
+            if (kind === 'section' && doc.getElementById(id)) return { render: () => viewSection(id), target: { scroll: `#${id}` } };
+            if (kind === 'cv') return { render: viewCv, target: { open: cvPanel().id } };
+            return VIEWS[kind];
+        }
+
+        // ---------- app shell ----------
+        function renderSidebar() {
+            const item = (view, label, cls = '') => h('button', {
+                type: 'button', class: cls, 'aria-current': currentView === view ? 'page' : null, onclick: () => go(view),
+            }, h('span', {}, label));
+            $('#sidebar').replaceChildren(
+                item('intro', 'Intro'),
+                item('work', 'Projects'),
+                ...projects().map(project => item(`project:${project.id}`, project.title || 'Untitled project', 'sub')),
+                h('button', { type: 'button', class: 'add sub', onclick: addProject }, h('span', {}, '+ New project')),
+                item('about', 'About'),
+                item('cv', 'CV'),
+                ...customSections().map(section => item(`section:${section.id}`, clean(section.querySelector('.section-title').textContent) || 'Untitled section')),
+                item('contact', 'Contact'),
+                h('button', { type: 'button', class: 'add', onclick: addSection }, h('span', {}, '+ New section')),
+                item('settings', 'Site settings'),
+                h('div', { class: 'spacer' }),
+                h('button', { type: 'button', class: 'disconnect', onclick: disconnect }, h('span', {}, 'Disconnect GitHub')));
+        }
+
+        function conflictBanner() {
+            if (!conflict) return null;
+            return h('div', { class: 'banner', role: 'alert' },
+                h('p', {}, 'index.html changed on GitHub after you started these edits. Publishing your version would overwrite that newer change.'),
+                h('div', { class: 'adds' },
+                    h('button', { type: 'button', onclick: discardDraft }, 'Load the latest and drop my edits'),
+                    h('button', {
+                        type: 'button', class: 'danger',
+                        onclick: () => {
+                            baseBlobSha = conflict.blobSha;
+                            conflict = null;
+                            changed();
+                            renderView();
+                        },
+                    }, 'Keep my version')));
+        }
+
+        function renderView() {
+            const main = $('#editor');
+            const top = main.scrollTop;
+            const [title, ...content] = (resolveView(currentView) || VIEWS.intro).render();
+            main.replaceChildren(...[conflictBanner(), h('h1', { tabindex: '-1' }, title), ...content.flat()].filter(Boolean));
+            main.querySelectorAll('textarea').forEach(autosize);
+            main.scrollTop = top;
+            renderSidebar();
+        }
+
+        function go(view) {
+            currentView = resolveView(view) ? view : 'intro';
+            history.replaceState(null, '', `#${currentView}`);
+            renderView();
+            $('#editor').scrollTop = 0;
+            $('#editor h1').focus();
+            setPreviewTarget(resolveView(currentView).target);
+        }
+
+        function changed() {
+            clearTimeout(flushTimer);
+            flushTimer = setTimeout(flush, 300);
+        }
+
+        function flush() {
+            clearTimeout(flushTimer);
+            updateStatus();
+            renderSidebar();
+            refreshPreview();
+            if (isDirty()) saveDraft();
+            else clearDraft();
+        }
+
+        function updateStatus() {
+            const dirty = isDirty();
+            const status = $('#status');
+            status.textContent = dirty ? 'Unpublished changes, saved on this device' : 'Everything is published';
+            status.classList.toggle('dirty', dirty);
+            $('#publish-btn').disabled = !dirty;
+            $('#discard-btn').disabled = !dirty;
+        }
+
+        // ---------- preview ----------
+        function refreshPreview() {
+            if (!previewOn) return;
+            const clone = doc.cloneNode(true);
+            clone.querySelectorAll('img[src]').forEach(img => {
+                img.setAttribute('src', assetUrl(img.getAttribute('src')));
+                img.removeAttribute('loading');
+            });
+            const style = clone.createElement('style');
+            style.textContent = `*, *::before { animation: none !important; transition: none !important; }
+                html { scroll-behavior: auto !important; }
+                #intro .eyebrow, #intro .hero-title, #intro .hero-sub, #intro .hero-meta, #intro .scroll-cue { opacity: 1 !important; }`;
+            clone.head.append(style);
+            const script = clone.createElement('script');
+            script.textContent = `(function () {
+                var target = ${JSON.stringify(previewTarget)}, restore = ${JSON.stringify(previewScroll)};
+                var panel = target.open && document.getElementById(target.open);
+                document.querySelectorAll('.case').forEach(function (c) { c.classList.add('in-view'); });
+                if (panel) {
+                    // set by hand, because the site's openPanel() would pull keyboard focus out of the form
+                    overlay.hidden = false;
+                    overlay.classList.add('active');
+                    document.body.classList.add('panel-open');
+                    panels.forEach(function (p) { p.hidden = p !== panel; });
+                    activePanel = panel;
+                }
+                if (restore) {
+                    scrollTo(0, restore.y);
+                    if (panel) panel.scrollTop = restore.panelY;
+                } else if (target.scroll) {
+                    var el = document.querySelector(target.scroll);
+                    if (el) el.scrollIntoView();
+                }
+                document.addEventListener('scroll', function () {
+                    parent.postMessage({ previewScroll: { y: scrollY, panelY: panel ? panel.scrollTop : 0 } }, '*');
+                }, { capture: true, passive: true });
+            })();`;
+            clone.body.append(script);
+            if (!$('#preview-frame')) {
+                // no allow-same-origin: the preview must never be able to read the token
+                $('#preview').append(h('iframe', { id: 'preview-frame', title: 'Live preview of your portfolio', sandbox: 'allow-scripts' }));
+            }
+            $('#preview-frame').srcdoc = '<!DOCTYPE html>' + clone.documentElement.outerHTML;
+        }
+
+        function setPreviewTarget(target) {
+            if (JSON.stringify(target) === JSON.stringify(previewTarget)) return;
+            previewTarget = target;
+            previewScroll = null;
+            refreshPreview();
+        }
+
+        function togglePreview() {
+            previewOn = !previewOn;
+            renderShellState();
+            // a sandboxed frame stays blank if reused after being hidden, so each show gets a new one
+            if (previewOn) refreshPreview();
+            else $('#preview').replaceChildren();
+        }
+
+        function renderShellState() {
+            $('#layout').classList.toggle('preview-on', previewOn);
+            const btn = $('#preview-btn');
+            btn.textContent = previewOn ? 'Hide preview' : 'Show preview';
+            btn.setAttribute('aria-pressed', String(previewOn));
+        }
+
+        window.addEventListener('message', event => {
+            const frame = $('#preview-frame');
+            if (frame && event.source === frame.contentWindow && event.data.previewScroll) previewScroll = event.data.previewScroll;
+        });
+
+        // ---------- publishing ----------
+        function viewForNode(el) {
+            const card = el.closest('.case');
+            if (card) return `project:${card.querySelector('[data-open]').dataset.open}`;
+            const panel = el.closest('.case-panel');
+            if (panel) return panel === cvPanel() ? 'cv' : `project:${panel.id}`;
+            const section = el.closest('main > section');
+            return section && customSections().includes(section) ? `section:${section.id}` : section?.id || 'settings';
+        }
+
+        function placeName(el) {
+            const view = viewForNode(el);
+            if (view.startsWith('project:')) return projects().find(p => view === `project:${p.id}`)?.title || 'Untitled project';
+            return view === 'cv' ? 'CV' : (view.startsWith('section:') ? clean(doc.getElementById(view.slice(8)).querySelector('.section-title').textContent) : view[0].toUpperCase() + view.slice(1));
+        }
+
+        function validate() {
+            const problems = [];
+            const problem = (el, text) => problems.push({ view: viewForNode(el), text: `${placeName(el)}: ${text}` });
+            doc.querySelectorAll('main img, #overlay img').forEach(img => {
+                const src = img.getAttribute('src');
+                if (!src) problem(img, 'an image still needs a file.');
+                else if (src.startsWith('img/') && !knownImages.includes(src)) problem(img, `${src} doesn't exist.`);
+                if (!clean(img.getAttribute('alt') || '')) problem(img, 'an image still needs alt text.');
+            });
+            projects().forEach(project => {
+                if (!project.title || project.title === 'New project') problem(project.card, 'give the project a title.');
+                if (!clean(project.card.querySelector('.case-desc').textContent)) problem(project.card, 'add a short description.');
+            });
+            doc.querySelectorAll('.panel-block p, .about-bio p').forEach(p => {
+                if (!clean(p.textContent)) problem(p, 'there is an empty paragraph to fill in or remove.');
+            });
+            doc.querySelectorAll('.panel-block h4').forEach(heading => {
+                if (!clean(heading.textContent)) problem(heading, 'a section still needs a heading.');
+            });
+            return problems;
+        }
+
+        function openPublishDialog() {
+            flush();
+            const dialog = $('#publish-dialog');
+            const body = $('#publish-body');
+            const close = () => dialog.close();
+            const problems = validate();
+            if (problems.length) {
+                body.replaceChildren(
+                    h('p', {}, 'A few things need fixing first, so nothing broken or inaccessible goes live.'),
+                    h('ul', {}, problems.map(item => h('li', {}, h('button', {
+                        type: 'button',
+                        onclick: () => { close(); go(item.view); },
+                    }, item.text)))),
+                    h('div', { class: 'dialog-actions' }, h('button', { type: 'button', onclick: close }, 'Back to editing')));
+                dialog.showModal();
+                return;
+            }
+            const files = ['index.html', ...Object.keys(pending)];
+            const messageField = field('What changed?', 'Update portfolio content', () => { }, { hint: 'Saved as the commit message on GitHub.' });
+            const errorText = h('p', { class: 'error-text', role: 'alert', hidden: true });
+            const cancelBtn = h('button', { type: 'button', onclick: close }, 'Cancel');
+            const confirmBtn = h('button', {
+                type: 'button', class: 'primary',
+                onclick: async () => {
+                    confirmBtn.disabled = cancelBtn.disabled = true;
+                    confirmBtn.textContent = 'Publishing…';
+                    errorText.hidden = true;
+                    try {
+                        await publish(messageField.querySelector('input').value.trim() || 'Update portfolio content');
+                        close();
+                        updateStatus();
+                        notify('Published. Vercel usually has it live within a minute.', { href: LIVE_URL, label: 'Open your site' });
+                    } catch (err) {
+                        errorText.textContent = err.message;
+                        errorText.hidden = false;
+                        confirmBtn.disabled = cancelBtn.disabled = false;
+                        confirmBtn.textContent = 'Try again';
+                        if (conflict) {
+                            close();
+                            renderView();
+                            notify(err.message);
+                        }
+                    }
+                },
+            }, 'Publish now');
+            body.replaceChildren(
+                h('p', {}, `This commits to ${BRANCH} on GitHub, and Vercel then updates your live site.`),
+                messageField,
+                h('p', { class: 'files' }, `Files: ${files.join(', ')}`),
+                errorText,
+                h('div', { class: 'dialog-actions' }, cancelBtn, confirmBtn));
+            dialog.showModal();
+        }
+
+        async function discardDraft() {
+            if (!confirm('Drop every unpublished change? This can\'t be undone.')) return;
+            clearTimeout(flushTimer);
+            await clearDraft();
+            pending = {};
+            previewImages = {};
+            conflict = null;
+            await start();
+        }
+
+        function disconnect() {
+            if (!confirm('Remove your GitHub token from this browser? Unpublished changes stay saved here.')) return;
+            flush();
+            localStorage.removeItem(TOKEN_KEY);
+            renderLogin();
+        }
+
+        // ---------- screens ----------
+        function renderLogin(errorMessage) {
+            const input = h('input', { id: 'token', type: 'password', autocomplete: 'off', spellcheck: 'false', required: true });
+            const error = h('p', { class: 'error-text', role: 'alert', hidden: !errorMessage }, errorMessage || '');
+            const submit = h('button', { type: 'submit', class: 'primary' }, 'Connect');
+            $('#app').replaceChildren(h('main', { class: 'center-page' },
+                h('h1', {}, 'Portfolio editor'),
+                h('p', {}, 'This page has no password of its own. It saves to your GitHub repository, so it needs a token only you hold. The token stays in this browser and is never added to your site.'),
+                h('ol', {},
+                    h('li', {}, h('a', { href: TOKEN_URL, target: '_blank', rel: 'noopener noreferrer' }, 'Create a fine-grained token on GitHub'), '. The name, expiry and permission are filled in for you.'),
+                    h('li', {}, 'Under ', h('strong', {}, 'Repository access'), ', choose ', h('strong', {}, 'Only select repositories'), ' and pick ', h('strong', {}, 'Joep-Groenteman-portfolio'), '.'),
+                    h('li', {}, 'Check that ', h('strong', {}, 'Contents'), ' is set to ', h('strong', {}, 'Read and write'), ', then generate the token and paste it below.')),
+                h('form', {
+                    onsubmit: async event => {
+                        event.preventDefault();
+                        submit.disabled = true;
+                        error.hidden = true;
+                        localStorage.setItem(TOKEN_KEY, input.value.trim());
+                        await start();
+                    },
+                },
+                    h('div', { class: 'field' }, h('label', { for: 'token' }, 'GitHub token'), input),
+                    error,
+                    submit)));
+            input.focus();
+        }
+
+        function renderMessage(title, lines, action) {
+            $('#app').replaceChildren(h('main', { class: 'center-page' },
+                h('h1', {}, title),
+                lines,
+                action));
+        }
+
+        function renderEditor() {
+            $('#app').replaceChildren(
+                h('header', { class: 'topbar' },
+                    h('img', { src: '/img/logo.svg', alt: '' }),
+                    h('strong', {}, 'Portfolio editor'),
+                    h('span', { class: 'status', id: 'status', role: 'status' }),
+                    h('button', { type: 'button', id: 'discard-btn', class: 'discard', onclick: discardDraft }, 'Discard'),
+                    h('button', { type: 'button', id: 'preview-btn', onclick: togglePreview }),
+                    h('button', { type: 'button', id: 'publish-btn', class: 'primary', onclick: openPublishDialog }, 'Publish')),
+                h('div', { class: 'layout', id: 'layout' },
+                    h('nav', { class: 'sidebar', id: 'sidebar', 'aria-label': 'Editor sections' }),
+                    h('main', { class: 'editor', id: 'editor' }),
+                    h('div', { class: 'preview', id: 'preview' })));
+
+            $('#editor').addEventListener('focusin', event => {
+                const scoped = event.target.closest('[data-preview]');
+                setPreviewTarget(scoped ? JSON.parse(scoped.dataset.preview) : resolveView(currentView)?.target || VIEWS.intro.target);
+            });
+
+            renderShellState();
+            refreshKnownImages();
+            currentView = resolveView(location.hash.slice(1) || 'intro') ? location.hash.slice(1) || 'intro' : 'intro';
+            previewTarget = resolveView(currentView).target;
+            previewScroll = null;
+            renderView();
+            updateStatus();
+            refreshPreview();
+        }
+
+        async function start() {
+            if (!token()) return renderLogin();
+            renderMessage('Loading your portfolio…', []);
+            try {
+                const repo = await gh('');
+                if (!repo.permissions?.push) {
+                    localStorage.removeItem(TOKEN_KEY);
+                    return renderLogin('This token can read the repository but not write to it. Give it Contents: Read and write.');
+                }
+                const latest = await fetchLatest();
+                const images = await gh(`/contents/img?ref=${latest.head}`);
+                knownImages = images.filter(file => file.type === 'file').map(file => file.path);
+                baseBlobSha = latest.blobSha;
+                const parser = new DOMParser();
+                const published = parser.parseFromString(latest.html, 'text/html');
+                const missing = REQUIRED.filter(selector => !published.querySelector(selector));
+                if (missing.length) {
+                    return renderMessage('This index.html looks different', [
+                        h('p', {}, 'The editor couldn\'t find these parts of the page, so it stopped rather than risk damaging the site:'),
+                        h('ul', {}, missing.map(selector => h('li', {}, selector))),
+                    ]);
+                }
+                doc = published;
+                cleanHtml = serialize();
+                conflict = null;
+
+                const draft = await loadDraft();
+                if (draft) {
+                    doc = parser.parseFromString(draft.html, 'text/html');
+                    pending = draft.pending || {};
+                    for (const [path, file] of Object.entries(pending)) {
+                        previewImages[path] = file.dataUrl;
+                        if (!knownImages.includes(path) && path.startsWith('img/')) knownImages.push(path);
+                    }
+                    if (draft.baseBlobSha !== latest.blobSha) conflict = latest;
+                    baseBlobSha = draft.baseBlobSha;
+                }
+                renderEditor();
+                if (draft && !conflict) notify('Restored your unpublished edits from this device.');
+            } catch (err) {
+                if (err.status === 401) {
+                    localStorage.removeItem(TOKEN_KEY);
+                    return renderLogin('GitHub didn\'t accept that token. It may be mistyped or expired.');
+                }
+                if (err.status === 403 || err.status === 404) {
+                    localStorage.removeItem(TOKEN_KEY);
+                    return renderLogin(`This token doesn't have access to ${REPO}. Check the repository and permissions it was created with.`);
+                }
+                renderMessage('Couldn\'t load your portfolio', [h('p', {}, err.message)],
+                    h('button', { type: 'button', onclick: start }, 'Try again'));
+            }
+        }
+
+        start();
+    </script>
+
+</body>
+
+</html>

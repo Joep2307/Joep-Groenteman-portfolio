@@ -1,0 +1,12 @@
+@use '../abstracts/mixins';
+
+@include mixins.reduced-motion {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    html {
+        scroll-behavior: auto;
+    }
+}
