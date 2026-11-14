@@ -26,20 +26,20 @@ test('the editor is served at /dev/', async ({ page }) => {
     await expect(page.locator('body')).not.toBeEmpty();
 });
 
-test('without a token the editor opens straight away', async ({ page }) => {
+test('without a password the editor opens straight away', async ({ page }) => {
     await mockGithub(page);
     await page.goto('/dev/');
     await expect(
         page.getByRole('button', { name: 'Site settings' }),
     ).toBeVisible();
-    await expect(page.getByLabel('GitHub token')).toHaveCount(0);
+    await expect(page.getByLabel('Password')).toHaveCount(0);
 });
 
-test('connecting asks for the token and can be left', async ({ page }) => {
+test('connecting asks for the password and can be left', async ({ page }) => {
     await mockGithub(page);
     await page.goto('/dev/');
-    await page.getByRole('button', { name: 'Connect GitHub' }).click();
-    await expect(page.getByLabel('GitHub token')).toBeVisible();
+    await page.getByRole('button', { name: 'Connect', exact: true }).click();
+    await expect(page.getByLabel('Password')).toBeVisible();
     await page.getByRole('button', { name: 'Back to editing' }).click();
     await expect(
         page.getByRole('button', { name: 'Site settings' }),

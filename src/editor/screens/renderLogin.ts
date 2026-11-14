@@ -1,18 +1,18 @@
-import { REPO_NAME, TOKEN_KEY, TOKEN_URL } from '../constants';
+import { PASSWORD_KEY } from '../constants';
 import type { EditorState } from '../EditorState';
 import { h } from '../util/h';
 import { query } from '../util/query';
 import { start } from './start';
 
 /**
- * Shows the screen that asks for a GitHub token. Unpublished changes are
+ * Shows the screen that asks for the editor password. Unpublished changes are
  * kept as a draft, so going back or connecting picks them up again.
  */
 export function renderLogin(state: EditorState, errorMessage = ''): void {
     const input = h('input', {
-        id: 'token',
+        id: 'password',
         type: 'password',
-        autocomplete: 'off',
+        autocomplete: 'current-password',
         spellcheck: 'false',
         required: true,
     });
@@ -26,7 +26,6 @@ export function renderLogin(state: EditorState, errorMessage = ''): void {
         { type: 'submit', class: 'primary' },
         'Connect',
     );
-    const strong = (text: string): HTMLElement => h('strong', {}, text);
     const form = h(
         'form',
         {
@@ -34,14 +33,14 @@ export function renderLogin(state: EditorState, errorMessage = ''): void {
                 event.preventDefault();
                 submit.disabled = true;
                 error.hidden = true;
-                localStorage.setItem(TOKEN_KEY, input.value.trim());
+                localStorage.setItem(PASSWORD_KEY, input.value);
                 void start(state);
             },
         },
         h(
             'div',
             { class: 'field' },
-            h('label', { for: 'token' }, 'GitHub token'),
+            h('label', { for: 'password' }, 'Password'),
             input,
         ),
         error,
@@ -69,48 +68,9 @@ export function renderLogin(state: EditorState, errorMessage = ''): void {
             h(
                 'p',
                 {},
-                'Editing needs no login. Publishing saves to your GitHub ' +
-                    'repository, so it needs a token only you hold. The ' +
-                    'token stays in this browser and is never added to ' +
-                    'your site.',
-            ),
-            h(
-                'ol',
-                {},
-                h(
-                    'li',
-                    {},
-                    h(
-                        'a',
-                        {
-                            href: TOKEN_URL,
-                            target: '_blank',
-                            rel: 'noopener noreferrer',
-                        },
-                        'Create a fine-grained token on GitHub',
-                    ),
-                    '. The name, expiry and permission are filled in for you.',
-                ),
-                h(
-                    'li',
-                    {},
-                    'Under ',
-                    strong('Repository access'),
-                    ', choose ',
-                    strong('Only select repositories'),
-                    ' and pick ',
-                    strong(REPO_NAME),
-                    '.',
-                ),
-                h(
-                    'li',
-                    {},
-                    'Check that ',
-                    strong('Contents'),
-                    ' is set to ',
-                    strong('Read and write'),
-                    ', then generate the token and paste it below.',
-                ),
+                'Editing needs no login. Publishing changes your live ' +
+                    'site, so it asks for the password. It is kept in ' +
+                    'this browser until you disconnect.',
             ),
             form,
         ),

@@ -13,7 +13,7 @@ export function previewDocument(state: EditorState): string {
     const clone = state.doc.cloneNode(true) as Document;
 
     // The editor mounts the site's script itself, and nothing else in the
-    // page may run next to the GitHub token: the policy also covers inline
+    // page may run next to the password: the policy also covers inline
     // handlers and `javascript:` links.
     clone.querySelectorAll('script').forEach((script) => {
         script.remove();

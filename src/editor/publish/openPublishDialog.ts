@@ -6,7 +6,7 @@ import {
 } from '../constants';
 import type { EditorState } from '../EditorState';
 import { field } from '../fields/field';
-import { getToken } from '../github/getToken';
+import { getPassword } from '../github/getPassword';
 import { repoPath } from '../github/repoPath';
 import { flush } from '../shell/flush';
 import { go } from '../shell/go';
@@ -71,8 +71,8 @@ export function openPublishDialog(state: EditorState): void {
         return;
     }
 
-    // Publishing is the one thing that needs the token.
-    if (!getToken()) {
+    // Publishing is the one thing that needs the password.
+    if (!getPassword()) {
         connect(state);
         return;
     }

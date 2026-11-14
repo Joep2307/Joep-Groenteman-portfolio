@@ -3,9 +3,9 @@ export const REPO = `Joep2307/${REPO_NAME}`;
 export const BRANCH = 'main';
 export const API_URL = `https://api.github.com/repos/${REPO}`;
 export const LIVE_URL = 'https://joep-groenteman-portfolio-qwc2.vercel.app';
-export const TOKEN_KEY = 'portfolio-editor-token';
-export const TOKEN_URL =
-    'https://github.com/settings/personal-access-tokens/new?name=Portfolio+editor&description=Publishes+portfolio+edits+from+the+%2Fdev+page&expires_in=365&contents=write';
+/** The site's own server; it adds the GitHub token to the editor's calls. */
+export const PROXY_URL = '/api/github';
+export const PASSWORD_KEY = 'portfolio-editor-password';
 
 /**
  * The site's folder in the repository. The page refers to its files

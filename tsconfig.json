@@ -17,5 +17,5 @@
         "noUnusedParameters": true,
         "verbatimModuleSyntax": true
     },
-    "include": ["src", "exe", "*.config.ts", "vitest.setup.ts"]
+    "include": ["src", "exe", "api", "*.config.ts", "vitest.setup.ts"]
 }

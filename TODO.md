@@ -299,7 +299,7 @@ Same treatment for `dev/index.html`; the largest piece of work.
 - [x] Smoke, site: loads with no console errors; four sections render;
       a case panel opens, traps focus, closes on Escape and returns
       focus; rail links scroll `[Sonnet]`
-- [x] Smoke, editor: `/dev/` opens without a token; the token is only
+- [x] Smoke, editor: `/dev/` opens without a password; it is only
       asked for when publishing
       `[Sonnet]`
 - [x] Smoke, accessibility: axe run on the site and on an open panel

@@ -1,7 +1,7 @@
 import { customSections } from '../document/customSections';
 import { projects } from '../document/projects';
 import type { EditorState } from '../EditorState';
-import { getToken } from '../github/getToken';
+import { getPassword } from '../github/getPassword';
 import { connect } from '../publish/connect';
 import { disconnect } from '../publish/disconnect';
 import { clean } from '../util/clean';
@@ -67,8 +67,8 @@ export function renderSidebar(state: EditorState): void {
         action('+ New section', 'add', addSection),
         item('settings', 'Site settings'),
         h('div', { class: 'spacer' }),
-        getToken()
-            ? action('Disconnect GitHub', 'disconnect', disconnect)
-            : action('Connect GitHub', 'disconnect', connect),
+        getPassword()
+            ? action('Disconnect', 'disconnect', disconnect)
+            : action('Connect', 'disconnect', connect),
     );
 }

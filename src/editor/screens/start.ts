@@ -4,13 +4,13 @@ import {
     PAGE_PATH,
     REPO,
     REQUIRED_SELECTORS,
-    TOKEN_KEY,
+    PASSWORD_KEY,
 } from '../constants';
 import { serialize } from '../document/serialize';
 import { loadDraft } from '../draft/loadDraft';
 import type { EditorState } from '../EditorState';
 import { fetchLatest } from '../github/fetchLatest';
-import { getToken } from '../github/getToken';
+import { getPassword } from '../github/getPassword';
 import { GithubError } from '../github/GithubError';
 import { githubFetch } from '../github/githubFetch';
 import type { LatestSite } from '../github/LatestSite';
@@ -25,22 +25,23 @@ import { renderMessage } from './renderMessage';
 /**
  * Loads the published page and any draft kept on this device, then shows
  * the editor, or the screen that says why it cannot. Reading needs no
- * token; one is only asked for when publishing.
+ * password; it is only asked for when publishing.
  */
 export async function start(state: EditorState): Promise<void> {
-    const connected = Boolean(getToken());
+    const connected = Boolean(getPassword());
     renderMessage('Loading your portfolio…', []);
-    const forgetToken = (message: string): void => {
-        localStorage.removeItem(TOKEN_KEY);
+    const forgetPassword = (message: string): void => {
+        localStorage.removeItem(PASSWORD_KEY);
         renderLogin(state, message);
     };
     try {
         if (connected) {
             const repo = (await githubFetch('')) as Repository;
             if (!repo.permissions?.push) {
-                forgetToken(
-                    'This token can read the repository but not write to ' +
-                        'it. Give it Contents: Read and write.',
+                forgetPassword(
+                    'The GITHUB_TOKEN set in Vercel can read the ' +
+                        'repository but not write to it. Give it ' +
+                        'Contents: Read and write.',
                 );
                 return;
             }
@@ -109,14 +110,15 @@ export async function start(state: EditorState): Promise<void> {
     } catch (err) {
         const status = err instanceof GithubError ? err.status : undefined;
         if (connected && status === 401) {
-            forgetToken(
-                "GitHub didn't accept that token. It may be mistyped or " +
-                    'expired.',
-            );
+            forgetPassword('Wrong password.');
+        } else if (connected && (status === 502 || status === 503)) {
+            // The server is not set up; its message says what is missing.
+            forgetPassword(err instanceof Error ? err.message : '');
         } else if (connected && (status === 403 || status === 404)) {
-            forgetToken(
-                `This token doesn't have access to ${REPO}. Check the ` +
-                    'repository and permissions it was created with.',
+            forgetPassword(
+                `The GITHUB_TOKEN set in Vercel doesn't have access to ` +
+                    `${REPO}. Check the repository and permissions it ` +
+                    'was created with.',
             );
         } else {
             renderMessage(

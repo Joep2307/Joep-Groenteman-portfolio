@@ -1,5 +1,5 @@
-import { API_URL } from '../constants';
-import { getToken } from './getToken';
+import { API_URL, PROXY_URL } from '../constants';
+import { getPassword } from './getPassword';
 import { GithubError } from './GithubError';
 
 /** Calls the repository's GitHub API and returns the parsed response. */
@@ -7,13 +7,18 @@ export async function githubFetch(
     path: string,
     options: RequestInit = {},
 ): Promise<unknown> {
-    // Without a token the call is anonymous, which is enough to read.
-    const token = getToken();
-    const res = await fetch(API_URL + path, {
+    // With the password the call goes through the site's server, which
+    // adds the GitHub token. Without one it goes straight to GitHub,
+    // anonymously, which is enough to read.
+    const password = getPassword();
+    const url = password
+        ? `${PROXY_URL}?path=${encodeURIComponent(path)}`
+        : API_URL + path;
+    const res = await fetch(url, {
         ...options,
         cache: 'no-store',
         headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            ...(password ? { Authorization: `Bearer ${password}` } : {}),
             Accept: 'application/vnd.github+json',
         },
     });
