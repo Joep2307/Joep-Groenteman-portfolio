@@ -24,7 +24,7 @@
         "smoke": "playwright test --project=smoke",
         "baseline:capture": "BASE_URL=https://joep-groenteman-portfolio-qwc2.vercel.app playwright test --project=visual-desktop --project=visual-mobile --update-snapshots",
         "baseline:compare": "playwright test --project=visual-desktop --project=visual-mobile",
-        "wasm": "PATH=\"$HOME/.cargo/bin:$PATH\" wasm-pack build src/geometry --target bundler --release",
+        "wasm": "PATH=\"${CARGO_HOME:-$HOME/.cargo}/bin:$PATH\" wasm-pack build src/geometry --target bundler --release",
         "prepare": "husky"
     },
     "devDependencies": {

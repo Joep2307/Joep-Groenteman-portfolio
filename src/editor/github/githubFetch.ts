@@ -7,11 +7,13 @@ export async function githubFetch(
     path: string,
     options: RequestInit = {},
 ): Promise<unknown> {
+    // Without a token the call is anonymous, which is enough to read.
+    const token = getToken();
     const res = await fetch(API_URL + path, {
         ...options,
         cache: 'no-store',
         headers: {
-            Authorization: `Bearer ${getToken() ?? ''}`,
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
             Accept: 'application/vnd.github+json',
         },
     });

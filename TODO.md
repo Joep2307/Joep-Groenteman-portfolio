@@ -164,7 +164,8 @@ macOS Chromium, so it is a local check and does not belong in CI.
       itself to the pinned 12.6.0, but pnpm 9 fails with `packages field
       missing or empty`. This project should get 10; if that error
       appears, set `ENABLE_EXPERIMENTAL_COREPACK=1`. `installCommand` is
-      exactly at Vercel's 256 character limit. `[you]`
+      247 characters; Vercel's limit is 256. Vercel sets `CARGO_HOME`,
+      so the commands find cargo through it, not `$HOME/.cargo`. `[you]`
 - [ ] **The preview security change needs your yes** (see "The editor
       preview assumes a self-contained page" above). `[you]`
 
@@ -298,7 +299,8 @@ Same treatment for `dev/index.html`; the largest piece of work.
 - [x] Smoke, site: loads with no console errors; four sections render;
       a case panel opens, traps focus, closes on Escape and returns
       focus; rail links scroll `[Sonnet]`
-- [x] Smoke, editor: `/dev/` shows the login screen without a token
+- [x] Smoke, editor: `/dev/` opens without a token; the token is only
+      asked for when publishing
       `[Sonnet]`
 - [x] Smoke, accessibility: axe run on the site and on an open panel
       `[Sonnet]`

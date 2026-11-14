@@ -24,26 +24,26 @@ import { renderMessage } from './renderMessage';
 
 /**
  * Loads the published page and any draft kept on this device, then shows
- * the editor, or the screen that says why it cannot.
+ * the editor, or the screen that says why it cannot. Reading needs no
+ * token; one is only asked for when publishing.
  */
 export async function start(state: EditorState): Promise<void> {
-    if (!getToken()) {
-        renderLogin(state);
-        return;
-    }
+    const connected = Boolean(getToken());
     renderMessage('Loading your portfolio…', []);
     const forgetToken = (message: string): void => {
         localStorage.removeItem(TOKEN_KEY);
         renderLogin(state, message);
     };
     try {
-        const repo = (await githubFetch('')) as Repository;
-        if (!repo.permissions?.push) {
-            forgetToken(
-                'This token can read the repository but not write to it. ' +
-                    'Give it Contents: Read and write.',
-            );
-            return;
+        if (connected) {
+            const repo = (await githubFetch('')) as Repository;
+            if (!repo.permissions?.push) {
+                forgetToken(
+                    'This token can read the repository but not write to ' +
+                        'it. Give it Contents: Read and write.',
+                );
+                return;
+            }
         }
         // The repository answered, so a missing page is not about access.
         let latest: LatestSite;
@@ -108,12 +108,12 @@ export async function start(state: EditorState): Promise<void> {
         }
     } catch (err) {
         const status = err instanceof GithubError ? err.status : undefined;
-        if (status === 401) {
+        if (connected && status === 401) {
             forgetToken(
                 "GitHub didn't accept that token. It may be mistyped or " +
                     'expired.',
             );
-        } else if (status === 403 || status === 404) {
+        } else if (connected && (status === 403 || status === 404)) {
             forgetToken(
                 `This token doesn't have access to ${REPO}. Check the ` +
                     'repository and permissions it was created with.',

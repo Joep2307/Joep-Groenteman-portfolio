@@ -6,6 +6,7 @@ import {
 } from '../constants';
 import type { EditorState } from '../EditorState';
 import { field } from '../fields/field';
+import { getToken } from '../github/getToken';
 import { repoPath } from '../github/repoPath';
 import { flush } from '../shell/flush';
 import { go } from '../shell/go';
@@ -14,6 +15,7 @@ import { renderView } from '../shell/renderView';
 import { updateStatus } from '../shell/updateStatus';
 import { h } from '../util/h';
 import { query } from '../util/query';
+import { connect } from './connect';
 import { publish } from './publish';
 import { validate } from './validate';
 
@@ -66,6 +68,12 @@ export function openPublishDialog(state: EditorState): void {
             ),
         );
         dialog.showModal();
+        return;
+    }
+
+    // Publishing is the one thing that needs the token.
+    if (!getToken()) {
+        connect(state);
         return;
     }
 

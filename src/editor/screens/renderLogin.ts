@@ -4,7 +4,10 @@ import { h } from '../util/h';
 import { query } from '../util/query';
 import { start } from './start';
 
-/** Shows the screen that asks for a GitHub token. */
+/**
+ * Shows the screen that asks for a GitHub token. Unpublished changes are
+ * kept as a draft, so going back or connecting picks them up again.
+ */
 export function renderLogin(state: EditorState, errorMessage = ''): void {
     const input = h('input', {
         id: 'token',
@@ -42,7 +45,21 @@ export function renderLogin(state: EditorState, errorMessage = ''): void {
             input,
         ),
         error,
-        submit,
+        h(
+            'div',
+            { class: 'dialog-actions' },
+            h(
+                'button',
+                {
+                    type: 'button',
+                    onclick: () => {
+                        void start(state);
+                    },
+                },
+                'Back to editing',
+            ),
+            submit,
+        ),
     );
     query('#app').replaceChildren(
         h(
@@ -52,9 +69,9 @@ export function renderLogin(state: EditorState, errorMessage = ''): void {
             h(
                 'p',
                 {},
-                'This page has no password of its own. It saves to your ' +
-                    'GitHub repository, so it needs a token only you hold. ' +
-                    'The token stays in this browser and is never added to ' +
+                'Editing needs no login. Publishing saves to your GitHub ' +
+                    'repository, so it needs a token only you hold. The ' +
+                    'token stays in this browser and is never added to ' +
                     'your site.',
             ),
             h(
