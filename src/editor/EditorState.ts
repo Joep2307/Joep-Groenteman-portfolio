@@ -24,10 +24,18 @@ export interface EditorState {
     /** Image paths the page can refer to, pending uploads included. */
     knownImages: string[];
     currentView: string;
-    previewOn: boolean;
     previewTarget: PreviewTarget;
     /** Where the preview was scrolled to; cleared when its target moves. */
     previewScroll: PreviewScroll | null;
+    /**
+     * The elements of `doc` in document order, as the preview last drew
+     * them. A preview element's `data-node` is its index here.
+     */
+    previewNodes: Element[];
+    /** The input that edits each element of `doc`, once it is drawn. */
+    fieldNodes: WeakMap<Element, HTMLElement>;
+    /** What opened the edit panel, so closing it can go back there. */
+    drawerFrom: 'page' | 'bar';
     flushTimer: number | undefined;
     noticeTimer: number | undefined;
     /** Counts form fields, to give each one a unique id. */

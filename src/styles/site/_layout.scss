@@ -1,0 +1,63 @@
+@use '../abstracts/breakpoints';
+@use '../abstracts/mixins';
+
+// Every section and the footer span the page, so shapes can reach its
+// edge, and hold their content in one centred column.
+section,
+footer {
+    @include mixins.column;
+}
+
+section {
+    position: relative;
+    padding-bottom: var(--space-section);
+}
+
+@include breakpoints.up(breakpoints.$lg) {
+    section,
+    footer {
+        @include mixins.column-beside-rail;
+    }
+}
+
+// The copyright line and the way into the editor share a row under a
+// rule. The rule is a full row of its own, so it sits inside the column,
+// not edge to edge.
+footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 1.5rem;
+    padding-bottom: 2.5rem;
+}
+
+footer::before {
+    content: '';
+    flex-basis: 100%;
+    margin-bottom: 0.75rem;
+    border-top: var(--rule-width) solid var(--color-rule);
+}
+
+footer span {
+    @include mixins.meta;
+}
+
+// Quiet, for whoever owns the site, but a full-size target and a link
+// that shows it is one on hover and focus.
+.footer-login {
+    @include mixins.meta;
+
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--button-height);
+    text-decoration: none;
+}
+
+.footer-login:hover,
+.footer-login:focus-visible {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-decoration-thickness: var(--underline-width);
+    text-underline-offset: var(--underline-offset);
+}

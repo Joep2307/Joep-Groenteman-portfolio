@@ -6,16 +6,16 @@ import {
 } from '../constants';
 import type { EditorState } from '../EditorState';
 import { field } from '../fields/field';
-import { getPassword } from '../github/getPassword';
+import { GithubError } from '../github/GithubError';
 import { repoPath } from '../github/repoPath';
 import { flush } from '../shell/flush';
 import { go } from '../shell/go';
 import { notify } from '../shell/notify';
+import { renderLogin } from '../screens/renderLogin';
 import { renderView } from '../shell/renderView';
 import { updateStatus } from '../shell/updateStatus';
 import { h } from '../util/h';
 import { query } from '../util/query';
-import { connect } from './connect';
 import { publish } from './publish';
 import { validate } from './validate';
 
@@ -71,12 +71,6 @@ export function openPublishDialog(state: EditorState): void {
         return;
     }
 
-    // Publishing is the one thing that needs the password.
-    if (!getPassword()) {
-        connect(state);
-        return;
-    }
-
     const files = [PAGE_PATH, ...Object.keys(state.pending).map(repoPath)];
     const messageField = field(
         state,
@@ -124,6 +118,14 @@ export function openPublishDialog(state: EditorState): void {
                 { href: LIVE_URL, label: 'Open your site' },
             );
         } catch (err) {
+            if (err instanceof GithubError && err.status === 401) {
+                close();
+                renderLogin(
+                    'Your login has expired. Sign in again; your changes ' +
+                        'are still saved on this device.',
+                );
+                return;
+            }
             const message = err instanceof Error ? err.message : String(err);
             errorText.textContent = message;
             errorText.hidden = false;

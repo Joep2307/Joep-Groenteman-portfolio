@@ -1,7 +1,8 @@
 // Added to the site inside the editor preview, so it shows its settled
 // state right away each time it redraws.
 *,
-*::before {
+*::before,
+*::after {
     animation: none !important;
     transition: none !important;
 }
@@ -10,10 +11,31 @@ html {
     scroll-behavior: auto !important;
 }
 
-#intro .eyebrow,
-#intro .hero-title,
-#intro .hero-sub,
-#intro .hero-meta,
-#intro .scroll-cue {
-    opacity: 1 !important;
+// Edit mode. Every part that opens in the edit panel shows it while the
+// pointer is over it: a dashed coral outline and a label.
+[data-edit] {
+    cursor: pointer;
+}
+
+.is-edit-hover {
+    outline: 3px dashed var(--color-accent);
+    outline-offset: -3px;
+}
+
+.edit-hover-label {
+    position: fixed;
+    z-index: 1000;
+    pointer-events: none;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--color-bg);
+    background: var(--color-primary);
+    border-radius: var(--radius-pill);
+    padding: 0.45rem 0.75rem;
+}
+
+.edit-hover-label[hidden] {
+    display: none;
 }

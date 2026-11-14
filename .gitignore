@@ -6,3 +6,4 @@ src/geometry/pkg/
 test-results/
 playwright-report/
 .DS_Store
+.env*.local

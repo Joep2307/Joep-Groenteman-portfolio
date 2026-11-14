@@ -9,19 +9,29 @@ html {
 }
 
 body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--body);
-    line-height: 1.5;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--body-size);
+    line-height: var(--body-line-height);
     overflow-x: hidden;
 }
 
-::selection {
-    background: var(--accent);
-    color: var(--bg);
+// Shapes bleed off the page edge; this keeps them from widening the page.
+main {
+    overflow-x: clip;
 }
 
-a {
+::selection {
+    background: var(--color-primary);
+    color: var(--color-bg);
+}
+
+button {
+    font: inherit;
     color: inherit;
-    text-decoration: none;
+}
+
+img {
+    max-width: 100%;
 }

@@ -1,4 +1,3 @@
-import { STACKED_MAX_WIDTH_PX } from './constants';
 import type { EditorState } from './EditorState';
 
 export function createEditorState(): EditorState {
@@ -12,9 +11,11 @@ export function createEditorState(): EditorState {
         previewImages: {},
         knownImages: [],
         currentView: 'intro',
-        previewOn: window.innerWidth > STACKED_MAX_WIDTH_PX,
         previewTarget: { scroll: '#intro' },
         previewScroll: null,
+        previewNodes: [],
+        fieldNodes: new WeakMap(),
+        drawerFrom: 'bar',
         flushTimer: undefined,
         noticeTimer: undefined,
         fieldSeq: 0,

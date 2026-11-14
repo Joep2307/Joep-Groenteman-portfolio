@@ -4,6 +4,7 @@ import { hasCustomHtml } from '../markup/hasCustomHtml';
 import { setMarkup } from '../markup/setMarkup';
 import { toMarkup } from '../markup/toMarkup';
 import { field } from './field';
+import { registerField } from './registerField';
 import type { RichFieldOptions } from './RichFieldOptions';
 
 /**
@@ -18,19 +19,23 @@ export function richField(
 ): HTMLElement {
     const { skip, multiline = true, hint } = options;
     const custom = hasCustomHtml(node, skip);
-    return field(
+    return registerField(
         state,
-        label,
-        toMarkup(node, skip),
-        (value) => {
-            setMarkup(node, value, skip);
-        },
-        {
-            multiline,
-            disabled: custom,
-            hint: custom
-                ? `Contains custom HTML, so edit this one in ${PAGE_PATH}.`
-                : hint,
-        },
+        node,
+        field(
+            state,
+            label,
+            toMarkup(node, skip),
+            (value) => {
+                setMarkup(node, value, skip);
+            },
+            {
+                multiline,
+                disabled: custom,
+                hint: custom
+                    ? `Contains custom HTML, so edit this one in ${PAGE_PATH}.`
+                    : hint,
+            },
+        ),
     );
 }

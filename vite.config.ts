@@ -1,13 +1,16 @@
 import { resolve } from 'node:path';
 import { defineConfig, type Plugin } from 'vite';
 import wasm from 'vite-plugin-wasm';
+import { apiDevServer } from './src/server/apiDevServer';
 
 const exe = resolve(import.meta.dirname, 'exe');
 
 export default defineConfig({
     root: exe,
     appType: 'mpa',
-    plugins: [wasm() as Plugin],
+    // The editor's login and publishing go through api/, served by
+    // Vercel once deployed and by the dev server here.
+    plugins: [wasm() as Plugin, apiDevServer(import.meta.dirname)],
     // The apps live in exe/ but import their modules from ../src.
     server: { fs: { allow: [import.meta.dirname] } },
     build: {

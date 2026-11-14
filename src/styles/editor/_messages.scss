@@ -1,6 +1,6 @@
 .banner {
     border: 1px solid var(--warn);
-    border-radius: 6px;
+    border-radius: 0;
     padding: 0.85rem 1rem;
     margin-bottom: 1.5rem;
 }
@@ -17,15 +17,17 @@
 .notice {
     position: fixed;
     left: 50%;
-    bottom: 1.25rem;
+
+    // Just above the bar.
+    bottom: calc(var(--bar) + 2 * var(--edit-border) + 0.5rem);
     transform: translateX(-50%);
     width: max-content;
     max-width: calc(100% - 2rem);
-    background: var(--text);
-    color: var(--bg);
+    background: var(--color-primary);
+    color: var(--color-bg);
     font-size: 0.9rem;
     padding: 0.6rem 1rem;
-    border-radius: 3px;
+    border-radius: var(--radius-pill);
     z-index: 10;
 }
 

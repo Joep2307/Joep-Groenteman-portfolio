@@ -1,19 +1,22 @@
 import { mountSite } from '../../site/mountSite';
 import { PREVIEW_SANDBOX } from '../constants';
 import type { EditorState } from '../EditorState';
+import { attachEditTargets } from '../stage/attachEditTargets';
 import { h } from '../util/h';
 import { query } from '../util/query';
 import { holdScroll } from './holdScroll';
 import { previewDocument } from './previewDocument';
 
-/** Redraws the preview from the page as it is being edited. */
+/**
+ * Redraws the page as it is being edited, the screen the editor is
+ * built around.
+ */
 export function refreshPreview(state: EditorState): void {
-    if (!state.previewOn) return;
     // A new frame each time: the observers and timers the site set up on
     // the previous page go away with that frame's window.
     const frame = h('iframe', {
         id: 'preview-frame',
-        title: 'Live preview of your portfolio',
+        title: 'Your portfolio. Click a part to edit it',
         sandbox: PREVIEW_SANDBOX,
     });
     query('#preview').replaceChildren(frame);
@@ -40,6 +43,7 @@ export function refreshPreview(state: EditorState): void {
                 ? { revealCases: true, initialPanel: panel.id }
                 : { revealCases: true },
         );
+        attachEditTargets(state, page, view);
         const place = (): void => {
             if (restore) {
                 view.scrollTo(0, restore.y);

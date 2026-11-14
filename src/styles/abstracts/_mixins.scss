@@ -3,3 +3,113 @@
         @content;
     }
 }
+
+// Extra-wide black capitals in the primary blue. Uppercase is set here
+// only; the markup keeps its own casing for screen readers and the editor.
+@mixin display($size) {
+    font-family: var(--font-display);
+    font-size: $size;
+    font-stretch: var(--display-width);
+    font-weight: var(--display-weight);
+    line-height: var(--display-line-height);
+    letter-spacing: var(--display-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+}
+
+// Bold charcoal item title: a project, a job, a degree.
+@mixin item-title {
+    font-family: var(--font-body);
+    font-size: var(--title-size);
+    font-weight: var(--title-weight);
+    line-height: 1.3;
+    color: var(--color-text);
+}
+
+// Secondary details: organisations, dates, places.
+@mixin meta {
+    font-family: var(--font-body);
+    font-size: var(--meta-size);
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+}
+
+// Meta items in a row, split by a thin bar drawn in CSS so no separator
+// is typed into the content.
+@mixin meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 0.25rem;
+
+    > * + * {
+        margin-left: 0.6em;
+        padding-left: 0.6em;
+        border-left: var(--rule-width) solid currentcolor;
+    }
+}
+
+@mixin link {
+    color: var(--color-primary);
+    text-decoration-line: underline;
+    text-decoration-thickness: var(--underline-width);
+    text-underline-offset: var(--underline-offset);
+    text-decoration-color: currentcolor;
+    transition:
+        color var(--transition-color),
+        text-decoration-color var(--transition-color);
+
+    &:hover {
+        text-decoration-color: var(--color-accent);
+    }
+}
+
+// The pill button: blue on cream with a blue rim. On hover the rim turns
+// coral and the fill blue; a coral fill would put the label at 3.5:1.
+@mixin button {
+    font-family: var(--font-display);
+    font-size: var(--button-size);
+    font-stretch: var(--display-width);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-primary);
+    background: var(--color-bg);
+    border: var(--button-border) solid var(--color-primary);
+    border-radius: var(--radius-pill);
+    min-height: var(--button-height);
+    padding: 0 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition:
+        color var(--transition-color),
+        background-color var(--transition-color),
+        border-color var(--transition-color);
+
+    &:hover {
+        color: var(--color-bg);
+        background: var(--color-primary);
+        border-color: var(--color-accent);
+    }
+}
+
+// Padding that holds content in the centred column of a full-width box,
+// so what sits in the box can still reach the page edge.
+@mixin column {
+    padding-inline: max(
+        var(--page-padding),
+        (100% - var(--content-width)) / 2
+    );
+}
+
+// The same, clearing the fixed rail on the left where it shows.
+@mixin column-beside-rail {
+    padding-left: max(
+        var(--rail-clearance),
+        (100% - var(--content-width)) / 2
+    );
+}

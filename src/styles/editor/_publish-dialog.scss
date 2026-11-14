@@ -1,27 +1,29 @@
+@use '../abstracts/mixins';
+
 dialog {
     margin: auto;
     width: min(32rem, calc(100% - 2rem));
-    background: var(--bg-alt);
-    color: var(--text);
-    border: 1px solid var(--border-strong);
-    border-radius: 6px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    border: var(--rule-width) solid var(--color-rule);
+    border-radius: 0;
     padding: 1.5rem;
 }
 
 dialog::backdrop {
-    background: rgb(6 6 7 / 70%);
+    background: var(--scrim);
 }
 
 dialog h2 {
-    font-family: var(--display);
-    font-size: 1.25rem;
-    font-weight: 600;
+    @include mixins.display(1.25rem);
+
+    line-height: 1.05;
     margin-bottom: 1rem;
 }
 
 dialog p {
     font-size: 0.9rem;
-    color: var(--text-muted);
+    color: var(--color-text-muted);
     margin-bottom: 1rem;
 }
 
@@ -38,15 +40,15 @@ dialog li button {
     width: 100%;
     justify-content: flex-start;
     text-align: left;
-    font-family: var(--body);
+    font-family: var(--font-body);
     font-size: 0.875rem;
     border-color: var(--danger);
 }
 
 dialog .files {
-    font-family: var(--mono);
+    font-family: var(--font-mono);
     font-size: 0.8125rem;
-    color: var(--text-muted);
+    color: var(--color-text-muted);
     overflow-wrap: anywhere;
 }
 

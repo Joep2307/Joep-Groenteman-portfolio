@@ -1,14 +1,25 @@
 // The login screen and the other full-page states.
+// A cream card on the striped border.
 .center-page {
-    max-width: 34rem;
-    margin: 0 auto;
-    padding: 4rem 1rem;
+    width: min(36rem, 100% - 2 * var(--edit-border));
+    margin: max(var(--edit-border), 10vh) auto;
+    padding: 2.5rem clamp(1.25rem, 5vw, 2.5rem);
+    background: var(--color-bg);
+}
+
+.center-page .dialog-actions {
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.center-page .btn {
+    white-space: nowrap;
 }
 
 .center-page ol,
 .center-page ul {
     margin: 0 0 1.5rem 1.25rem;
-    color: var(--text-muted);
+    color: var(--color-text-muted);
     font-size: 0.95rem;
 }
 
@@ -17,10 +28,14 @@
 }
 
 .center-page li strong {
-    color: var(--text);
+    color: var(--color-text);
 }
 
 .center-page p {
-    color: var(--text-muted);
+    color: var(--color-text-muted);
     margin-bottom: 1rem;
+}
+
+.center-page .error-text {
+    color: var(--danger);
 }

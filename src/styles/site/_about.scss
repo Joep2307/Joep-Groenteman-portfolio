@@ -1,106 +1,82 @@
 @use '../abstracts/breakpoints';
-
-#about {
-    padding-bottom: 2rem;
-}
+@use '../abstracts/mixins';
 
 .about-grid {
     display: grid;
-    grid-template-columns: 1.3fr 1fr;
-    gap: 4rem;
-}
-
-.about-photo {
-    width: 168px;
-    aspect-ratio: 4/5;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    float: left;
-    margin: 0 1.6rem 1rem 0;
-    filter: grayscale(15%);
-}
-
-@include breakpoints.down(breakpoints.$sm) {
-    .about-photo {
-        width: 120px;
-    }
+    grid-template-columns: minmax(0, 5fr) minmax(0, 4fr);
+    gap: calc(var(--space-item) * 2);
 }
 
 .about-bio p {
-    color: var(--text-muted);
-    max-width: 56ch;
-    margin-bottom: 1.2rem;
-    font-size: 1.02rem;
+    max-width: var(--measure);
+    margin-bottom: 1rem;
 }
 
 .about-bio p:first-child {
-    color: var(--text);
-    font-size: 1.15rem;
-}
-
-.cv-btn {
-    margin-top: 1.5rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-family: var(--mono);
-    font-size: 0.8rem;
-    color: var(--bg);
-    background: var(--accent);
-    padding: 0.85rem 1.4rem;
-    border-radius: 3px;
-    transition:
-        transform 0.25s ease,
-        box-shadow 0.25s ease;
-}
-
-.cv-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px var(--accent-soft);
-}
-
-.skills-list {
-    list-style: none;
-}
-
-.skills-list li {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.9rem 0;
-    border-bottom: 1px solid var(--border);
-    font-family: var(--mono);
-    font-size: 0.82rem;
-}
-
-.skills-list li span:first-child {
-    color: var(--text);
-}
-
-.skills-list li span:last-child {
-    color: var(--text-dim);
-    text-align: right;
-}
-
-.skills-list li.skills-heading {
-    border-bottom: none;
-    padding: 1.4rem 0 0.5rem;
-}
-
-.skills-list li.skills-heading:first-child {
-    padding-top: 0;
-}
-
-.skills-list li.skills-heading span:first-child {
-    color: var(--accent);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-size: 0.8125rem;
+    font-size: var(--lead-size);
 }
 
 .about-actions {
     display: flex;
-    gap: 1.5rem;
     flex-wrap: wrap;
     align-items: center;
+    gap: 1rem 1.5rem;
+    margin-top: 2rem;
+}
+
+.cv-btn {
+    @include mixins.button;
+}
+
+// Plain bullets in two columns. The columns balance, so each group
+// heading lands at the top of one while there are two groups.
+.skills-list {
+    columns: 2;
+    column-gap: 2rem;
+    list-style: disc;
+    font-size: var(--list-size);
+    line-height: var(--list-line-height);
+}
+
+.skills-list li {
+    margin: 0 0 0.75rem 1.1em;
+    break-inside: avoid;
+}
+
+.skills-list li::marker {
+    color: var(--color-text);
+}
+
+.skills-list li span:first-child {
+    display: block;
+    font-weight: var(--title-weight);
+}
+
+.skills-list li span:last-child {
+    display: block;
+    color: var(--color-text-muted);
+}
+
+.skills-list li.skills-heading {
+    @include mixins.display(var(--display-size-small));
+
+    list-style: none;
+    margin-left: 0;
+    break-after: avoid;
+}
+
+.skills-list li.skills-heading span:last-child:empty {
+    display: none;
+}
+
+@include breakpoints.down(breakpoints.$md) {
+    .about-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@include breakpoints.down(breakpoints.$sm) {
+    .skills-list {
+        columns: 1;
+    }
 }

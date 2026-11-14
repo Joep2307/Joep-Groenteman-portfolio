@@ -1,6 +1,4 @@
 .case-media {
-    transition:
-        transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-        border-color 0.3s ease;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     transform-style: preserve-3d;
 }

@@ -1,3 +1,5 @@
+@use '../abstracts/mixins';
+
 * {
     margin: 0;
     padding: 0;
@@ -11,19 +13,19 @@ body,
 }
 
 body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--body);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
     line-height: 1.5;
 }
 
 a {
-    color: var(--accent);
+    @include mixins.link;
 }
 
 :focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
+    outline: var(--focus-width) solid var(--color-primary);
+    outline-offset: var(--focus-offset);
 }
 
 [hidden] {

@@ -7,6 +7,7 @@ import { h } from '../util/h';
 import { attrField } from './attrField';
 import { nextFieldId } from './nextFieldId';
 import { refreshKnownImages } from './refreshKnownImages';
+import { registerField } from './registerField';
 import { stageFile } from './stageFile';
 import { uniqueImagePath } from './uniqueImagePath';
 
@@ -63,6 +64,14 @@ export function imageField(
         void addFile();
     });
 
+    // Clicking the image on the page goes straight to the upload.
+    const upload = h(
+        'div',
+        { class: 'upload' },
+        fileInput,
+        h('label', { for: fileId, class: 'btn' }, 'Upload image'),
+    );
+    registerField(state, img, upload);
     return h(
         'div',
         {},
@@ -74,12 +83,7 @@ export function imageField(
             h(
                 'div',
                 {},
-                h(
-                    'div',
-                    { class: 'upload' },
-                    fileInput,
-                    h('label', { for: fileId, class: 'btn' }, 'Upload image'),
-                ),
+                upload,
                 pathField,
                 attrField(state, 'Alt text', img, 'alt', {
                     multiline: true,

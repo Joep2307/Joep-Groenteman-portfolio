@@ -7,42 +7,46 @@
     transform: translateY(-50%);
     display: flex;
     flex-direction: column;
-    gap: 2.6rem;
+    gap: 1.5rem;
     z-index: 100;
 }
 
+// The line is a border, so it stays visible in forced colours.
 .rail-item {
     display: flex;
     align-items: center;
     gap: 0.8125rem;
-    font-family: var(--mono);
+    min-height: 24px;
     font-size: 0.8125rem;
-    color: var(--text-dim);
+    font-weight: 500;
     letter-spacing: 0.04em;
-    transition: color 0.3s ease;
+    color: var(--color-primary);
+    text-decoration: none;
 }
 
 .rail-item::before {
     content: '';
     width: 18px;
-    height: 1px;
     flex: 0 0 auto;
-    background: currentcolor;
-    transition: width 0.3s ease;
+    border-top: var(--rule-width) solid currentcolor;
 }
 
+.rail-item:hover::before {
+    border-top-color: var(--color-accent);
+}
+
+// Coral, and thicker, longer and bold: never colour alone.
 .rail-item.active {
-    color: var(--accent);
+    font-weight: 700;
 }
 
 .rail-item.active::before {
-    width: 26px;
+    width: 32px;
+    border-top: 3px solid var(--color-accent);
 }
 
 .rail-item .label {
     opacity: 0;
-    transform: translateX(-4px);
-    transition: all 0.3s ease;
     white-space: nowrap;
 }
 
@@ -50,7 +54,6 @@
 .rail-item:focus-visible .label,
 .rail-item.active .label {
     opacity: 1;
-    transform: translateX(0);
 }
 
 @include breakpoints.down(breakpoints.$lg) {

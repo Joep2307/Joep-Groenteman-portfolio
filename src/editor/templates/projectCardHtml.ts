@@ -2,7 +2,7 @@
 export function projectCardHtml(n: string, caseNum: string): string {
     return `<div class="case" id="case-${n}">
                 <div class="case-media">
-                    <div class="glow"></div><img src="" loading="lazy" alt="">
+                    <img src="" loading="lazy" alt="">
                 </div>
                 <div>
                     <span class="case-index">${caseNum}</span>

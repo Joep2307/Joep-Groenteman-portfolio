@@ -1,14 +1,15 @@
+// Rows are divided by rules, not drawn as cards.
 .row {
     position: relative;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: var(--bg-card);
-    padding: 0.85rem;
-    margin-bottom: 0.6rem;
+    border-top: var(--rule-width) solid var(--color-rule);
+    padding: 0.85rem 0;
 }
 
 .row .row {
-    background: var(--bg-alt);
+    border-top: none;
+    border-left: var(--rule-width) solid var(--color-rule);
+    padding-left: 0.85rem;
+    margin-bottom: 0.6rem;
 }
 
 .row-body > *:last-child,
@@ -20,7 +21,7 @@
 .row-actions {
     position: absolute;
     top: 0.4rem;
-    right: 0.85rem;
+    right: 0;
     display: flex;
     gap: 0.25rem;
 }
@@ -41,9 +42,9 @@
     width: 100%;
     justify-content: flex-start;
     text-align: left;
-    font-family: var(--display);
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-text);
     min-height: 2.75rem;
 }
 

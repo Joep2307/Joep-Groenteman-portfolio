@@ -1,79 +1,37 @@
-import { PASSWORD_KEY } from '../constants';
-import type { EditorState } from '../EditorState';
+import { LOGIN_URL } from '../constants';
 import { h } from '../util/h';
 import { query } from '../util/query';
-import { start } from './start';
 
 /**
- * Shows the screen that asks for the editor password. Unpublished changes are
- * kept as a draft, so going back or connecting picks them up again.
+ * Shows the screen that asks you to sign in with GitHub. Unpublished
+ * changes are kept as a draft, so they are back after signing in.
  */
-export function renderLogin(state: EditorState, errorMessage = ''): void {
-    const input = h('input', {
-        id: 'password',
-        type: 'password',
-        autocomplete: 'current-password',
-        spellcheck: 'false',
-        required: true,
-    });
-    const error = h(
-        'p',
-        { class: 'error-text', role: 'alert', hidden: !errorMessage },
-        errorMessage,
-    );
-    const submit = h(
-        'button',
-        { type: 'submit', class: 'primary' },
-        'Connect',
-    );
-    const form = h(
-        'form',
-        {
-            onsubmit: (event) => {
-                event.preventDefault();
-                submit.disabled = true;
-                error.hidden = true;
-                localStorage.setItem(PASSWORD_KEY, input.value);
-                void start(state);
-            },
-        },
-        h(
-            'div',
-            { class: 'field' },
-            h('label', { for: 'password' }, 'Password'),
-            input,
-        ),
-        error,
-        h(
-            'div',
-            { class: 'dialog-actions' },
-            h(
-                'button',
-                {
-                    type: 'button',
-                    onclick: () => {
-                        void start(state);
-                    },
-                },
-                'Back to editing',
-            ),
-            submit,
-        ),
-    );
+export function renderLogin(errorMessage = ''): void {
     query('#app').replaceChildren(
         h(
             'main',
             { class: 'center-page' },
-            h('h1', {}, 'Portfolio editor'),
+            h('h1', {}, 'Log in to edit your portfolio'),
             h(
                 'p',
                 {},
-                'Editing needs no login. Publishing changes your live ' +
-                    'site, so it asks for the password. It is kept in ' +
-                    'this browser until you disconnect.',
+                'Sign in with the GitHub account that owns this site. ' +
+                    'Your changes are saved on this device until you ' +
+                    'publish them.',
             ),
-            form,
+            errorMessage
+                ? h('p', { class: 'error-text', role: 'alert' }, errorMessage)
+                : null,
+            h(
+                'div',
+                { class: 'dialog-actions' },
+                h('a', { href: '/' }, 'Back to the site'),
+                h(
+                    'a',
+                    { href: LOGIN_URL, class: 'btn primary' },
+                    'Sign in with GitHub',
+                ),
+            ),
         ),
     );
-    input.focus();
 }

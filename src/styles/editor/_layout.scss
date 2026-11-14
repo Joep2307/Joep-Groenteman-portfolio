@@ -1,61 +1,75 @@
 @use '../abstracts/breakpoints';
+@use '../abstracts/mixins';
 
-// Below this the sidebar moves on top and the preview replaces the form.
+// Below this the edit panel slides up from the bottom instead of opening
+// beside the page.
 $stacked: 1100px;
 
-.topbar {
-    height: var(--topbar);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0 1.25rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.topbar img {
-    width: 28px;
-    height: 28px;
-    border-radius: 7px;
-}
-
-.topbar strong {
-    font-family: var(--display);
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.status {
-    font-family: var(--mono);
-    font-size: 0.8125rem;
-    color: var(--text-muted);
-    margin-right: auto;
-    margin-left: 0.75rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.status.dirty {
-    color: var(--warn);
-}
-
-.layout {
-    height: calc(100% - var(--topbar));
+.edit-mode {
+    height: 100%;
     display: grid;
-    grid-template-columns: 13.5rem minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) var(--bar);
+    gap: var(--edit-border);
+    padding: var(--edit-border);
 }
 
-.layout.preview-on {
-    grid-template-columns: 13.5rem minmax(26rem, 1fr) minmax(0, 1.1fr);
+.workspace {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    background: var(--color-bg);
+}
+
+.stage {
+    min-width: 0;
+    min-height: 0;
+}
+
+.stage iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    background: var(--color-bg);
+}
+
+.drawer {
+    width: var(--drawer-width);
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    border-left: var(--button-border) solid var(--color-text);
+    background: var(--color-bg);
+}
+
+.drawer-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-bottom: var(--rule-width) solid var(--color-rule);
+}
+
+.editor {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem 1.5rem 4rem;
+}
+
+// The field a click on the page led to.
+.is-target {
+    box-shadow: inset 3px 0 0 var(--color-accent);
+    padding-left: 0.75rem;
 }
 
 .sidebar {
-    border-right: 1px solid var(--border);
+    max-height: 45%;
     overflow-y: auto;
-    padding: 1rem 0.75rem;
+    padding: 0.5rem 0.75rem;
     display: flex;
     flex-direction: column;
     gap: 0.15rem;
+    border-bottom: var(--rule-width) solid var(--color-rule);
 }
 
 .sidebar button {
@@ -63,10 +77,16 @@ $stacked: 1100px;
     border: none;
     min-height: 2.25rem;
     text-align: left;
-    font-family: var(--body);
+    font-family: var(--font-body);
     font-size: 0.9rem;
-    color: var(--text-muted);
+    font-weight: 400;
+    color: var(--color-text);
     justify-content: flex-start;
+}
+
+.sidebar button:hover:not(:disabled) {
+    color: var(--color-primary);
+    background: none;
 }
 
 .sidebar button.sub {
@@ -80,112 +100,103 @@ $stacked: 1100px;
     white-space: nowrap;
 }
 
+// A coral bar and bold: never colour alone.
 .sidebar button[aria-current='page'] {
-    background: var(--accent-soft);
-    color: var(--text);
+    color: var(--color-primary);
+    font-weight: 700;
+    border-left: 3px solid var(--color-accent);
+    border-radius: 0;
 }
 
 .sidebar button.add {
-    color: var(--accent);
-    font-family: var(--mono);
+    color: var(--color-primary);
     font-size: 0.8125rem;
+    font-weight: 600;
 }
 
-.sidebar .spacer {
-    flex: 1;
-    min-height: 1.5rem;
+// The bar sits on the bottom of the striped border.
+.bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0 0.75rem;
+    background: var(--color-bg);
+    min-width: 0;
 }
 
-.sidebar .disconnect {
-    color: var(--text-muted);
-    font-family: var(--mono);
+.bar img {
+    width: 26px;
+    height: 26px;
+}
+
+.bar strong {
+    @include mixins.display(0.875rem);
+
+    white-space: nowrap;
+}
+
+.status {
     font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    margin-right: auto;
+    margin-left: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.editor {
-    overflow-y: auto;
-    padding: 2rem 2.25rem 6rem;
+.status.dirty {
+    color: var(--warn);
 }
 
-.editor > * {
-    max-width: 46rem;
+.bar button {
+    flex: none;
+    white-space: nowrap;
 }
 
-.preview {
-    display: none;
-    border-left: 1px solid var(--border);
-    background: var(--bg);
-}
-
-.preview-on .preview {
-    display: block;
-}
-
-.preview iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
-    background: var(--bg);
+.bar .log-out {
+    border-color: transparent;
 }
 
 @include breakpoints.down($stacked) {
-    .layout,
-    .layout.preview-on {
+    .workspace {
+        position: relative;
         grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: auto minmax(0, 1fr);
     }
 
-    .sidebar {
-        flex-direction: row;
-        overflow-x: auto;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        padding: 0.5rem;
-    }
-
-    .sidebar button,
-    .sidebar button.sub {
+    // A sheet over the lower part of the page, so the part being edited
+    // can stay in view above it.
+    .drawer {
+        position: absolute;
+        inset: auto 0 0;
         width: auto;
-        white-space: nowrap;
-        padding-left: 0.8rem;
-        flex: 0 0 auto;
-    }
-
-    .sidebar button span {
-        overflow: visible;
-    }
-
-    .sidebar .spacer {
-        display: none;
+        max-height: 62%;
+        border-left: none;
+        border-top: var(--button-border) solid var(--color-text);
     }
 
     .editor {
-        padding: 1.5rem 1rem 5rem;
-    }
-
-    .preview-on .editor {
-        display: none;
-    }
-
-    .preview-on .preview {
-        border-left: none;
+        padding: 1rem 1rem 3rem;
     }
 }
 
 @include breakpoints.down(breakpoints.$sm) {
-    .topbar {
-        padding: 0 0.75rem;
-        gap: 0.4rem;
+    .bar {
+        gap: 0.35rem;
+        padding: 0 0.4rem;
     }
 
-    .topbar strong,
-    .topbar img,
+    .bar strong,
+    .bar img,
     .status {
         display: none;
     }
 
-    .topbar .discard {
+    .bar .discard {
         margin-right: auto;
+    }
+
+    .bar button {
+        padding-inline: 0.6rem;
     }
 }

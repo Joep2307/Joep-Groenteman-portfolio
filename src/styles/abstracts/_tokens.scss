@@ -1,15 +1,144 @@
+@use 'breakpoints';
+@use 'icons';
+
+// Every value the look is built from. Partials hold no colours or sizes of
+// their own, so the style can be tuned here.
 :root {
-    --bg: #0a0a0a;
-    --bg-alt: #131316;
-    --bg-card: #101012;
-    --text: #f2f1ec;
-    --text-muted: #8a8a8a;
-    --text-dim: #9a9a9a;
-    --accent: #8094ff;
-    --accent-soft: rgb(128 148 255 / 16%);
-    --accent-dim: rgb(128 148 255 / 72%);
-    --border: #202023;
-    --display: 'Space Grotesk', sans-serif;
-    --body: 'Roboto', sans-serif;
-    --mono: 'JetBrains Mono', monospace;
+    color-scheme: light;
+
+    // Colour. Primary is for type that shouts and for links. Accent is for
+    // shapes and small highlights only: 3.2:1 on the background is too
+    // little for text, and white on it (3.5:1) only carries icons.
+    --color-bg: #fcf5e6;
+    --color-primary: #1a33d1;
+    --color-accent: #e4603f;
+    --color-text: #2b2b2b;
+    --color-text-muted: #4a4a4a;
+    --color-rule: #3a3a3a;
+    --color-on-accent: #fff;
+
+    // Behind an open case panel: the body text colour, see-through.
+    --scrim: color-mix(in srgb, var(--color-text) 40%, transparent);
+
+    // Type
+    --font-display: 'Archivo', 'Helvetica Neue', arial, sans-serif;
+    --font-body: 'Inter', 'Helvetica Neue', helvetica, arial, sans-serif;
+
+    // System fonts only, for file paths in the editor.
+    --font-mono: ui-monospace, menlo, consolas, monospace;
+    --display-weight: 900;
+    --display-width: 125%;
+    --display-line-height: 0.88;
+    --display-tracking: -0.015em;
+    --display-size-hero: clamp(2.125rem, 9.4vw, 7.5rem);
+    --display-size-statement: clamp(1.75rem, 5.5vw, 4rem);
+    --display-size-section: clamp(1.75rem, 3.5vw, 2.5rem);
+    --display-size-label: 1.75rem;
+    --display-size-small: 1rem;
+    --body-size: 1.0625rem;
+    --body-line-height: 1.55;
+    --lead-size: 1.1875rem;
+    --title-size: 1.125rem;
+    --title-weight: 700;
+    --meta-size: 0.9375rem;
+    --list-size: 0.9375rem;
+    --list-line-height: 1.7;
+    --button-size: 0.875rem;
+    --measure: 62ch;
+
+    // Layout
+    --content-width: 1100px;
+    --page-padding: clamp(1.5rem, 6vw, 5rem);
+
+    // Room the fixed section rail needs at the left, where it is shown.
+    --rail-clearance: 12rem;
+    --hero-top: 9rem;
+    --space-section: 5rem;
+    --space-item: 2rem;
+
+    // Each case has a screen to itself. The image is capped so image and
+    // text still fit in one screen together.
+    --case-min-height: 100svh;
+    --case-media-max-height: 50svh;
+    --rule-width: 1px;
+    --radius-image: 16px;
+    --radius-pill: 999px;
+    --button-border: 2px;
+    --button-height: 2.75rem;
+
+    // Links, focus, motion
+    --underline-width: 2px;
+    --underline-offset: 0.2em;
+    --focus-width: 2px;
+    --focus-offset: 3px;
+    --transition-color: 0.18s ease;
+
+    // Shapes. Overhang is how far a shape reaches past the page edge, so
+    // the pointer drift never pulls it clear of the edge.
+    --shape-overhang: 48px;
+    --shape-pill-height: 70px;
+    --shape-pill-width: 190px;
+    --shape-pill-shift: 64px;
+    --shape-pill-overlap: 10px;
+    --shape-half-height: 58px;
+    --shape-half-overlap: 0.4;
+    --shape-half-step: calc(
+        var(--shape-half-height) / 2 * (1 - var(--shape-half-overlap))
+    );
+
+    // The shapes that stand on a section's rule, and the quarter disc in
+    // the margin beside the cases.
+    --shape-dot: 32px;
+    --shape-dot-gap: 10px;
+    --shape-bar-width: 200px;
+    --shape-rule-gap: 8px;
+    --shape-dome-width: 112px;
+    --shape-quarter: 96px;
+    --shape-margin-dot: 22px;
+    --shape-margin-dot-gap: 14px;
+    --shape-side-half: 48px;
+    --shape-ring: 72px;
+    --shape-ring-width: 14px;
+    --shape-slide: 28px;
+    --shape-slide-duration: 0.4s;
+
+    // Contact rows
+    --icon-disc: 28px;
+    --icon-size: 16px;
+}
+
+// Beside the stacked pills the hero title gets the width left over: the
+// rail's room, the pills and a gap, at about 8.2em per line of capitals.
+@include breakpoints.up(breakpoints.$lg) {
+    :root {
+        --display-size-hero: clamp(2.125rem, (100vw - 490px) / 8.2, 7.5rem);
+    }
+}
+
+// Below this the stacked pills sit above the hero title, which moves down
+// to make room for them.
+@include breakpoints.down(breakpoints.$lg) {
+    :root {
+        --hero-top: 13rem;
+        --shape-pill-height: 52px;
+        --shape-pill-width: 140px;
+        --shape-pill-shift: 48px;
+        --shape-pill-overlap: 8px;
+    }
+}
+
+@include breakpoints.down(breakpoints.$sm) {
+    :root {
+        --hero-top: 11.5rem;
+        --space-section: 4rem;
+        --shape-pill-height: 40px;
+        --shape-pill-width: 112px;
+        --shape-pill-shift: 38px;
+        --shape-pill-overlap: 6px;
+        --shape-half-height: 40px;
+        --shape-dot: 24px;
+        --shape-dot-gap: 8px;
+        --shape-bar-width: 120px;
+        --shape-dome-width: 80px;
+    }
 }

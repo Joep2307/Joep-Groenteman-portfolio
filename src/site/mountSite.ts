@@ -1,8 +1,8 @@
 import { attachCaseTilt } from './attachCaseTilt';
-import { attachHeroGlow } from './attachHeroGlow';
 import { attachMagneticHover } from './attachMagneticHover';
 import { attachPanels } from './attachPanels';
 import { attachScrollProgress } from './attachScrollProgress';
+import { attachShapes } from './attachShapes';
 import { attachTopnavScroll } from './attachTopnavScroll';
 import { loadGeometry } from './loadGeometry';
 import { markMagnetic } from './markMagnetic';
@@ -44,7 +44,7 @@ export function mountSite(
         if (motion) {
             attachCaseTilt(doc, geometry);
             attachMagneticHover(doc, geometry);
-            attachHeroGlow(doc, view, geometry);
+            attachShapes(doc, view, geometry);
         }
     });
 }

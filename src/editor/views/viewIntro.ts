@@ -15,19 +15,15 @@ export function viewIntro(state: EditorState): ViewContent {
     const hero = group('Hero', [
         textField(
             state,
-            'Small line above the title',
+            'Label above the introduction',
             need(doc, '#intro .eyebrow'),
         ),
         richField(state, 'Title', need(doc, '.hero-title'), {
             hint:
-                'Enter starts a new line. Wrap a word in *asterisks* for ' +
-                'the accent colour.',
+                'Enter starts a new line. Wrap a word in *asterisks* to ' +
+                'underline it with a coral bar.',
         }),
         richField(state, 'Introduction', need(doc, '.hero-sub')),
-        richField(state, 'Scroll hint', need(doc, '.scroll-cue'), {
-            skip: '.line',
-            multiline: false,
-        }),
         textField(
             state,
             'Label in the side navigation',

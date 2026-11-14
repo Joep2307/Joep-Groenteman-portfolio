@@ -1,10 +1,25 @@
-// The editor shares the site's tokens. These are the ones it adds, and the
-// two it sets a step lighter so form borders and hints stay readable.
+@use '../abstracts/breakpoints';
+
+// The editor shares the site's tokens. These are the ones it adds. Danger
+// is a deep red, so it never reads as the coral accent.
 :root {
-    --text-muted: #a8a8a8;
-    --danger: #ff8f8f;
-    --warn: #ffcf70;
-    --border: #2c2c30;
-    --border-strong: #5a5a60;
-    --topbar: 3.75rem;
+    --danger: #b3261e;
+    --warn: #8a4b00;
+
+    // The striped "under construction" border round the whole editor:
+    // coral and cream at 45 degrees, so it is clear the page is being
+    // edited and is not the live site.
+    --edit-border: 12px;
+    --stripe-width: 14px;
+    --stripe-a: var(--color-accent);
+    --stripe-b: var(--color-bg);
+    --bar: 3.25rem;
+    --drawer-width: 30rem;
+}
+
+@include breakpoints.down(breakpoints.$sm) {
+    :root {
+        --edit-border: 6px;
+        --stripe-width: 8px;
+    }
 }

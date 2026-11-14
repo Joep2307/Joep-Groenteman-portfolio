@@ -25,13 +25,23 @@ describe('geometry bindings', () => {
         expect(magnetic_offset(100, 100, 100, 0.5)).toBe(-25);
     });
 
-    it('spreads the glow over its range, even with no viewport', async () => {
-        const { glow_target } = await geometry();
+    it('spreads the drift over its range, even with no viewport', async () => {
+        const { parallax_offset } = await geometry();
 
-        expect(glow_target(0, 1000, 420)).toBe(-210);
-        expect(glow_target(500, 1000, 420)).toBe(0);
-        expect(glow_target(1000, 1000, 420)).toBe(210);
-        expect(glow_target(10, 0, 420)).toBe(0);
+        expect(parallax_offset(0, 1000, 420)).toBe(-210);
+        expect(parallax_offset(500, 1000, 420)).toBe(0);
+        expect(parallax_offset(1000, 1000, 420)).toBe(210);
+        expect(parallax_offset(10, 0, 420)).toBe(0);
+    });
+
+    it('pushes a shape away from a nearby pointer', async () => {
+        const { repel_offset } = await geometry();
+
+        expect(repel_offset(100, 0, 200, 40)).toBe(20);
+        expect(repel_offset(-100, 0, 200, 40)).toBe(-20);
+        expect(repel_offset(60, 80, 200, 40)).toBe(12);
+        expect(repel_offset(200, 0, 200, 40)).toBe(0);
+        expect(repel_offset(0, 0, 200, 40)).toBe(0);
     });
 
     it('eases a fraction of the way to the target', async () => {

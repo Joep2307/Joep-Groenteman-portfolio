@@ -1,0 +1,313 @@
+@use '../abstracts/breakpoints';
+@use '../abstracts/mixins';
+
+// Below this the stacked pills move above the hero title; beside it they
+// would run into it.
+$pills-beside-from: breakpoints.$lg;
+
+// From here the margin beside the column is wide enough for the shapes
+// in it and a gap: the content width plus twice the quarter disc and
+// 2rem.
+$margin-from: 1360px;
+
+// Flat coral forms that bleed off the page edge. Each motif is one
+// `.shape`, drawn with its pseudo-elements, so the script moves it as a
+// whole with `translate`. The groups slide in with `transform`, which
+// leaves that alone.
+.shapes {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.shape,
+.shape::before,
+.shape::after {
+    position: absolute;
+    display: block;
+    background: var(--color-accent);
+}
+
+.shape {
+    will-change: translate;
+}
+
+.shape::before,
+.shape::after {
+    content: '';
+}
+
+section > *:not(.shapes) {
+    position: relative;
+    z-index: 1;
+}
+
+// (a) Stacked pills, flush right: the upper one rounded on the right, the
+// lower one rounded on the left and running off the page.
+.hero-shapes {
+    --height: calc(var(--shape-pill-height) * 2 - var(--shape-pill-overlap));
+
+    top: calc(var(--hero-top) + 1.5rem);
+    right: 0;
+    width: calc(var(--shape-pill-width) + var(--shape-pill-shift));
+    height: var(--height);
+    animation: shapes-from-right var(--shape-slide-duration) ease-out both;
+}
+
+.shape-pills {
+    right: calc(-1 * var(--shape-overhang));
+    bottom: 0;
+    width: calc(var(--shape-pill-width) + var(--shape-overhang));
+    height: var(--shape-pill-height);
+    border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+}
+
+.shape-pills::before {
+    right: calc(var(--shape-pill-shift) + var(--shape-overhang));
+    bottom: calc(100% - var(--shape-pill-overlap));
+    width: var(--shape-pill-width);
+    height: 100%;
+    border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+}
+
+// The title is at least as tall as the pills beside it, so what follows
+// it starts below them.
+@include breakpoints.up($pills-beside-from) {
+    #intro h1.hero-title {
+        min-height: calc(
+            var(--shape-pill-height) * 2 - var(--shape-pill-overlap) + 1.5rem
+        );
+    }
+}
+
+@include breakpoints.down($pills-beside-from) {
+    .hero-shapes {
+        top: calc(var(--hero-top) - var(--height) - 1.5rem);
+    }
+}
+
+// (b) Three half-circles in a row, flat side left, flush left.
+.contact-shapes {
+    left: 0;
+    bottom: calc(var(--space-section) / 2);
+    width: calc(var(--shape-half-height) / 2 + var(--shape-half-step) * 2);
+    height: var(--shape-half-height);
+    animation: shapes-from-left var(--shape-slide-duration) ease-out both;
+}
+
+.shape-halves,
+.shape-halves::before,
+.shape-halves::after {
+    top: 0;
+    width: calc(var(--shape-half-height) / 2);
+    height: 100%;
+    border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+}
+
+.shape-halves {
+    left: calc(-1 * var(--shape-overhang));
+    width: calc(var(--shape-half-height) / 2 + var(--shape-overhang));
+}
+
+.shape-halves::before {
+    left: calc(var(--shape-overhang) + var(--shape-half-step));
+}
+
+.shape-halves::after {
+    left: calc(var(--shape-overhang) + var(--shape-half-step) * 2);
+}
+
+// (c) and (d) stand on the rule over a section head, in the empty gap the
+// section before leaves above it, so they clear text at every width.
+.work-shapes,
+.about-shapes {
+    bottom: calc(100% + var(--shape-rule-gap));
+}
+
+// (c) A dot, then a bar running off the right edge.
+.work-shapes {
+    right: 0;
+    width: calc(
+        var(--shape-dot) + var(--shape-dot-gap) + var(--shape-bar-width)
+    );
+    height: var(--shape-dot);
+}
+
+.shape-dot-bar {
+    right: calc(-1 * var(--shape-overhang));
+    bottom: 0;
+    width: calc(var(--shape-bar-width) + var(--shape-overhang));
+    height: 100%;
+    border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+}
+
+.shape-dot-bar::before {
+    right: calc(100% + var(--shape-dot-gap));
+    bottom: 0;
+    width: var(--shape-dot);
+    height: 100%;
+    border-radius: 50%;
+}
+
+// (d) A half disc at the left end of the rule, where the column starts.
+.about-shapes {
+    left: max(var(--page-padding), (100% - var(--content-width)) / 2);
+    width: var(--shape-dome-width);
+    height: calc(var(--shape-dome-width) / 2);
+}
+
+@include breakpoints.up(breakpoints.$lg) {
+    .about-shapes {
+        left: max(var(--rail-clearance), (100% - var(--content-width)) / 2);
+    }
+}
+
+.shape-dome {
+    inset: 0;
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+
+// (e) Shapes in the right margin, beside the cases and the about text.
+// Only where the margin has room for them; centred in it, or flush with
+// the page edge for the ones that bleed off it.
+.margin-shapes {
+    display: none;
+    right: calc((100% - var(--content-width)) / 4 - var(--size) / 2);
+    width: var(--size);
+}
+
+@media (min-width: $margin-from) {
+    .margin-shapes {
+        display: block;
+    }
+}
+
+// A column of three small dots, near the top of the cases.
+.work-dots {
+    --size: var(--shape-margin-dot);
+
+    top: 20%;
+    height: calc(
+        var(--shape-margin-dot) * 3 + var(--shape-margin-dot-gap) * 2
+    );
+}
+
+.shape-dot-column,
+.shape-dot-column::before,
+.shape-dot-column::after {
+    width: var(--shape-margin-dot);
+    height: var(--shape-margin-dot);
+    border-radius: 50%;
+}
+
+.shape-dot-column {
+    top: 0;
+    left: 0;
+}
+
+.shape-dot-column::before {
+    top: calc(100% + var(--shape-margin-dot-gap));
+}
+
+.shape-dot-column::after {
+    top: calc(200% + var(--shape-margin-dot-gap) * 2);
+}
+
+// A quarter disc halfway down, bleeding off the edge.
+.work-quarter {
+    top: 50%;
+    right: 0;
+    width: var(--shape-quarter);
+    height: var(--shape-quarter);
+}
+
+.shape-quarter {
+    top: 0;
+    right: calc(-1 * var(--shape-overhang));
+    width: calc(var(--shape-quarter) + var(--shape-overhang));
+    height: 100%;
+    border-radius: var(--shape-quarter) 0 0;
+}
+
+// A half disc near the bottom, flat side on the edge.
+.work-half {
+    top: 80%;
+    right: 0;
+    width: var(--shape-side-half);
+    height: calc(var(--shape-side-half) * 2);
+}
+
+.shape-side-half {
+    top: 0;
+    right: calc(-1 * var(--shape-overhang));
+    width: calc(var(--shape-side-half) + var(--shape-overhang));
+    height: 100%;
+    border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+}
+
+// A ring halfway down the about section.
+.about-ring {
+    --size: var(--shape-ring);
+
+    top: 50%;
+    height: var(--shape-ring);
+}
+
+.shape-ring {
+    inset: 0;
+    border: var(--shape-ring-width) solid var(--color-accent);
+    border-radius: 50%;
+    background: none;
+}
+
+// (f) Three dots, large to small, on the contact rule at the column's
+// right end.
+.contact-steps {
+    right: max(var(--page-padding), (100% - var(--content-width)) / 2);
+    bottom: calc(100% + var(--shape-rule-gap));
+    width: calc(var(--shape-dot) * 2.2 + var(--shape-dot-gap) * 2);
+    height: var(--shape-dot);
+}
+
+.shape-steps,
+.shape-steps::before,
+.shape-steps::after {
+    bottom: 0;
+    border-radius: 50%;
+}
+
+.shape-steps {
+    left: 0;
+    width: var(--shape-dot);
+    height: var(--shape-dot);
+}
+
+.shape-steps::before {
+    left: calc(100% + var(--shape-dot-gap));
+    width: calc(var(--shape-dot) * 0.7);
+    height: calc(var(--shape-dot) * 0.7);
+}
+
+.shape-steps::after {
+    left: calc(170% + var(--shape-dot-gap) * 2);
+    width: calc(var(--shape-dot) * 0.5);
+    height: calc(var(--shape-dot) * 0.5);
+}
+
+@keyframes shapes-from-right {
+    from {
+        transform: translateX(var(--shape-slide));
+    }
+}
+
+@keyframes shapes-from-left {
+    from {
+        transform: translateX(calc(-1 * var(--shape-slide)));
+    }
+}
+
+@include mixins.reduced-motion {
+    .shapes {
+        animation: none;
+    }
+}

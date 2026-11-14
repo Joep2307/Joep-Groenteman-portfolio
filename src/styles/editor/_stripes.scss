@@ -1,0 +1,18 @@
+// The striped border: the body is striped, and every screen of the
+// editor sits on it in cream boxes, one border's width in from the edge.
+body {
+    background: repeating-linear-gradient(
+        -45deg,
+        var(--stripe-a) 0 var(--stripe-width),
+        var(--stripe-b) var(--stripe-width) calc(var(--stripe-width) * 2)
+    );
+}
+
+// Forced colours drop the gradient, so the boxes get a border instead.
+@media (forced-colors: active) {
+    .workspace,
+    .bar,
+    .center-page {
+        border: 2px solid CanvasText;
+    }
+}

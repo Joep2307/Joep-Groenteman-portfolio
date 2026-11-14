@@ -4,47 +4,53 @@ import {
     PAGE_PATH,
     REPO,
     REQUIRED_SELECTORS,
-    PASSWORD_KEY,
 } from '../constants';
 import { serialize } from '../document/serialize';
 import { loadDraft } from '../draft/loadDraft';
 import type { EditorState } from '../EditorState';
 import { fetchLatest } from '../github/fetchLatest';
-import { getPassword } from '../github/getPassword';
 import { GithubError } from '../github/GithubError';
 import { githubFetch } from '../github/githubFetch';
+import { isLoggedIn } from '../github/isLoggedIn';
 import type { LatestSite } from '../github/LatestSite';
 import { listImages } from '../github/listImages';
 import type { Repository } from '../github/Repository';
 import { notify } from '../shell/notify';
 import { h } from '../util/h';
 import { renderEditor } from './renderEditor';
+import { loginMessage } from './loginMessage';
 import { renderLogin } from './renderLogin';
 import { renderMessage } from './renderMessage';
 
 /**
- * Loads the published page and any draft kept on this device, then shows
- * the editor, or the screen that says why it cannot. Reading needs no
- * password; it is only asked for when publishing.
+ * Checks the login, loads the published page and any draft kept on this
+ * device, then shows the editor, or the screen that says why it cannot.
  */
 export async function start(state: EditorState): Promise<void> {
-    const connected = Boolean(getPassword());
     renderMessage('Loading your portfolio…', []);
-    const forgetPassword = (message: string): void => {
-        localStorage.removeItem(PASSWORD_KEY);
-        renderLogin(state, message);
-    };
+    // After a sign-in that did not work, GitHub sends you back here with
+    // the reason in the address. It is shown once, then dropped.
+    const failure = new URLSearchParams(location.search).get('login');
+    if (failure !== null) {
+        history.replaceState(null, '', location.pathname + location.hash);
+    }
     try {
-        if (connected) {
-            const repo = (await githubFetch('')) as Repository;
-            if (!repo.permissions?.push) {
-                forgetPassword(
+        if (!(await isLoggedIn())) {
+            renderLogin(loginMessage(failure));
+            return;
+        }
+        const repo = (await githubFetch('')) as Repository;
+        if (!repo.permissions?.push) {
+            renderMessage("The editor can't publish", [
+                h(
+                    'p',
+                    {},
                     'The GITHUB_TOKEN set in Vercel can read the ' +
                         'repository but not write to it. Give it ' +
                         'Contents: Read and write.',
-                );
-                return;
-            }
+                ),
+            ]);
+            return;
         }
         // The repository answered, so a missing page is not about access.
         let latest: LatestSite;
@@ -109,21 +115,25 @@ export async function start(state: EditorState): Promise<void> {
         }
     } catch (err) {
         const status = err instanceof GithubError ? err.status : undefined;
-        if (connected && status === 401) {
-            forgetPassword('Wrong password.');
-        } else if (connected && (status === 502 || status === 503)) {
-            // The server is not set up; its message says what is missing.
-            forgetPassword(err instanceof Error ? err.message : '');
-        } else if (connected && (status === 403 || status === 404)) {
-            forgetPassword(
-                `The GITHUB_TOKEN set in Vercel doesn't have access to ` +
-                    `${REPO}. Check the repository and permissions it ` +
-                    'was created with.',
-            );
+        const message = err instanceof Error ? err.message : String(err);
+        if (status === 401) {
+            renderLogin('Your login has expired. Sign in again.');
+        } else if (status === 403 || status === 404) {
+            renderMessage("The editor can't reach your site's files", [
+                h(
+                    'p',
+                    {},
+                    `The GITHUB_TOKEN set in Vercel doesn't have access to ` +
+                        `${REPO}. Check the repository and permissions it ` +
+                        'was created with.',
+                ),
+            ]);
         } else {
+            // 502 and 503 come from the site's server, whose message says
+            // what is wrong or missing.
             renderMessage(
                 "Couldn't load your portfolio",
-                [h('p', {}, err instanceof Error ? err.message : String(err))],
+                [h('p', {}, message)],
                 h(
                     'button',
                     {

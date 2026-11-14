@@ -6,6 +6,7 @@ import { caseLabelField } from '../fields/caseLabelField';
 import { field } from '../fields/field';
 import { group } from '../fields/group';
 import { imageField } from '../fields/imageField';
+import { registerField } from '../fields/registerField';
 import { richField } from '../fields/richField';
 import { tagsField } from '../fields/tagsField';
 import { textField } from '../fields/textField';
@@ -30,14 +31,15 @@ export function viewProject(state: EditorState, id: string): ViewContent {
         },
         '← All projects',
     );
-    const titleField = field(
+    const cardTitle = need(card, '.case-title');
+    const panelTitle = need(panel, '.panel-title');
+    const titleField = registerField(
         state,
-        'Project title',
-        project.title,
-        (value) => {
-            need(card, '.case-title').textContent = value;
-            need(panel, '.panel-title').textContent = value;
-        },
+        [cardTitle, panelTitle],
+        field(state, 'Project title', project.title, (value) => {
+            cardTitle.textContent = value;
+            panelTitle.textContent = value;
+        }),
     );
     const cardGroup = group(
         'Homepage card',

@@ -1,28 +1,34 @@
 // @vitest-environment node
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
-import { GET, PATCH, POST } from '../../../api/github';
+import { SESSION_COOKIE } from './constants';
+import { handleGithub } from './handleGithub';
+import { signSession } from './signSession';
 
-const URL_BASE = 'https://site.example/api/github?path=';
+const SITE = 'https://site.example';
+const upstream = vi.fn<typeof fetch>();
 
 function call(
-    handler: typeof GET,
     method: string,
     path: string,
-    password = 'secret',
+    { loggedIn = true, origin = SITE } = {},
 ): Promise<Response> {
-    return handler(
-        new Request(URL_BASE + encodeURIComponent(path), {
+    const exp = Math.floor(Date.now() / 1000) + 60;
+    const value = signSession({ id: 42, login: 'joep', exp }, 'secret');
+    return handleGithub(
+        new Request(`${SITE}/api/github?path=${encodeURIComponent(path)}`, {
             method,
-            headers: { Authorization: `Bearer ${password}` },
+            headers: {
+                origin,
+                ...(loggedIn ? { cookie: `${SESSION_COOKIE}=${value}` } : {}),
+            },
             body: method === 'GET' ? null : '{}',
         }),
     );
 }
 
-const upstream = vi.fn<typeof fetch>();
-
 beforeEach(() => {
-    vi.stubEnv('EDITOR_PASSWORD', 'secret');
+    vi.stubEnv('SESSION_SECRET', 'secret');
+    vi.stubEnv('EDITOR_GITHUB_ID', '42');
     vi.stubEnv('GITHUB_TOKEN', 'ghp_test');
     upstream.mockReset();
     upstream.mockImplementation(() =>
@@ -36,19 +42,19 @@ afterEach(() => {
     vi.unstubAllGlobals();
 });
 
-test('refuses a wrong password without calling GitHub', async () => {
-    const res = await call(GET, 'GET', '', 'guess');
+test('refuses a call without a login, without calling GitHub', async () => {
+    const res = await call('GET', '', { loggedIn: false });
     expect(res.status).toBe(401);
     expect(upstream).not.toHaveBeenCalled();
 });
 
 test('says so when the environment variables are missing', async () => {
     vi.stubEnv('GITHUB_TOKEN', '');
-    expect((await call(GET, 'GET', '')).status).toBe(503);
+    expect((await call('GET', '')).status).toBe(503);
 });
 
 test('forwards an allowed call with the server token', async () => {
-    const res = await call(POST, 'POST', '/git/blobs');
+    const res = await call('POST', '/git/blobs');
     expect(res.status).toBe(200);
     const [url, init] = upstream.mock.calls[0] ?? [];
     expect(url).toBe(
@@ -60,12 +66,20 @@ test('forwards an allowed call with the server token', async () => {
     );
 });
 
+test('refuses writes from another site', async () => {
+    const res = await call('POST', '/git/blobs', {
+        origin: 'https://evil.example',
+    });
+    expect(res.status).toBe(403);
+    expect(upstream).not.toHaveBeenCalled();
+});
+
 test('refuses calls the editor never makes', async () => {
     const refused = [
-        call(POST, 'POST', '/git/refs'),
-        call(PATCH, 'PATCH', '/git/refs/heads/other'),
-        call(GET, 'GET', '/../../user'),
-        call(GET, 'GET', '/collaborators'),
+        call('POST', '/git/refs'),
+        call('PATCH', '/git/refs/heads/other'),
+        call('GET', '/../../user'),
+        call('GET', '/collaborators'),
     ];
     for (const res of await Promise.all(refused)) {
         expect(res.status).toBe(403);
@@ -75,5 +89,5 @@ test('refuses calls the editor never makes', async () => {
 
 test('reports a rejected server token as a server problem', async () => {
     upstream.mockResolvedValue(Response.json({}, { status: 401 }));
-    expect((await call(GET, 'GET', '')).status).toBe(502);
+    expect((await call('GET', '')).status).toBe(502);
 });

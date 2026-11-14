@@ -1,0 +1,37 @@
+// Line icons for the contact rows, as SVG masks: only their shape counts,
+// the colour comes from the element they mask.
+@function -join($parts) {
+    $joined: '';
+
+    @each $part in $parts {
+        $joined: $joined + $part;
+    }
+
+    @return $joined;
+}
+
+@function -icon($paths...) {
+    @return url(-join(
+            (
+                "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' ",
+                "viewBox='0 0 24 24' fill='none' stroke='black' ",
+                "stroke-width='2' stroke-linecap='round' ",
+                "stroke-linejoin='round'%3E",
+                -join($paths),
+                '%3C/svg%3E'
+            )
+        ));
+}
+
+:root {
+    --icon-mail: #{-icon(
+            "%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E",
+            "%3Cpath d='m3 7 9 6 9-6'/%3E"
+        )};
+    --icon-link: #{-icon("%3Cpath d='M7 17 17 7M8 7h9v9'/%3E")};
+    --icon-linkedin: #{-icon(
+            "%3Crect x='3' y='3' width='18' height='18' rx='3'/%3E",
+            "%3Cpath d='M8 11v5M8 8v.01M12 16v-5",
+            "M12 13a2.5 2.5 0 0 1 5 0v3'/%3E"
+        )};
+}

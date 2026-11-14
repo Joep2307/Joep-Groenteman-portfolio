@@ -1,11 +1,13 @@
 export const REPO_NAME = 'Joep-Groenteman-portfolio';
 export const REPO = `Joep2307/${REPO_NAME}`;
 export const BRANCH = 'main';
-export const API_URL = `https://api.github.com/repos/${REPO}`;
 export const LIVE_URL = 'https://joep-groenteman-portfolio-qwc2.vercel.app';
 /** The site's own server; it adds the GitHub token to the editor's calls. */
 export const PROXY_URL = '/api/github';
-export const PASSWORD_KEY = 'portfolio-editor-password';
+/** Sign in with GitHub, who is logged in, and log out. */
+export const LOGIN_URL = '/api/auth/login';
+export const SESSION_URL = '/api/auth/me';
+export const LOGOUT_URL = '/api/auth/logout';
 
 /**
  * The site's folder in the repository. The page refers to its files
@@ -39,7 +41,6 @@ export const REQUIRED_SELECTORS = [
     '.hero-title',
     '.hero-sub',
     '.hero-meta',
-    '.scroll-cue',
     '#work .section-title',
     '.cases',
     '#about .section-title',
@@ -68,9 +69,6 @@ export const DRAFT_KEY = 'draft';
 export const FLUSH_DELAY_MS = 300;
 export const NOTICE_DURATION_MS = 7000;
 
-/** The preview starts open on wider windows; matches `$stacked` in SCSS. */
-export const STACKED_MAX_WIDTH_PX = 1100;
-
 /**
  * The preview frame shares the editor's origin so the editor can mount the
  * site into it. Its scripts stay enabled for the listeners the editor adds;
@@ -78,6 +76,12 @@ export const STACKED_MAX_WIDTH_PX = 1100;
  */
 export const PREVIEW_SANDBOX = 'allow-same-origin allow-scripts';
 export const PREVIEW_CSP = "script-src 'none'";
+
+/**
+ * Clicks on these in the page do what they do on the site, so case
+ * studies can be opened, stepped through and closed while editing.
+ */
+export const PAGE_CONTROLS = '.panel-close, #overlay, .rail, [data-nav]';
 
 export const PARAGRAPHS_HINT =
     'Double asterisks make text **bold**. The first paragraph shows ' +

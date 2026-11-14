@@ -1,9 +1,6 @@
 import { customSections } from '../document/customSections';
 import { projects } from '../document/projects';
 import type { EditorState } from '../EditorState';
-import { getPassword } from '../github/getPassword';
-import { connect } from '../publish/connect';
-import { disconnect } from '../publish/disconnect';
 import { clean } from '../util/clean';
 import { h } from '../util/h';
 import { query } from '../util/query';
@@ -66,9 +63,5 @@ export function renderSidebar(state: EditorState): void {
         item('contact', 'Contact'),
         action('+ New section', 'add', addSection),
         item('settings', 'Site settings'),
-        h('div', { class: 'spacer' }),
-        getPassword()
-            ? action('Disconnect', 'disconnect', disconnect)
-            : action('Connect', 'disconnect', connect),
     );
 }

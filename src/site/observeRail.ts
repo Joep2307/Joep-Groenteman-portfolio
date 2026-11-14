@@ -1,4 +1,4 @@
-import { RAIL_THRESHOLD } from './constants';
+import { RAIL_ROOT_MARGIN } from './constants';
 
 /** Marks the rail item of the section currently in view. */
 export function observeRail(
@@ -21,7 +21,7 @@ export function observeRail(
                 item.setAttribute('aria-current', 'location');
             }
         },
-        { threshold: RAIL_THRESHOLD },
+        { rootMargin: RAIL_ROOT_MARGIN },
     );
     doc.querySelectorAll('main section').forEach((section) => {
         observer.observe(section);

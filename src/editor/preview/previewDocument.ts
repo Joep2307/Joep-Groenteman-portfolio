@@ -7,10 +7,18 @@ import type { EditorState } from '../EditorState';
 /**
  * The page as the preview frame gets it: unable to run scripts of its own,
  * styled with the built site styles, and with images that show pending
- * uploads.
+ * uploads. Also records which element of the page each one in the preview
+ * stands for, in `state.previewNodes`.
  */
 export function previewDocument(state: EditorState): string {
     const clone = state.doc.cloneNode(true) as Document;
+
+    // Number each element before anything is taken out, so a click on the
+    // page can find the element it was drawn from.
+    state.previewNodes = [...state.doc.querySelectorAll('*')];
+    clone.querySelectorAll('*').forEach((el, index) => {
+        el.setAttribute('data-node', String(index));
+    });
 
     // The editor mounts the site's script itself, and nothing else in the
     // page may run next to the password: the policy also covers inline
