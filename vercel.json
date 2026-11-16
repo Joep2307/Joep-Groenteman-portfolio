@@ -1,7 +1,0 @@
-{
-    "$schema": "https://openapi.vercel.sh/vercel.json",
-    "framework": null,
-    "installCommand": "curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal -t wasm32-unknown-unknown && PATH=\"${CARGO_HOME:-$HOME/.cargo}/bin:$PATH\" && curl -sSf https://wasm-bindgen.github.io/wasm-pack/installer/init.sh | sh && pnpm install --frozen-lockfile",
-    "buildCommand": "PATH=\"${CARGO_HOME:-$HOME/.cargo}/bin:$PATH\" pnpm build",
-    "outputDirectory": "dist"
-}

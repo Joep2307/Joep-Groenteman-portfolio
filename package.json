@@ -22,7 +22,7 @@
         "test:coverage": "vitest run --coverage",
         "test:rust": "cargo test --manifest-path src/geometry/Cargo.toml",
         "smoke": "playwright test --project=smoke",
-        "baseline:capture": "BASE_URL=https://joep-groenteman-portfolio-qwc2.vercel.app playwright test --project=visual-desktop --project=visual-mobile --update-snapshots",
+        "baseline:capture": "BASE_URL=https://joepgroenteman.com playwright test --project=visual-desktop --project=visual-mobile --update-snapshots",
         "baseline:compare": "playwright test --project=visual-desktop --project=visual-mobile",
         "wasm": "PATH=\"${CARGO_HOME:-$HOME/.cargo}/bin:$PATH\" wasm-pack build src/geometry --target bundler --release",
         "prepare": "husky"

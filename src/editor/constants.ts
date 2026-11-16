@@ -1,7 +1,7 @@
 export const REPO_NAME = 'Joep-Groenteman-portfolio';
 export const REPO = `Joep2307/${REPO_NAME}`;
 export const BRANCH = 'main';
-export const LIVE_URL = 'https://joep-groenteman-portfolio-qwc2.vercel.app';
+export const LIVE_URL = 'https://joepgroenteman.com';
 /** The site's own server; it adds the GitHub token to the editor's calls. */
 export const PROXY_URL = '/api/github';
 /** Sign in with GitHub, who is logged in, and log out. */
