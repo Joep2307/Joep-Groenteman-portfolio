@@ -1,18 +1,25 @@
-import { PROXY_URL } from '../constants';
+import { REPO_API } from '../constants';
 import { GithubError } from './GithubError';
+import { readToken } from './readToken';
 
 /**
- * Calls the repository's GitHub API through the site's server, which
- * checks the login cookie and adds the GitHub token.
+ * Calls GitHub's API for the site's repository with the token saved in
+ * this browser. `path` is relative to the repository, '' for the
+ * repository itself.
  */
 export async function githubFetch(
     path: string,
     options: RequestInit = {},
 ): Promise<unknown> {
-    const res = await fetch(`${PROXY_URL}?path=${encodeURIComponent(path)}`, {
+    const token = readToken();
+    if (token === null) throw new GithubError('Not logged in.', 401);
+    const res = await fetch(REPO_API + path, {
         ...options,
         cache: 'no-store',
-        headers: { Accept: 'application/vnd.github+json' },
+        headers: {
+            Accept: 'application/vnd.github+json',
+            Authorization: `Bearer ${token}`,
+        },
     });
     const data: unknown = await res.json().catch(() => ({}));
     if (!res.ok) {

@@ -2,12 +2,30 @@ export const REPO_NAME = 'Joep-Groenteman-portfolio';
 export const REPO = `Joep2307/${REPO_NAME}`;
 export const BRANCH = 'main';
 export const LIVE_URL = 'https://joepgroenteman.com';
-/** The site's own server; it adds the GitHub token to the editor's calls. */
-export const PROXY_URL = '/api/github';
-/** Sign in with GitHub, who is logged in, and log out. */
-export const LOGIN_URL = '/api/auth/login';
-export const SESSION_URL = '/api/auth/me';
-export const LOGOUT_URL = '/api/auth/logout';
+/** The editor talks to GitHub straight from the browser. */
+export const GITHUB_API = 'https://api.github.com';
+export const REPO_API = `${GITHUB_API}/repos/${REPO}`;
+/**
+ * The only account that can log in, matched on the numeric id (Joep2307),
+ * so a renamed account still works and someone taking the old name does
+ * not get in.
+ */
+export const EDITOR_GITHUB_ID = 114413220;
+/** Where this browser keeps the token until you log out. */
+export const TOKEN_KEY = 'portfolio-editor-token';
+/**
+ * GitHub's page for a new fine-grained token, filled in as far as GitHub
+ * allows. Which repository it may touch has to be picked by hand.
+ */
+export const NEW_TOKEN_URL =
+    'https://github.com/settings/personal-access-tokens/new?' +
+    new URLSearchParams({
+        name: 'Portfolio editor',
+        description: `Edit and publish ${LIVE_URL} from /dev/`,
+        target_name: 'Joep2307',
+        expires_in: '90',
+        contents: 'write',
+    }).toString();
 
 /**
  * The site's folder in the repository. The page refers to its files

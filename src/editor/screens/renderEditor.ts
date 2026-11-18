@@ -136,7 +136,7 @@ export function renderEditor(state: EditorState): void {
                         type,
                         class: 'log-out',
                         onclick: () => {
-                            void logOut(state);
+                            logOut(state);
                         },
                     },
                     'Log out',

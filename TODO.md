@@ -1,165 +1,68 @@
-# TODO — edit on the site itself (`/dev/`)
+# TODO — log in with a GitHub token (`/dev/`)
 
-The editor becomes the site: the whole screen is the page as visitors
-see it, inside a striped "under construction" border. Click a section
-and edit its text and images right there. You get in through a "Log
-in" link at the bottom of the site, not by typing `/dev/`.
+The site is on GitHub Pages (DNS to GitHub, `deploy.yml`), which serves
+files only. The "Sign in with GitHub" login needed `api/` running on
+Vercel, so on the live site it got a 503. Joep does not want Vercel,
+so the editor now logs in with a GitHub token and talks to GitHub
+straight from the browser. No server, nothing to host.
 
-Built on the branch, not committed. Everything below is done and
-checked except the set-up only Joep can do (`[you]`), which the login
-needs before it works.
+## How it works
 
-No database. Who you are comes from GitHub; the login is a signed
-cookie the server can check on its own; content stays in the repo and
-drafts stay in the browser, as before.
+1. "Log in" in the footer goes to `/dev/`, as before
+2. With no token saved, `/dev/` shows the login screen: a token field,
+   a "Create a token on GitHub" link (prefilled: name, owner, 90 days,
+   Contents read and write) and the two choices GitHub cannot prefill
+3. On "Log in" the editor asks GitHub who the token belongs to
+   (`GET /user`). Only id `114413220` (Joep2307) gets in, so a renamed
+   account still works and someone taking the old name does not
+4. It then reads the repo, as before. The token is kept in this
+   browser's `localStorage` until "Log out", which forgets it
+5. A token GitHub rejects, at any point, publishing included, is
+   forgotten and you are back at the login screen with the reason;
+   the draft stays
 
-## What it does
+Trade-off, accepted: a token in `localStorage` can be read by script
+on `/dev/`. The editor loads no third-party script and the preview
+frame runs with `script-src 'none'`, and the token can only touch
+this one repo's contents.
 
-1. A small "Log in" link in the footer goes to `/dev/`
-2. `/dev/` shows a login screen with "Sign in with GitHub". GitHub
-   asks you to confirm, then sends you back into the editor. Only
-   the account in `EDITOR_GITHUB_ID` gets in; anyone else sees "This
-   GitHub account can't edit this site". A login lasts 30 days
-3. The editor is the site, full screen, inside a coral and cream
-   striped border
-4. Hovering a part of the page outlines it and shows "Edit <name>".
-   Clicking opens a panel with its fields, the one for what you
-   clicked focused and marked with a coral bar. The page updates as
-   you type
-5. Status, Sections, Discard, Publish and Log out sit in a bar on the
-   bottom border
+## Plan
+
+- [x] `src/editor/constants.ts`: drop the `/api/` URLs; add
+      `GITHUB_API`, `REPO_API`, `EDITOR_GITHUB_ID`, `TOKEN_KEY`,
+      `NEW_TOKEN_URL`
+- [x] `src/editor/github/`: `readToken`, `saveToken`, `forgetToken`
+      (storage wrapped in try/catch); `githubFetch` calls `REPO_API`
+      with `Authorization: Bearer`; `fetchViewer` (`GET /user`) and
+      `GithubUser`. Remove `isLoggedIn`
+- [x] `src/editor/screens/renderLogin.ts`: the token form and the
+      steps; takes `state` so it can start the editor. Remove
+      `loginMessage` (no more `?login=` reasons)
+- [x] `start.ts`: token → `/user` → id check → repo, messages about
+      the token instead of Vercel's `GITHUB_TOKEN`
+- [x] `logOut.ts`: forget the token; `openPublishDialog.ts`: forget it
+      on a 401, and "GitHub Pages" instead of "Vercel"
+- [x] Remove `api/`, `src/server/`, `apiDevServer` in
+      `vite.config.ts`, `api` in `tsconfig.json`
+- [x] Tests: `githubFetch.test.ts`; `editor.smoke.ts` mocks
+      `api.github.com` and a saved token, covers the login screen, a
+      token of another account, a rejected token, and axe
 
 ## Set up `[you]`
 
-- [ ] GitHub, live site: Settings → Developer settings → OAuth Apps →
-      New OAuth App. Homepage URL: the live URL. Authorization
-      callback URL: `<live URL>/api/auth/callback`. Generate a client
-      secret
-- [ ] Vercel → Project → Settings → Environment Variables, for
-      Production: `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` (from the
-      app), `EDITOR_GITHUB_ID` (the `id` number at
-      `https://api.github.com/users/Joep2307`), `SESSION_SECRET`
-      (`openssl rand -base64 32`). `GITHUB_TOKEN` stays. Delete
-      `EDITOR_PASSWORD`. Redeploy
-- [ ] After the deploy, open `<live URL>/api/auth/me`. JSON saying
-      "Not logged in." is right; a Vercel error page means the
-      function did not build (see "Risk" below)
-- [ ] Local, optional: a second OAuth App with callback
-      `http://localhost:5173/api/auth/callback`, and the same four
-      variables (with its id and secret) plus `GITHUB_TOKEN` in
-      `.env.local` in the repo root (ignored by git). `pnpm dev`
-      serves `api/` itself, no Vercel CLI needed
-
-Preview deployments get their own URL, which GitHub will not send you
-back to, so sign-in works on the live site and locally only.
-
-Risk: Vercel builds `api/*.ts`, which import `src/server/*.ts` with
-`.js` extensions, as Node ES modules need. That is the documented way,
-but it could not be tried before deploying. If `/api/auth/me` fails,
-the fallback is to move `src/server/` into `api/_lib/`.
-
-## Decisions taken (say so to change them)
-
-- [x] **Stripes**: the site accent and background, 45°, 12px border,
-      6px on phones (`src/styles/editor/_tokens.scss`)
-- [x] **Login link**: muted text after the copyright line,
-      underlined on hover and focus, 44px tall, `rel="nofollow"`
-- [x] **Log in before editing**; the server checks the cookie on
-      every call, so the login screen is a convenience, not the lock
-- [x] **One account**, matched on the numeric id, so a renamed account
-      still works and someone taking the old name does not get in
-- [x] **30 days** per login
-- [x] **The password is gone**: `EDITOR_PASSWORD`, `getPassword`,
-      `connect`, `disconnect` and the password field
-- [x] **The form editor stays** as "Sections" (bar) / "All sections"
-      (panel): the list of every view, for site settings, adding and
-      reordering projects and sections
-
-## What was built
-
-Site:
-
-- [x] `exe/index.html`: `<a class="footer-login" href="/dev/"
-      rel="nofollow">Log in</a>` in the footer, after `footer span`
-- [x] `src/styles/site/_layout.scss`: footer is one row under a rule
-      (a `::before` that takes a full row), link quiet until hover
-
-Server (`api/` files are one-line entry points; the code is in
-`src/server/`, one symbol per file):
-
-- [x] `api/auth/login.ts` → `handleLogin`: random `state` in a
-      10-minute cookie on the callback path, redirect to GitHub with
-      no scopes and `allow_signup=false`
-- [x] `api/auth/callback.ts` → `handleCallback`: checks `state`,
-      swaps the code (`exchangeCode`), asks who you are
-      (`fetchGithubUser`), checks the id, sets the session, back to
-      `/dev/`. Failures go to `/dev/?login=cancelled|denied|expired|
-      error|setup`. The GitHub token is dropped
-- [x] `api/auth/me.ts` → `handleMe`: `{ login }`, 401 or 503
-- [x] `api/auth/logout.ts` → `handleLogout`: POST, same origin only,
-      clears the cookie
-- [x] `api/github.ts` → `handleGithub`: the proxy, now behind the
-      session cookie, and same origin only for writes
-- [x] Session: `signSession` / `verifySession` (HMAC-SHA256 over
-      base64url JSON, constant-time compare, expiry),
-      `currentSession` (also re-checks `EDITOR_GITHUB_ID`). Cookies
-      are `HttpOnly; SameSite=Lax`, `Secure` on https
-- [x] `apiDevServer`: a Vite plugin so `pnpm dev` serves `api/` with
-      `.env.local`, like Vercel does
-
-Editor:
-
-- [x] Every GitHub call goes through the proxy; the browser holds no
-      secret. `start` asks `/api/auth/me` first; a 401 at any point,
-      publishing included, goes to the login screen with the draft
-      kept
-- [x] `renderLogin` / `loginMessage`: the login screen and the
-      reasons; `logOut` in the bar
-- [x] `renderEditor`: `main.workspace` (the frame and the panel) and
-      the bar, on a striped body. Preview toggle and
-      `STACKED_MAX_WIDTH_PX` removed
-- [x] `src/editor/stage/`: `editTargets` (what can be clicked),
-      `attachEditTargets` (marks them in the frame after each redraw,
-      hover outline and label, click capture on the frame's window),
-      `editTargetOf`, `nodeOf`, `fieldFor`, `openFromPage`,
-      `openDrawer`, `closeDrawer`, `showSections`, `toggleSections`,
-      `markTarget`
-- [x] `previewDocument` numbers each element (`data-node`) so a click
-      finds the element of the page it came from; `registerField`
-      (in `textField`, `richField`, `imageField` and the project
-      title) maps that element to its input
-- [x] Clicks on case study controls (close, previous, next), the
-      scrim and the rail still work, so case studies can be opened
-      and edited (`PAGE_CONTROLS`)
-
-Different from the plan:
-
-- No injected "Edit" buttons per section for the keyboard. Instead:
-  Enter on any link in the page opens its part like a click, and
-  "Sections" in the bar lists every part. The injected buttons would
-  have changed the page's own markup and focus order
-- The panel pushes the page narrower on wide screens (at 1100px and
-  up) and covers the lower 62% on smaller ones
+- [ ] On `/dev/`, follow "Create a token on GitHub": Repository access
+      → Only select repositories → `Joep-Groenteman-portfolio`;
+      Permissions → Contents → Read and write. Paste it in, log in
+- [ ] The OAuth App, if you made one for the old login, can be deleted
+      (GitHub → Settings → Developer settings → OAuth Apps)
 
 ## Checked
 
-- [x] Unit: `src/server/session.test.ts`, `auth.test.ts`,
-      `handleGithub.test.ts` (replaces `proxy.test.ts`),
-      `src/editor/stage/stage.test.ts`. 96 tests pass
-- [x] Smoke: footer link, login screen, refused sign-in, the stage,
-      click hero → Intro with Title focused → typing changes the
-      page → Escape closes, click a case card → that project without
-      opening its case study, Sections → Site settings, axe on the
-      login screen and on the open panel. 20 pass
-- [x] `pnpm typecheck`, `pnpm lint`, `npx prettier --check .`
-- [x] Looked at 320, 412, 820 and 1280px: no horizontal scroll
-- [x] `pnpm dev`: `/api/auth/login`, `/me` and `/logout` answer, with
-      cookies set and read through the dev server
-- [ ] Known: at 320px the frame is 308px wide, and the site's own
-      top bar crowds there (name against "Get in touch"). It is the
-      site below its smallest width, not the editor
-- [ ] Not committed; the visual baseline is not recaptured (the
-      footer changed)
+- [x] `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm smoke`,
+      `npx prettier --check .`: 75 unit tests, 23 smoke tests pass
+- [x] GitHub's API allows these calls from the browser (CORS `*`,
+      `Authorization` header, GET/POST/PATCH)
+- [ ] Not committed. The `deploy.yml` push to `main` takes it live
 
 ---
 

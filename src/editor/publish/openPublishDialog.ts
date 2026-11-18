@@ -6,6 +6,7 @@ import {
 } from '../constants';
 import type { EditorState } from '../EditorState';
 import { field } from '../fields/field';
+import { forgetToken } from '../github/forgetToken';
 import { GithubError } from '../github/GithubError';
 import { repoPath } from '../github/repoPath';
 import { flush } from '../shell/flush';
@@ -114,15 +115,18 @@ export function openPublishDialog(state: EditorState): void {
             updateStatus(state);
             notify(
                 state,
-                'Published. Vercel usually has it live within a minute.',
+                'Published. GitHub Pages usually has it live in a few ' +
+                    'minutes.',
                 { href: LIVE_URL, label: 'Open your site' },
             );
         } catch (err) {
             if (err instanceof GithubError && err.status === 401) {
                 close();
+                forgetToken();
                 renderLogin(
-                    'Your login has expired. Sign in again; your changes ' +
-                        'are still saved on this device.',
+                    state,
+                    "GitHub didn't accept your token. Log in with a new " +
+                        'one; your changes are still saved on this device.',
                 );
                 return;
             }
@@ -142,8 +146,8 @@ export function openPublishDialog(state: EditorState): void {
         h(
             'p',
             {},
-            `This commits to ${BRANCH} on GitHub, and Vercel then updates ` +
-                'your live site.',
+            `This commits to ${BRANCH} on GitHub, and GitHub Pages then ` +
+                'updates your live site.',
         ),
         messageField,
         h('p', { class: 'files' }, `Files: ${files.join(', ')}`),

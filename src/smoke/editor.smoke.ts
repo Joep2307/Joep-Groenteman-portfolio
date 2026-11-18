@@ -2,21 +2,40 @@ import { readFileSync } from 'node:fs';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
-/** Answers the login check: logged in, or not. */
-async function mockLogin(page: Page, loggedIn: boolean): Promise<void> {
-    await page.route('**/api/auth/me', (route) =>
-        loggedIn
-            ? route.fulfill({ json: { login: 'joep' } })
-            : route.fulfill({ status: 401, json: { message: 'No.' } }),
+const REPO_API =
+    'https://api.github.com/repos/Joep2307/Joep-Groenteman-portfolio';
+const TOKEN_KEY = 'portfolio-editor-token';
+const JOEP = { id: 114413220, login: 'Joep2307' };
+
+/** Saves a token in the browser before the editor loads. */
+async function saveToken(page: Page): Promise<void> {
+    await page.addInitScript((key) => {
+        localStorage.setItem(key, 'github_pat_test');
+    }, TOKEN_KEY);
+}
+
+/** Answers GitHub's "who is this?" with the given account, or a 401. */
+async function mockViewer(
+    page: Page,
+    user: { id: number; login: string } | null,
+): Promise<void> {
+    await page.route('https://api.github.com/user', (route) =>
+        user
+            ? route.fulfill({ json: user })
+            : route.fulfill({
+                  status: 401,
+                  json: { message: 'Bad credentials' },
+              }),
     );
 }
 
-/** Answers the editor's GitHub reads, through the proxy, from disk. */
+/** Answers the editor's reads of the repository, from disk. */
 async function mockGithub(page: Page): Promise<void> {
     const html = readFileSync('exe/index.html').toString('base64');
-    await page.route('**/api/github?*', (route) => {
-        const path =
-            new URL(route.request().url()).searchParams.get('path') ?? '';
+    await page.route(`${REPO_API}**`, (route) => {
+        const path = new URL(route.request().url()).pathname.slice(
+            new URL(REPO_API).pathname.length,
+        );
         if (path === '') {
             return route.fulfill({ json: { permissions: { push: true } } });
         }
@@ -35,7 +54,8 @@ async function mockGithub(page: Page): Promise<void> {
 
 /** The editor, logged in, with the page loaded in its frame. */
 async function openEditor(page: Page): Promise<void> {
-    await mockLogin(page, true);
+    await saveToken(page);
+    await mockViewer(page, JOEP);
     await mockGithub(page);
     await page.goto('/dev/');
     await expect(
@@ -49,25 +69,64 @@ test('the footer of the site links to the editor', async ({ page }) => {
     await expect(link).toHaveAttribute('href', '/dev/');
 });
 
-test('without a login the editor asks you to sign in', async ({ page }) => {
-    await mockLogin(page, false);
+test('without a token the editor asks for one', async ({ page }) => {
     const response = await page.goto('/dev/');
     expect(response?.status()).toBe(200);
     await expect(
         page.getByRole('heading', { name: 'Log in to edit your portfolio' }),
     ).toBeVisible();
+    await expect(page.getByLabel('GitHub token')).toBeFocused();
     await expect(
-        page.getByRole('link', { name: 'Sign in with GitHub' }),
-    ).toHaveAttribute('href', '/api/auth/login');
+        page.getByRole('link', { name: /Create a token on GitHub/ }),
+    ).toHaveAttribute(
+        'href',
+        /^https:\/\/github\.com\/settings\/personal-access-tokens\/new\?/,
+    );
 });
 
-test('a refused sign-in says why, once', async ({ page }) => {
-    await mockLogin(page, false);
-    await page.goto('/dev/?login=denied');
+test('pasting a token logs in and keeps it', async ({ page }) => {
+    await mockViewer(page, JOEP);
+    await mockGithub(page);
+    await page.goto('/dev/');
+    await page.getByLabel('GitHub token').fill('  github_pat_test  ');
+    await page.getByRole('button', { name: 'Log in' }).click();
+    await expect(
+        page.frameLocator('#preview-frame').locator('.hero-title'),
+    ).toBeVisible();
+    expect(
+        await page.evaluate((key) => localStorage.getItem(key), TOKEN_KEY),
+    ).toBe('github_pat_test');
+});
+
+test("another account's token is refused and forgotten", async ({ page }) => {
+    await saveToken(page);
+    await mockViewer(page, { id: 1, login: 'someone' });
+    await page.goto('/dev/');
     await expect(page.getByRole('alert')).toContainText(
-        "This GitHub account can't edit this site",
+        "This token belongs to someone, which can't edit this site",
     );
-    expect(new URL(page.url()).search).toBe('');
+    expect(
+        await page.evaluate((key) => localStorage.getItem(key), TOKEN_KEY),
+    ).toBeNull();
+});
+
+test('a token GitHub rejects sends you back to log in', async ({ page }) => {
+    await saveToken(page);
+    await mockViewer(page, null);
+    await page.goto('/dev/');
+    await expect(page.getByRole('alert')).toContainText(
+        "GitHub didn't accept this token",
+    );
+});
+
+test('log out forgets the token', async ({ page }) => {
+    await openEditor(page);
+    page.once('dialog', (dialog) => void dialog.accept());
+    await page.getByRole('button', { name: 'Log out' }).click();
+    await expect(page.getByLabel('GitHub token')).toBeVisible();
+    expect(
+        await page.evaluate((key) => localStorage.getItem(key), TOKEN_KEY),
+    ).toBeNull();
 });
 
 test('logged in, the page fills the striped editor', async ({ page }) => {
@@ -126,8 +185,9 @@ test('Sections lists every part of the page', async ({ page }) => {
 });
 
 test('the login screen has no accessibility violations', async ({ page }) => {
-    await mockLogin(page, false);
-    await page.goto('/dev/?login=denied');
+    await saveToken(page);
+    await mockViewer(page, null);
+    await page.goto('/dev/');
     await expect(page.getByRole('alert')).toBeVisible();
     const results = await new AxeBuilder({ page }).analyze();
     expect(results.violations).toEqual([]);
