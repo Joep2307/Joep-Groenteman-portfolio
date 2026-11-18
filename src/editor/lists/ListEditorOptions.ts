@@ -18,5 +18,10 @@ export interface ListEditorOptions<T extends ListItem> {
     readonly remove?: (item: T) => void;
     /** The question to ask before removing; without it nothing is asked. */
     readonly confirmRemove?: (item: T) => string;
+    /**
+     * Puts an item in the archive. By default its elements go, called by
+     * the list's name; `false` leaves the Archive button out.
+     */
+    readonly archive?: ((item: T) => void) | false;
     readonly rowClass?: string;
 }

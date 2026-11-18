@@ -24,6 +24,8 @@ export interface EditorState {
     /** Image paths the page can refer to, pending uploads included. */
     knownImages: string[];
     currentView: string;
+    /** The open view's heading, which archived rows say they came from. */
+    viewTitle: string;
     previewTarget: PreviewTarget;
     /** Where the preview was scrolled to; cleared when its target moves. */
     previewScroll: PreviewScroll | null;

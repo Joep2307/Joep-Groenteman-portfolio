@@ -1,8 +1,17 @@
-// Rows are divided by rules, not drawn as cards.
+// Rows are divided by rules, not drawn as cards. The drag handle has a
+// narrow gutter on the left.
 .row {
     position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 0.4rem;
     border-top: var(--rule-width) solid var(--color-rule);
     padding: 0.85rem 0;
+}
+
+.row-body {
+    grid-column: 2;
+    min-width: 0;
 }
 
 .row .row {
@@ -24,6 +33,12 @@
     right: 0;
     display: flex;
     gap: 0.25rem;
+}
+
+// Two fields side by side leave no room on the first line for the
+// buttons, so the fields start under them.
+.row:has(> .row-body > .two-up:first-child) > .row-body {
+    padding-top: 2rem;
 }
 
 .row-actions button.icon {
@@ -49,16 +64,16 @@
 }
 
 .project-row {
-    display: flex;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 0.75rem;
+    column-gap: 0.75rem;
 }
 
-.project-row .row-body {
-    flex: 1;
-    min-width: 0;
+.project-row .row-grip {
+    align-self: center;
 }
 
 .project-row .row-actions {
     position: static;
+    grid-column: 3;
 }

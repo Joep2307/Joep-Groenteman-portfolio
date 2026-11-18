@@ -3,11 +3,13 @@ import { projects } from '../document/projects';
 import type { EditorState } from '../EditorState';
 import type { ResolvedView } from './ResolvedView';
 import { viewAbout } from './viewAbout';
+import { viewArchive } from './viewArchive';
 import { viewContact } from './viewContact';
 import { viewCv } from './viewCv';
 import { viewIntro } from './viewIntro';
 import { viewProject } from './viewProject';
 import { viewSection } from './viewSection';
+import { viewSections } from './viewSections';
 import { viewSettings } from './viewSettings';
 import { viewWork } from './viewWork';
 
@@ -60,6 +62,16 @@ export function resolveView(
             return {
                 render: () => viewContact(state),
                 target: { scroll: '#contact' },
+            };
+        case 'sections':
+            return {
+                render: () => viewSections(state),
+                target: { scroll: '#intro' },
+            };
+        case 'archive':
+            return {
+                render: () => viewArchive(state),
+                target: { scroll: '#intro' },
             };
         case 'settings':
             return {

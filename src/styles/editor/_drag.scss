@@ -1,0 +1,61 @@
+// The handle a row is dragged by, in a narrow gutter on its left. The
+// arrow buttons do the same for the keyboard.
+.row-grip {
+    grid-row: 1;
+    grid-column: 1;
+    align-self: start;
+    width: 1.25rem;
+    height: 1.75rem;
+    margin-top: -0.05rem;
+    color: var(--color-text-muted);
+    cursor: grab;
+    touch-action: none;
+
+    &::before {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: currentcolor;
+        mask: var(--icon-grip) center / 1.1rem no-repeat;
+    }
+
+    &:hover {
+        color: var(--color-primary);
+    }
+
+    // A list of one has nothing to reorder; the gutter stays so rows line
+    // up with those of longer lists.
+    &.is-idle {
+        visibility: hidden;
+    }
+}
+
+.is-sorting {
+    user-select: none;
+    cursor: grabbing;
+}
+
+.is-sorting > .row:not(.is-dragging) {
+    transition: transform var(--transition-color);
+}
+
+// The row being dragged lifts above the others with a rule round it:
+// never a shadow, as the rest of the editor has none.
+.row.is-dragging {
+    z-index: 1;
+    background: var(--color-bg);
+    outline: var(--button-border) solid var(--color-primary);
+    outline-offset: 0.25rem;
+
+    .row-grip {
+        cursor: grabbing;
+        color: var(--color-primary);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .is-sorting > .row:not(.is-dragging) {
+        transition: none;
+    }
+}

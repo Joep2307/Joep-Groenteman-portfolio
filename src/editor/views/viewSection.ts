@@ -1,14 +1,14 @@
+import { archiveSection } from '../archive/archiveSection';
 import { PARAGRAPHS_HINT } from '../constants';
 import { need } from '../document/need';
-import { removeGroup } from '../document/removeGroup';
-import { renumberSections } from '../document/renumberSections';
+import { pageSections } from '../document/pageSections';
+import { removeSection } from '../document/removeSection';
 import type { EditorState } from '../EditorState';
 import { group } from '../fields/group';
 import { paragraphList } from '../lists/paragraphList';
 import { sectionFields } from '../lists/sectionFields';
 import { changed } from '../shell/changed';
 import { go } from '../shell/go';
-import { clean } from '../util/clean';
 import { h } from '../util/h';
 import type { ViewContent } from './ViewContent';
 import { viewIntro } from './viewIntro';
@@ -16,23 +16,23 @@ import { viewIntro } from './viewIntro';
 /** The view for a section added in the editor. */
 export function viewSection(state: EditorState, id: string): ViewContent {
     const { doc } = state;
-    const section = doc.getElementById(id);
-    if (!section) return viewIntro(state);
-    const title = clean(need(section, '.section-title').textContent);
-    const removeSection = (): void => {
+    const item = pageSections(doc).find((s) => s.id === id);
+    if (!item) return viewIntro(state);
+    const leave = (): void => {
+        changed(state);
+        go(state, 'sections');
+    };
+    const remove = (): void => {
         const sure = confirm(
             'Remove this section? It only disappears from the live site ' +
-                'once you publish.',
+                'once you publish. To keep it for later, archive it instead.',
         );
         if (!sure) return;
-        const rail = doc.querySelector(`.rail [data-target="${id}"]`);
-        removeGroup({ nodes: rail ? [section, rail] : [section] });
-        renumberSections(doc);
-        changed(state);
-        go(state, 'intro');
+        removeSection(doc, item);
+        leave();
     };
     return {
-        title: title || 'Untitled section',
+        title: item.title,
         content: [
             group(
                 'Section',
@@ -41,7 +41,7 @@ export function viewSection(state: EditorState, id: string): ViewContent {
                     paragraphList(
                         state,
                         `${id}:paragraphs`,
-                        need(section, '.about-bio'),
+                        need(item.section, '.about-bio'),
                         null,
                         PARAGRAPHS_HINT,
                     ),
@@ -55,9 +55,16 @@ export function viewSection(state: EditorState, id: string): ViewContent {
                     'button',
                     {
                         type: 'button',
-                        class: 'danger',
-                        onclick: removeSection,
+                        onclick: () => {
+                            archiveSection(state, item);
+                            leave();
+                        },
                     },
+                    'Archive this section',
+                ),
+                h(
+                    'button',
+                    { type: 'button', class: 'danger', onclick: remove },
                     'Remove this section',
                 ),
             ),

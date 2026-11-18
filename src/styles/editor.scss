@@ -6,7 +6,10 @@
 @use 'editor/buttons';
 @use 'editor/layout';
 @use 'editor/forms';
+@use 'editor/icons';
 @use 'editor/rows';
+@use 'editor/drag';
+@use 'editor/archive';
 @use 'editor/image-field';
 @use 'editor/messages';
 @use 'editor/login';

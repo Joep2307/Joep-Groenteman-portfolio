@@ -108,6 +108,12 @@ $stacked: 1100px;
     border-radius: 0;
 }
 
+.sidebar hr {
+    border: none;
+    border-top: var(--rule-width) solid var(--color-rule);
+    margin: 0.4rem 0;
+}
+
 .sidebar button.add {
     color: var(--color-primary);
     font-size: 0.8125rem;

@@ -1,3 +1,4 @@
+import { archiveProject } from '../archive/archiveProject';
 import { addNode } from '../document/addNode';
 import { need } from '../document/need';
 import { projects } from '../document/projects';
@@ -10,6 +11,7 @@ import { registerField } from '../fields/registerField';
 import { richField } from '../fields/richField';
 import { tagsField } from '../fields/tagsField';
 import { textField } from '../fields/textField';
+import { changed } from '../shell/changed';
 import { go } from '../shell/go';
 import { h } from '../util/h';
 import { blocksEditor } from './blocksEditor';
@@ -89,6 +91,18 @@ export function viewProject(state: EditorState, id: string): ViewContent {
         ],
         { open: id },
     );
+    const archive = h(
+        'button',
+        {
+            type: 'button',
+            onclick: () => {
+                archiveProject(state, project);
+                changed(state);
+                go(state, 'work');
+            },
+        },
+        'Archive this project',
+    );
     return {
         title: project.title || 'Untitled project',
         content: [
@@ -96,6 +110,7 @@ export function viewProject(state: EditorState, id: string): ViewContent {
             group('Project', titleField),
             cardGroup,
             study,
+            h('div', { class: 'adds' }, archive),
         ],
     };
 }

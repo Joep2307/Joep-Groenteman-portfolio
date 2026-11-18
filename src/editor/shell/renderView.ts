@@ -13,6 +13,7 @@ export function renderView(state: EditorState): void {
     const top = main.scrollTop;
     const view = resolveView(state, state.currentView);
     const { title, content } = view ? view.render() : viewIntro(state);
+    state.viewTitle = title;
     main.replaceChildren(
         ...[conflictBanner(state), h('h1', { tabindex: '-1' }, title)].filter(
             (el) => el !== null,

@@ -1,4 +1,5 @@
-import { PANEL_BLOCK_HTML } from '../constants';
+import { archiveRow } from '../archive/archiveRow';
+import { BLOCK_KINDS, PANEL_BLOCK_HTML } from '../constants';
 import { addNode } from '../document/addNode';
 import { need } from '../document/need';
 import type { EditorState } from '../EditorState';
@@ -43,6 +44,9 @@ export function blocksEditor(
                     key: itemsKey,
                     name: 'item',
                     items: blockItems(block),
+                    archive: (item) => {
+                        archiveRow(state, item.nodes, BLOCK_KINDS[item.type]);
+                    },
                     render: (item, j) =>
                         renderBlockItem(
                             state,

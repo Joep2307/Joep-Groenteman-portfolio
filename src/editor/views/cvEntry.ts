@@ -84,7 +84,9 @@ export function cvEntry(
         key: `${key}:subs`,
         name: 'sub-role',
         items: toItems(sub()?.querySelectorAll(':scope > .cv-item') ?? []),
-        // The wrapper goes with its last sub-role.
+        // The wrapper goes with its last sub-role. Archiving one would
+        // leave the wrapper behind, empty, so sub-roles are only removed.
+        archive: false,
         remove: (item) => {
             const wrapper = item.nodes[0].parentElement;
             removeGroup(item);

@@ -1,0 +1,51 @@
+// The archive: each entry with a small picture, what it is and where it
+// came from, and its two buttons on the right.
+.archive-row {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0.85rem;
+}
+
+.archive-row .row-actions {
+    position: static;
+    grid-column: 3;
+}
+
+.archive-thumb {
+    grid-column: 1;
+    width: 3rem;
+    height: 3rem;
+    object-fit: cover;
+    border: var(--rule-width) solid var(--color-rule);
+}
+
+span.archive-thumb {
+    background: var(--color-text-muted);
+    mask: var(--icon-archive) center / 1.25rem no-repeat;
+    border: none;
+}
+
+.archive-row .row-body {
+    grid-column: 2;
+}
+
+.archive-meta {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.archive-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.archive-empty {
+    border-top: var(--rule-width) solid var(--color-rule);
+    padding-top: 1.5rem;
+    color: var(--color-text-muted);
+}

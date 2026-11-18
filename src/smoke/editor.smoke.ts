@@ -204,3 +204,85 @@ test('the open edit panel has no accessibility violations', async ({
         .analyze();
     expect(results.violations).toEqual([]);
 });
+
+/** Opens a view from the list of every part of the page. */
+async function openView(page: Page, name: string): Promise<void> {
+    await page.getByRole('button', { name: 'Sections', exact: true }).click();
+    await page
+        .getByRole('navigation', { name: 'Every part of the page' })
+        .getByRole('button', { name, exact: true })
+        .click();
+    await expect(
+        page.locator('#drawer').getByRole('heading', { level: 1 }),
+    ).toHaveText(name.replace(/ \(\d+\)$/, ''));
+}
+
+test('a project can be archived and restored', async ({ page }) => {
+    await openEditor(page);
+    const frame = page.frameLocator('#preview-frame');
+    const titles = frame.locator('.case .case-title');
+    const before = await titles.allInnerTexts();
+
+    await openView(page, 'Projects');
+    await page.getByRole('button', { name: 'Archive project 2' }).click();
+    await expect(titles).toHaveText(before.filter((_, i) => i !== 1));
+    await expect(frame.locator('.case-index').nth(1)).toContainText('CASE 02');
+
+    await openView(page, 'Archive (1)');
+    const drawer = page.locator('#drawer');
+    await expect(drawer).toContainText(before[1] ?? '');
+    const results = await new AxeBuilder({ page })
+        .exclude('#preview-frame')
+        .analyze();
+    expect(results.violations).toEqual([]);
+
+    await drawer.getByRole('button', { name: 'Restore' }).click();
+    await expect(titles).toHaveText(before);
+    await expect(drawer).toContainText('Nothing is archived');
+    await expect(page.locator('#status')).toHaveText(
+        'Everything is published',
+    );
+});
+
+test('sections can be dragged into a new order', async ({ page }) => {
+    await openEditor(page);
+    await openView(page, 'Arrange sections');
+    const rows = page.locator('[data-row^="sections:"] .project-open');
+    await expect(rows).toHaveText(['Selected work', 'About', 'Contact']);
+
+    // The mouse does not scroll, so the rows have to be on screen.
+    await page.getByRole('button', { name: 'All sections' }).click();
+    await page.locator('[data-row="sections:2"]').scrollIntoViewIfNeeded();
+    const grip = page.locator('[data-row="sections:2"] .row-grip');
+    const target = page.locator('[data-row="sections:0"]');
+    const from = await grip.boundingBox();
+    const to = await target.boundingBox();
+    if (!from || !to) throw new Error('The rows are not on screen.');
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(from.x + from.width / 2, to.y + 4, { steps: 12 });
+    await page.mouse.up();
+
+    await expect(rows).toHaveText(['Contact', 'Selected work', 'About']);
+    const frame = page.frameLocator('#preview-frame');
+    // The preview redraws once the editor has caught up.
+    await expect
+        .poll(() =>
+            frame
+                .locator('main > section')
+                .evaluateAll((all) => all.map((el) => el.id)),
+        )
+        .toEqual(['intro', 'contact', 'work', 'about']);
+    await expect(frame.locator('.rail-item .label')).toHaveText([
+        'Intro',
+        'Contact',
+        'Work',
+        'About',
+    ]);
+    await expect(frame.locator('#contact .section-num')).toHaveText('01');
+
+    const results = await new AxeBuilder({ page })
+        .exclude('#preview-frame')
+        .analyze();
+    expect(results.violations).toEqual([]);
+});

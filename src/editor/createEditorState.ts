@@ -11,6 +11,7 @@ export function createEditorState(): EditorState {
         previewImages: {},
         knownImages: [],
         currentView: 'intro',
+        viewTitle: 'Intro',
         previewTarget: { scroll: '#intro' },
         previewScroll: null,
         previewNodes: [],

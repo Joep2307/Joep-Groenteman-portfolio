@@ -1,3 +1,4 @@
+import { archiveProject } from '../archive/archiveProject';
 import { projects } from '../document/projects';
 import type { EditorState } from '../EditorState';
 import { group } from '../fields/group';
@@ -22,6 +23,9 @@ export function viewWork(state: EditorState): ViewContent {
         },
         remove: (project) => {
             removeProject(doc, project);
+        },
+        archive: (project) => {
+            archiveProject(state, project);
         },
         confirmRemove: (project) =>
             `Remove “${project.title}” and its case study? It only ` +

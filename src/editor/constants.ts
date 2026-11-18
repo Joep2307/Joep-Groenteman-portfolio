@@ -120,3 +120,26 @@ export const PANEL_BLOCK_HTML =
 export const SOCIAL_LINK_HTML =
     '<a href="" target="_blank" rel="noopener noreferrer">' +
     '<span class="sr-only"> (opens in a new tab)</span></a>';
+
+/**
+ * Archived parts wait in a template at the end of the page: inert, so
+ * visitors, screen readers and the site's scripts never see them.
+ */
+export const ARCHIVE_ID = 'archive';
+/** Marks a parent without an id, so an archived part can find it again. */
+export const ARCHIVE_HOME_ATTR = 'data-archive-home';
+/** How much of an archived part's text the archive shows. */
+export const ARCHIVE_TITLE_LENGTH = 90;
+
+/** Dragging a row this close to the panel's edge scrolls the panel. */
+export const DRAG_EDGE_PX = 48;
+export const DRAG_MAX_SCROLL_PX = 14;
+
+/** What the archive calls each piece of a case study or CV section. */
+export const BLOCK_KINDS = {
+    text: 'Paragraph',
+    image: 'Image',
+    entry: 'CV entry',
+    languages: 'Languages',
+    other: 'Custom HTML',
+} as const;

@@ -1,14 +1,15 @@
-import { customSections } from '../document/customSections';
+import { archiveEntries } from '../archive/archiveEntries';
+import { pageSections } from '../document/pageSections';
 import { projects } from '../document/projects';
 import type { EditorState } from '../EditorState';
-import { clean } from '../util/clean';
 import { h } from '../util/h';
 import { query } from '../util/query';
 import { addProject } from '../views/addProject';
 import { addSection } from '../views/addSection';
+import { sectionView } from '../views/sectionView';
 import { go } from './go';
 
-/** Draws the list of views, following the page's projects and sections. */
+/** Draws the list of views, in the order of the page's sections. */
 export function renderSidebar(state: EditorState): void {
     const { doc } = state;
     const item = (view: string, label: string, cls = ''): HTMLElement =>
@@ -40,28 +41,39 @@ export function renderSidebar(state: EditorState): void {
             },
             h('span', {}, label),
         );
+    const sections = pageSections(doc).flatMap((section) => {
+        switch (section.id) {
+            case 'work':
+                return [
+                    item('work', 'Projects'),
+                    ...projects(doc).map((project) =>
+                        item(
+                            `project:${project.id}`,
+                            project.title || 'Untitled project',
+                            'sub',
+                        ),
+                    ),
+                    action('+ New project', 'add sub', addProject),
+                ];
+            case 'about':
+                return [item('about', 'About'), item('cv', 'CV')];
+            case 'contact':
+                return [item('contact', 'Contact')];
+            default:
+                return [item(sectionView(section), section.title)];
+        }
+    });
+    const archived = archiveEntries(doc).length;
     query('#sidebar').replaceChildren(
         item('intro', 'Intro'),
-        item('work', 'Projects'),
-        ...projects(doc).map((project) =>
-            item(
-                `project:${project.id}`,
-                project.title || 'Untitled project',
-                'sub',
-            ),
-        ),
-        action('+ New project', 'add sub', addProject),
-        item('about', 'About'),
-        item('cv', 'CV'),
-        ...customSections(doc).map((section) =>
-            item(
-                `section:${section.id}`,
-                clean(section.querySelector('.section-title')?.textContent) ||
-                    'Untitled section',
-            ),
-        ),
-        item('contact', 'Contact'),
+        ...sections,
         action('+ New section', 'add', addSection),
+        h('hr', {}),
+        item('sections', 'Arrange sections'),
+        item(
+            'archive',
+            archived ? `Archive (${String(archived)})` : 'Archive',
+        ),
         item('settings', 'Site settings'),
     );
 }

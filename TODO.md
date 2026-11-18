@@ -1,3 +1,76 @@
+# TODO — archive, and easier ordering (`/dev/`)
+
+Joep wants to put projects, texts and the like away without deleting
+them, see them together in an archive, and order sections more easily.
+
+## How the archive works
+
+- Archived parts move into `<template id="archive">` at the end of
+  `exe/index.html`. A template is inert: visitors, screen readers,
+  search engines' rendering and the site's scripts never see it. It is
+  still in the page source, like everything in this public repo
+- Vite walks into template content, so images only an archived part
+  uses still get built and deployed, and show again on restore
+- Each archived thing is one `<div class="archived">` with its kind,
+  title, the view it came from and the date, holding one part per
+  element. A part remembers its parent (`#id`, or a
+  `data-archive-home` marker the editor adds when the parent has no
+  id) and its position there
+- Restore puts every part back at its position, then renumbers cases
+  and sections, puts panels in card order and the rail in section
+  order. If a part's parent is gone or archived itself, Restore says
+  which and stays disabled
+- Archive then restore gives back the same HTML: the empty template
+  and unused markers are removed
+- New project and section numbers skip numbers used in the archive,
+  so a restored one never clashes
+
+## Plan
+
+- [x] `document/`: `insertNode` (addNode for an existing element),
+      `nextNumber` also counts ids in templates, `pageSections`,
+      `PageSection`, `syncRail`, `alignPanels`, `swapSections`
+- [x] `archive/`: `archiveTemplate`, `archiveEntries`, `ArchiveMeta`,
+      `archiveNodes`, `homeOf`, `findHome`, `entryParts`,
+      `missingHome`, `restoreEntry`, `dropEntry`, `pruneHomes`,
+      `describeNodes`, `archiveRow`, `archiveProject`, `archiveSection`
+- [x] `listEditor`: an Archive button on every removable row (opt out
+      with `archive: false`, or pass a function); a drag handle on
+      every row, pointer based so touch works, with the list sliding
+      out of the way and the panel scrolling near its edges. ↑/↓ stay
+      for the keyboard. `moveItem` turns a drag into neighbour swaps
+- [x] Views: `viewArchive` (restore, delete for good, thumbnails,
+      empty state), `viewSections` ("Arrange sections": every section
+      but Intro, drag/↑↓, archive or remove custom ones, add one).
+      Archive buttons on a project's and a custom section's own view.
+      Sub-roles opt out (their wrapper goes with the last one)
+- [x] Sidebar follows page order; adds "Arrange sections" and
+      "Archive (n)"
+- [x] `EditorState.viewTitle`, so an archived row knows where it came
+      from
+- [x] SCSS: grip and archive icons as masks, drag states, archive rows,
+      reduced motion
+- [x] Tests: archive/restore gives back the same HTML for a project, a
+      paragraph, and an image with its caption; restore blocked while
+      the home is archived or gone; delete leaves no trace; `nextNumber`
+      with archived ids; `moveItem`; `swapSections` + `syncRail`.
+      Smoke: archive and restore a project, reorder sections by drag,
+      axe on the archive and arrange views
+
+## Checked
+
+- [x] `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm smoke`,
+      `npx prettier --check .`: 86 unit tests, 25 smoke tests pass
+- [x] A build of a page with an archived project: the template ships
+      inert, and an image only it uses is still in `dist/img`
+- [x] Rows with two fields side by side start under the row's buttons,
+      which now need four places
+
+## Open `[you]`
+
+- [ ] Try it on `/dev/`: archive something, publish, check the live site,
+      restore it
+
 # TODO — log in with a GitHub token (`/dev/`)
 
 The site is on GitHub Pages (DNS to GitHub, `deploy.yml`), which serves
